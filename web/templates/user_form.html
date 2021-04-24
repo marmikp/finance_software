@@ -1,0 +1,112 @@
+<script>
+$(document).ready(function(){
+    $(".new_customer").click(function(){
+          $.post('/api/hafta/new_hafta_entry_dialog',
+            function(returnedData){
+                 var w = window.open('about:blank');
+                    w.document.open();
+                    w.document.write(returnedData);
+                    w.document.close();
+        }).fail(function(){
+              console.log("error");
+        });
+  });
+
+  $(".new").click(function(){
+    $.post('/api/hafta/extend_hafta_dialog', { 'user_id': $(this).attr('user_id')},
+            function(returnedData){
+                var w = window.open('about:blank');
+                w.document.open();
+                w.document.write(returnedData);
+                w.document.close();
+
+        }).fail(function(){
+              console.log("error");
+        });
+  });
+  $(".add_collection").click(function(){
+    $.post('/api/hafta/add_collection_dialog', { 'user_id': $(this).attr('data'), 'loan_id': $(this).attr('loan_id')},
+            function(returnedData){
+            var w = window.open('about:blank');
+            w.document.open();
+            w.document.write(returnedData);
+            w.document.close();
+                 console.log(returnedData);
+        }).fail(function(){
+              console.log("error");
+        });
+  });
+  $(".close_loan").click(function(){
+    $.post('/api/hafta/close_loan_dialog', { 'user_id': $(this).attr('data')},
+            function(returnedData){var w = window.open('about:blank');
+            w.document.open();
+            w.document.write(returnedData);
+            w.document.close();
+                 console.log(returnedData);
+        }).fail(function(){
+              console.log("error");
+        });
+  });
+
+});
+</script>
+<div style="padding: 50px;padding-top:100px; ">
+<div class="col-md-3">
+        <input type="button" class="new_customer btn btn-primary" value="New Customer">
+    </div>
+<table id="example" class="table table-striped table-bordered" style="width:100%; padding-top: 50px;">
+        <thead>
+            <tr>
+                <th>User Id</th>
+                <th>Name</th>
+                <th>Phone</th>
+                <th>User Type</th>
+                <th>No. of Loan </th>
+                <th>No. of Account</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for d in data %}
+            <tr>
+                <td>{{d.id}}</td>
+                <td>{{d.user_name}}</td>
+                <td>{{d.user_phone}}</td>
+                <td>{{d.customer_type}}</td>
+                <td>{{d.num_loan_hafta}}</td>
+                <td>{{d.num_loan_account}}</td>
+                <td>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <input type="button" class="new btn btn-danger" value="New/Extend" user_id="{{d.id}}">
+                        </div>
+                        <div class="col-md-3">
+                            <input type="button" class="add_collection btn btn-danger" value="Add Collection" data="{{d.id}}">
+                        </div>
+                        <div class="col-md-3">
+                            <input type="button" class="close_loan btn btn-danger" value="Close Loan" data="{{d.id}}">
+                        </div>
+
+                    </div>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+        <tfoot>
+            <tr>
+                <th>User Id</th>
+                <th>Name</th>
+                <th>Phone</th>
+                <th>User Type</th>
+                <th>No. of Loan </th>
+                <th>No. of Account</th>
+                <th>Actions</th>
+            </tr>
+        </tfoot>
+    </table>
+
+    </div>
+<script> $(document).ready(function() {
+    $('#example').DataTable();
+} ); </script>
+

@@ -1,0 +1,494 @@
+import datetime
+
+from flask import Flask, request, render_template, session, redirect
+from markupsafe import Markup
+from sqlalchemy import MetaData
+
+import src.utils
+from database import db_utils, model
+from database.model import db
+from src import utils
+from src.utils import is_logged_in, create_entry_new_hafta
+
+app = Flask(__name__, template_folder='web', static_folder='web')
+app.secret_key = '123456'
+app.config['SESSION_TYPE'] = 'filesystem'
+model.init_database(app)
+with app.app_context():
+    db_utils.META_DATA = MetaData(bind=db.session.get_bind(), reflect=True)
+
+
+@app.route("/api/test", methods=['POST', 'GET'])
+def test():
+    db_utils.extend_hafta(2, 2000, 6, 8)
+    return {"asd": "ads"}
+
+
+######## GENERAL ########
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    if session.get('username'):
+        return render_template('index.html')
+    else:
+        return redirect('/api/user/login')
+
+
+@app.route('/api/user/signup', methods=['GET'])
+def signup():
+    try:
+        args = {'username': request.args['username'], 'password': request.args['password']}
+        print(args)
+        db_utils.signup(**args)
+        return "success"
+    except Exception as e:
+        return str(e)
+
+
+@app.route('/api/user/login', methods=['POST', 'GET'])
+def login():
+    if session.get('username'):
+        return redirect('/')
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+        login_check = db_utils.login(username, password)
+        if login_check['code'] == 200:
+            session['username'] = username
+            return redirect("/")
+        else:
+            return render_template('login.html', data="invalid username or password")
+    else:
+
+        return render_template('login.html')
+
+
+@app.route("/api/add_new_customer", methods=['POST', 'GET'])
+def add_new_customer():
+    data = request.form.to_dict()
+    data_query = dict()
+    data_query['id'] = data['id']
+    data_query['user_name'] = data['name']
+    data_query['user_alias'] = data['alias']
+    data_query['user_address'] = data['address']
+    data_query['user_phone'] = data['phone']
+    data_query['user_city'] = data['city']
+    db_resp = db_utils.add_new_customer(**data_query)
+    return db_resp
+
+
+############## HAFTA ##############
+@app.route('/api/hafta', methods=['GET', 'POST'])
+def hafta():
+    if session.get('username'):
+        data = db_utils.get_users_details()
+        return render_template('index.html', data=Markup(render_template('templates/user_form.html', data=data)))
+    else:
+        return redirect('/api/user/login')
+
+
+@app.route('/api/hafta/new_hafta_entry_dialog', methods=['POST', 'GET'])
+def new_hafta_entry_dialog(id=None):
+    if not session.get('username'):
+        # TODO : code to close current dialog and open login screen in mainwindow
+        return "logged out"
+    max_id = db_utils.get_max_customer_id(id)
+    return f"""
+    <html>
+    <head> 
+    <title>HTML Redirect</title>  
+    </head> 
+    <body>
+    <form action="/api/hafta/new_hafta_entry" method=POST></br>
+    <input type=text name=id value={max_id}></br>
+    <input type=text name=name placeholder=Name></br>
+    <input type=text name=alias placeholder=Alias></br>
+    <input type=text name=address placeholder=Address></br>
+    <input type=text name=phone placeholder=Phone></br>
+    <input type=text name=city placeholder=City></br>
+    <input type=text name=base_amount placeholder=BaseAmount></br>
+    <input type=text name=interest placeholder=Interest></br>
+    <input type=text name=noi placeholder=Installations></br>
+    <input type=date name=startdate placeholder=StartDate></br>
+    <input type=text name=period placeholder=Period value=monthly></br>
+    <select id="cars" name=loan_type>
+      <option value="flat">Flat</option>
+      <option value="hafta">Hafta</option>
+    </select>
+    <input type=text name=guarantor_1_name placeholder=guarantor_1_name></br>
+    <input type=text name=guarantor_1_phone placeholder=guarantor_1_phone></br>
+    <input type=text name=guarantor_1_address placeholder=guarantor_1_address></br>
+    <input type=text name=guarantor_2_name placeholder=guarantor_2_name></br>
+    <input type=text name=guarantor_2_phone placeholder=guarantor_2_phone></br>
+    <input type=text name=guarantor_2_address placeholder=guarantor_2_address></br>
+    <input type=text name=paid_amount placeholder=Paid_amount></br>
+    <input type=submit value=Submit>
+    </form>
+    </body>
+    </html>"""
+
+
+@app.route('/api/hafta/current_user_hafta_entry_dialog', methods=['POST', 'GET'])
+def current_user_hafta_entry_dialog(id=None):
+    data = src.utils.get_user_details(request.form['user_id'])
+    try:
+        resp = f"""
+            <html>
+            <head> 
+            <title>HTML Redirect</title>  
+            </head> 
+            <body>
+            <form action="/api/hafta/new_hafta_entry" method=POST></br>
+            <input type=text name=id value={request.form['user_id']}></br>
+            <input type=text name=name value={data[0]['user_name']} placeholder=Name></br>
+            <input type=text name=alias value={data[0]['user_name']} placeholder=Alias></br>
+            <input type=text name=address value={data[0]['user_address']} placeholder=Address></br>
+            <input type=text name=phone value={data[0]['user_phone']} placeholder=Phone></br>
+            <input type=text name=city value={data[0]['user_city']} placeholder=City></br>
+            <input type=text name=base_amount placeholder=BaseAmount></br>
+            <input type=text name=interest placeholder=Interest></br>
+            <input type=text name=noi placeholder=Installations></br>
+            <input type=date name=startdate value={datetime.datetime.now().date()} placeholder=StartDate></br>
+            <input type=text name=period placeholder=Period value=monthly></br>
+            <select id="cars" name=loan_type>
+              <option value="flat">Flat</option>
+              <option value="hafta">Hafta</option>
+            </select>
+            <input type=text name=guarantor_1_name placeholder=guarantor_1_name></br>
+            <input type=text name=guarantor_1_phone placeholder=guarantor_1_phone></br>
+            <input type=text name=guarantor_1_address placeholder=guarantor_1_address></br>
+            <input type=text name=guarantor_2_name placeholder=guarantor_2_name></br>
+            <input type=text name=guarantor_2_phone placeholder=guarantor_2_phone></br>
+            <input type=text name=guarantor_2_address placeholder=guarantor_2_address></br>
+            <input type=text name=paid_amount placeholder=Paid_amount></br>
+            <input type=submit value=Submit>
+            </form>
+            </body>
+            </html>"""
+    except Exception as e:
+        print(e)
+    print(resp)
+    return resp
+
+
+@app.route('/api/hafta/current_user_hafta_entry', methods=['POST', 'GET'])
+def current_user_hafta_entry():
+    return new_hafta_entry(current_user=True)
+
+
+@app.route('/api/hafta/new_hafta_entry', methods=['POST'])
+def new_hafta_entry(current_user=False):
+    if not is_logged_in():
+        # TODO : code to close current dialog and open login screen in mainwindow
+        return "logged out"
+    data = request.form.to_dict()
+    if not current_user:
+        resp = add_new_customer()
+    entry_added_flag = False
+    try:
+        if resp['code'] == 200:
+            resp = create_entry_new_hafta(**data)
+            if resp['code'] == 200:
+                entry_added_flag = True
+    except Exception as e:
+        print(e)
+
+    if entry_added_flag:
+        return {'code': 200, 'status': 'user added with hafta'}
+
+    return resp
+
+
+@app.route('/api/hafta/extend_hafta_dialog', methods=['POST'])
+def extend_hafta_dialog():
+    data = src.utils.get_user_details(request.form['user_id'])
+    loan_id_list = []
+    for d in data:
+        if d['loan_id'] in loan_id_list:
+            continue
+        else:
+            loan_id_list.append(d['loan_id'])
+    data_rander = {'data': data, 'loan_id_list': loan_id_list}
+    return render_template('templates/new_extend_form.html', data=data_rander)
+
+
+@app.route('/api/hafta/extend_hafta', methods=['POST'])
+def extend_hafta():
+    user_data = dict()
+    user_data['customer_id'] = int(request.form['user_id'])
+    user_data['loan_id'] = int(request.form['loan_id'])
+    user_data['amount'] = float(request.form['amount'])
+    user_data['no_of_hafta'] = int(request.form['months'])
+    resp = db_utils.extend_hafta(**user_data)
+    return resp
+
+
+@app.route('/api/hafta/party_to_party_transfer', methods=['POST'])
+def party_to_party_transfer():
+    return None
+
+
+@app.route('/api/hafta/add_collection_dialog', methods=['POST', 'GET'])
+def add_collection_dialog():
+    if request.method == "POST":
+        data = src.utils.get_user_details(int(request.form['user_id']))
+    else:
+        data = src.utils.get_user_details(int(request.args['user_id']))
+    return render_template('templates/user_add_collection.html', data=data)
+
+
+@app.route('/api/hafta/add_collection', methods=['POST'])
+def add_collection():
+    db_data = dict()
+    db_data['id'] = int(request.form['user_id'])
+    db_data['transaction_id'] = int(request.form['loan_id'])
+    db_data['installment_num'] = int(request.form['no_of_installment'])
+    db_data['paid_date'] = datetime.datetime.strptime(request.form['paid_date'], '%Y-%m-%d')
+    db_data['paid_amount'] = float(request.form['paid_amount'])
+    db_data['emi_amount'] = float(request.form['base_amount'])
+    resp = db_utils.add_installment(**db_data)
+    return resp
+
+
+@app.route('/api/hafta/close_loan_dialog', methods=['POST', 'GET'])
+def close_loan_dialog():
+    if request.method == 'POST':
+        data = src.utils.get_loan_entries_by_user_id(request.form['user_id'])
+    else:
+        data = src.utils.get_loan_entries_by_user_id(request.args['user_id'])
+    return render_template('templates/close_loan.html', data=data)
+
+
+@app.route('/api/hafta/close_loan', methods=['POST'])
+def close_loan():
+    resp = db_utils.close_loan(int(request.form['user_id']), int(request.form['loan_id']),
+                               float(request.form['amount']))
+    print(resp)
+    return resp
+
+
+############### ACCOUNT ###############
+@app.route('/api/account', methods=['POST', 'GET'])
+def account():
+    if session.get('username'):
+        data = db_utils.get_users_details(user_type="account")
+        return render_template('index.html',
+                               data=Markup(render_template('templates/user_form_account.html', data=data)))
+    else:
+        return redirect('/api/user/login')
+
+
+@app.route('/api/account/fetch_customers', methods=['POST'])
+def fetch_customers():
+    return None
+
+
+@app.route('/api/account/current_user_account_entry_dialog', methods=['POST', 'GET'])
+def current_user_account_entry_dialog(id=None):
+    data = src.utils.get_user_details(request.form['user_id'])
+    try:
+        resp = f"""
+            <html>
+            <head> 
+            <title>HTML Redirect</title>  
+            </head> 
+            <body>
+            <form action="/api/account/current_user_account_entry" method=POST></br>
+            <input type=text name=id value={request.form['user_id']}></br>
+            <input type=text name=name value={data[0]['user_name']} placeholder=Name></br>
+            <input type=text name=alias value={data[0]['user_name']} placeholder=Alias></br>
+            <input type=text name=address value={data[0]['user_address']} placeholder=Address></br>
+            <input type=text name=phone value={data[0]['user_phone']} placeholder=Phone></br>
+            <input type=text name=city value={data[0]['user_city']} placeholder=City></br>
+            <input type=text name=base_amount placeholder=BaseAmount></br>
+            <input type=text name=interest placeholder=Interest></br>
+            <input type=text name=noi placeholder=Installations></br>
+            <input type=date name=startdate value={datetime.datetime.now().date()} placeholder=StartDate></br>
+            <input type=text name=period placeholder=Period value=monthly></br>
+            <select id="cars" name=loan_type>
+              <option value="flat">Flat</option>
+              <option value="hafta">Hafta</option>
+            </select>
+            <input type=text name=paid_amount placeholder=Paid_amount></br>
+            <input type=submit value=Submit>
+            </form>
+            </body>
+            </html>"""
+    except Exception as e:
+        print(e)
+    print(resp)
+    return resp
+
+
+@app.route('/api/account/extend_hafta', methods=['POST', 'GET'])
+def account_extend_hafta():
+    user_data = dict()
+    user_data['customer_id'] = int(request.form['user_id'])
+    user_data['loan_id'] = int(request.form['loan_id'])
+    user_data['amount'] = float(request.form['amount'])
+    user_data['no_of_hafta'] = int(request.form['months'])
+    resp = db_utils.extend_hafta(user_type="account", **user_data)
+    return str(resp)
+
+@app.route('/api/account/new_account_entry_dialog', methods=['POST', 'GET'])
+def new_account_entry_dialog(id=None):
+    if not session.get('username'):
+        # TODO : code to close current dialog and open login screen in mainwindow
+        return "logged out"
+    max_id = db_utils.get_max_customer_id(id)
+    return f"""
+    <html>
+    <head> 
+    <title>HTML Redirect</title>  
+    </head> 
+    <body>
+    <form action="/api/account/new_account_entry" method=POST></br>
+    <input type=text name=id value={max_id}></br>
+    <input type=text name=name placeholder=Name></br>
+    <input type=text name=alias placeholder=Alias></br>
+    <input type=text name=address placeholder=Address></br>
+    <input type=text name=phone placeholder=Phone></br>
+    <input type=text name=city placeholder=City></br>
+    <input type=text name=base_amount placeholder=BaseAmount></br>
+    <input type=text name=interest placeholder=Interest></br>
+    <input type=text name=noi placeholder=Installations></br>
+    <input type=date name=startdate placeholder=StartDate></br>
+    <input type=text name=period placeholder=Period value=monthly></br>
+    <select id="cars" name=loan_type>
+      <option value="flat">Flat</option>
+      <option value="hafta">Hafta</option>
+    </select>
+    <input type=text name=paid_amount placeholder=Paid_amount></br>
+    <input type=submit value=Submit>
+    </form>
+    </body>
+    </html>"""
+
+
+@app.route('/api/account/current_user_account_entry', methods=['POST', 'GET'])
+def current_user_account_entry():
+    return new_account_entry(current_user=True)
+
+
+@app.route('/api/account/add_new_account_customer', methods=['POST'])
+def add_new_account_customer():
+    data = request.form.to_dict()
+    data_query = dict()
+    data_query['id'] = data['id']
+    data_query['user_name'] = data['name']
+    data_query['user_alias'] = data['alias']
+    data_query['user_address'] = data['address']
+    data_query['user_phone'] = data['phone']
+    data_query['user_city'] = data['city']
+    db_resp = db_utils.add_new_customer(**data_query)
+    return db_resp
+
+
+@app.route('/api/account/new_account_entry', methods=['POST'])
+def new_account_entry(current_user=False):
+    if not is_logged_in():
+        # TODO : code to close current dialog and open login screen in mainwindow
+        return "logged out"
+    data = request.form.to_dict()
+    if not current_user:
+        resp = add_new_customer()
+    else:
+        resp = {'code': 200}
+    entry_added_flag = False
+    try:
+        if resp['code'] == 200:
+            resp = create_entry_new_hafta(user_type="account", **data)
+            if resp['code'] == 200:
+                entry_added_flag = True
+    except Exception as e:
+        print(e)
+        return {'code': 500, 'status': 'server error occured'}
+
+    if entry_added_flag:
+        return {'code': 200, 'status': 'user added with hafta'}
+
+    return resp
+
+
+@app.route('/api/account/account_hafta_extend_dialog', methods=['POST', 'GET'])
+def account_hafta_extend_dialog():
+    data = src.utils.get_user_details(request.form['user_id'], user_type='account')
+    loan_id_list = []
+    for d in data:
+        if d['loan_id'] is None:
+            continue
+        if d['loan_id'] in loan_id_list:
+            continue
+        else:
+            loan_id_list.append(d['loan_id'])
+    data_rander = {'data': data, 'loan_id_list': loan_id_list}
+    return render_template('templates/new_extend_form_account.html', data=data_rander)
+
+
+@app.route('/api/account/pay_dialog', methods=['POST'])
+def pay_dialog():
+    return None
+
+
+@app.route('/api/account/customer_detail_dialog', methods=['POST'])
+def customer_detail_dialog():
+    return None
+
+
+@app.route('/api/account/pay_installment', methods=['POST'])
+def pay_installment():
+    return None
+
+@app.route('/api/account/add_collection_dialog', methods=['POST', 'GET'])
+def add_account_collection_dialog():
+    if request.method == "POST":
+        data = src.utils.get_user_details(int(request.form['user_id']), user_type="account")
+    else:
+        data = src.utils.get_user_details(int(request.args['user_id']), user_type="account")
+    return render_template('templates/user_add_collection_account.html', data=data)
+
+@app.route('/api/account/add_collection', methods=['POST', 'GET'])
+def add_account_collection():
+    db_data = dict()
+    db_data['id'] = int(request.form['user_id'])
+    db_data['transaction_id'] = int(request.form['loan_id'])
+    db_data['installment_num'] = int(request.form['no_of_installment'])
+    db_data['paid_date'] = datetime.datetime.strptime(request.form['paid_date'], '%Y-%m-%d')
+    db_data['paid_amount'] = float(request.form['paid_amount'])
+    db_data['emi_amount'] = float(request.form['base_amount'])
+    resp = db_utils.add_installment(**db_data, user_type="account")
+    return resp
+
+@app.route('/api/account/close_loan_dialog', methods=['POST', 'GET'])
+def close_account_loan_dialog():
+    if request.method == 'POST':
+        data = src.utils.get_loan_entries_by_user_id(request.form['user_id'], user_type="account")
+    else:
+        data = src.utils.get_loan_entries_by_user_id(request.args['user_id'])
+    return render_template('templates/close_account_loan.html', data=data, user_type="account")
+
+
+@app.route('/api/account/close_loan', methods=['POST'])
+def close_account_loan():
+    resp = db_utils.close_loan(int(request.form['user_id']), int(request.form['loan_id']),
+                               float(request.form['amount']), user_type="account")
+    print(resp)
+    return resp
+
+########## REPORT ############
+@app.route('/api/report/pending_installment', methods=['POST'])
+def pending_installment():
+    return None
+
+
+@app.route('/api/report/p2p_transactions', methods=['POST'])
+def p2p_transactions():
+    return None
+
+
+@app.route('/api/report/account_transactions', methods=['POST'])
+def account_transactions():
+    return None
+
+
+if __name__ == '__main__':
+    app.run(debug=True)
