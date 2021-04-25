@@ -5,7 +5,7 @@ from flask import session
 
 from database import db_utils
 from database.db_utils import get_pending_installment_of_loan_id, META_DATA
-from database.model import db, HaftEntry
+from database.model import db, HaftEntry, CrDrEntry
 
 calculate_emi = lambda a, b: a / b
 
@@ -19,34 +19,45 @@ def is_logged_in():
 
 def create_entry_new_hafta(user_type="loan", **kwargs):
     query_data = dict()
-    query_data['id'] = int(kwargs['id'])
-    query_data['base_amount'] = float(kwargs['base_amount'])
-    query_data['interest'] = float(kwargs['interest'])
-    query_data['total_amount'] = query_data['base_amount'] + query_data['interest']
-    query_data['no_installment'] = int(kwargs['noi'])
-    query_data['start_date'] = datetime.strptime(str(kwargs['startdate']), "%Y-%m-%d")
-    query_data['installment_period'] = kwargs['period']
-    query_data['loan_type'] = kwargs['loan_type']
-    query_data['last_installment_date'] = query_data['start_date'] + relativedelta(months=query_data['no_installment'])
-    if user_type == "loan":
-        query_data['guarantor_1_name'] = kwargs['guarantor_1_name']
-        query_data['guarantor_1_phone'] = int(kwargs['guarantor_1_phone'])
-        query_data['guarantor_1_address'] = kwargs['guarantor_1_address']
+    if user_type == 'debit':
+        query_data['id'] = int(kwargs['id'])
+        query_data['base_amount'] = float(kwargs['base_amount'])
+        query_data['paid_date'] = datetime.strptime(str(kwargs['startdate']), "%Y-%m-%d")
+        query_data['remark'] = kwargs['remark']
+        crdr_query = CrDrEntry(**query_data)
+        db.session.add(crdr_query)
+        db.session.commit()
+        db_utils.sum_sub_value_in_balance_amount(query_data['base_amount'], 'sub')
+        resp = {'code': 200, 'status': 'entry for debit account created'}
+    else:
+        query_data['id'] = int(kwargs['id'])
+        query_data['base_amount'] = float(kwargs['base_amount'])
+        query_data['interest'] = float(kwargs['interest'])
+        query_data['total_amount'] = query_data['base_amount'] + query_data['interest']
+        query_data['no_installment'] = int(kwargs['noi'])
+        query_data['start_date'] = datetime.strptime(str(kwargs['startdate']), "%Y-%m-%d")
+        query_data['installment_period'] = kwargs['period']
+        query_data['loan_type'] = kwargs['loan_type']
+        query_data['last_installment_date'] = query_data['start_date'] + relativedelta(months=query_data['no_installment'])
+        if user_type == "loan":
+            query_data['guarantor_1_name'] = kwargs['guarantor_1_name']
+            query_data['guarantor_1_phone'] = int(kwargs['guarantor_1_phone'])
+            query_data['guarantor_1_address'] = kwargs['guarantor_1_address']
 
-        if kwargs['guarantor_2_name'] != '':
-            query_data['guarantor_2_name'] = kwargs['guarantor_2_name']
-            query_data['guarantor_2_phone'] = int(kwargs['guarantor_2_phone'])
-            query_data['guarantor_2_address'] = kwargs['guarantor_2_address']
-    resp = db_utils.add_new_hafta_entry(user_type=user_type, **query_data)
-    if resp['code'] == 200:
-        query_data['transaction_id'] = resp['transaction_id']
-        # user-table will be created in above method
-        resp = add_user_track_data(user_type=user_type, **query_data)
-        query_data['emi_amount'] = resp['emi_amount']
-        if resp['code'] == 200 and query_data['loan_type'] == 'flat':
-            query_data['paid_amount'] = float(kwargs['paid_amount']) if kwargs['paid_amount'] != '' else 1000
-            resp = db_utils.add_installment(user_type=user_type, **query_data)
-
+            if kwargs['guarantor_2_name'] != '':
+                query_data['guarantor_2_name'] = kwargs['guarantor_2_name']
+                query_data['guarantor_2_phone'] = int(kwargs['guarantor_2_phone'])
+                query_data['guarantor_2_address'] = kwargs['guarantor_2_address']
+        resp = db_utils.add_new_hafta_entry(user_type=user_type, **query_data)
+        if resp['code'] == 200:
+            query_data['transaction_id'] = resp['transaction_id']
+            # user-table will be created in above method
+            resp = add_user_track_data(user_type=user_type, **query_data)
+            query_data['emi_amount'] = resp['emi_amount']
+            if resp['code'] == 200 and query_data['loan_type'] == 'flat':
+                query_data['paid_amount'] = float(kwargs['paid_amount']) if kwargs['paid_amount'] != '' else 1000
+                resp = db_utils.add_installment(user_type=user_type, **query_data)
+            db_utils.sum_sub_value_in_balance_amount(query_data['base_amount'], 'sub')
     return resp
 
 

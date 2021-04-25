@@ -20,8 +20,7 @@ with app.app_context():
 
 @app.route("/api/test", methods=['POST', 'GET'])
 def test():
-    db_utils.extend_hafta(2, 2000, 6, 8)
-    return {"asd": "ads"}
+    return render_template("templates/report_page.html")
 
 
 ######## GENERAL ########
@@ -114,6 +113,7 @@ def new_hafta_entry_dialog(id=None):
       <option value="flat">Flat</option>
       <option value="hafta">Hafta</option>
     </select>
+    Is Debit account: <input type='checkbox' name="is_debit"></br>
     <input type=text name=guarantor_1_name placeholder=guarantor_1_name></br>
     <input type=text name=guarantor_1_phone placeholder=guarantor_1_phone></br>
     <input type=text name=guarantor_1_address placeholder=guarantor_1_address></br>
@@ -121,6 +121,7 @@ def new_hafta_entry_dialog(id=None):
     <input type=text name=guarantor_2_phone placeholder=guarantor_2_phone></br>
     <input type=text name=guarantor_2_address placeholder=guarantor_2_address></br>
     <input type=text name=paid_amount placeholder=Paid_amount></br>
+    <input type=textarea name='remark' placeholder='Remark'></br>
     <input type=submit value=Submit>
     </form>
     </body>
@@ -160,6 +161,7 @@ def current_user_hafta_entry_dialog(id=None):
             <input type=text name=guarantor_2_phone placeholder=guarantor_2_phone></br>
             <input type=text name=guarantor_2_address placeholder=guarantor_2_address></br>
             <input type=text name=paid_amount placeholder=Paid_amount></br>
+            
             <input type=submit value=Submit>
             </form>
             </body>
@@ -186,7 +188,10 @@ def new_hafta_entry(current_user=False):
     entry_added_flag = False
     try:
         if resp['code'] == 200:
-            resp = create_entry_new_hafta(**data)
+            if data['is_debit'] != 'on':
+                resp = create_entry_new_hafta(**data)
+            else:
+                resp = create_entry_new_hafta(**data, user_type='debit')
             if resp['code'] == 200:
                 entry_added_flag = True
     except Exception as e:

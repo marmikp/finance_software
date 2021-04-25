@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import ForeignKey, create_engine, MetaData, Table
 from sqlalchemy import *
@@ -57,7 +59,7 @@ class Customer(db.Model):
     user_city = db.Column(db.String(10), index=True, nullable=False)
     customer_type_loan = db.Column(db.Integer, index=True, nullable=False, default=0)
     customer_type_account = db.Column(db.Integer, index=True, nullable=False, default=0)
-    no_of_loans = db.Column(db.Integer, index=True, nullable=False, default=0)
+    customer_type_crdr = db.Column(db.Integer, index=True, nullable=False, default=0)
 
     def get_id(self):
         return self.id
@@ -68,10 +70,27 @@ class Customer(db.Model):
     def __repr__(self):
         return str({"id": self.id, "user_name": self.user_name, "user_alias": self.user_alias,
                     "user_address": self.user_address, "user_phone": self.user_phone, "user_city": self.user_city,
-                    "no_of_loans": self.no_of_loans})
+                    'customer_type_crdr': self.customer_type_crdr})
 
 
+class CrDrEntry(db.Model):
+    __tablename__ = "crdr_entries"
+    __table_args__ = {'extend_existing': True}
+    id = db.Column(db.Integer, ForeignKey(Customer.id))
+    transaction_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    base_amount = db.Column(db.Float, index=True, nullable=False)
+    paid_date = db.Column(db.Date, index=True, default=datetime.now().date())
+    remark = db.Column(db.String(500), index=False, nullable=True)
 
+    def get_id(self):
+        return self.id
+
+    def __unicode__(self):
+        return self.client_id
+
+    def __repr__(self):
+        return str({"id": self.id, "transaction_id": self.transaction_id, "base_amount": self.base_amount,
+                    "paid_date": self.paid_date, "remark": self.remark})
 
 class HaftEntry(db.Model):
     __tablename__ = 'hafta_entry'

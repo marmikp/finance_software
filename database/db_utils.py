@@ -3,6 +3,7 @@ import time
 from operator import itemgetter
 
 from dateutil.relativedelta import relativedelta
+from flask import session
 from sqlalchemy import MetaData, create_engine, func
 from database.model import *
 
@@ -11,6 +12,19 @@ META_DATA = None
 
 def convert_table_to_dict_data(data):
     return {column: getattr(data, column) for column in data.__table__.c.keys()}
+
+
+def get_amount_value_from_general(username):
+    return General.query.filter_by(username=username).first().total_balance
+
+
+def sum_sub_value_in_balance_amount(amount, operation='sum'):
+    total_amount = get_amount_value_from_general(session['username'])
+    if operation == 'sum':
+        General.query.filter_by(username=session['username']).update({'total_balance': total_amount + amount})
+    else:
+        General.query.filter_by(username=session['username']).update({'total_balance': total_amount - amount})
+    db.session.commit()
 
 
 def signup(**kwargs):
@@ -106,8 +120,8 @@ def extend_hafta(customer_id, amount, no_of_hafta, loan_id, user_type="loan"):
             table.update().where(
                 (table.c.loan_id == loan_id) & (
                         table.c.no_of_installment == no_installments)).values(
-                {"no_of_installment": no_installments + no_of_hafta, "date_to_pay": user_data_list[0]['date_to_pay']+
-                                                                                 relativedelta(months=no_of_hafta)}))
+                {"no_of_installment": no_installments + no_of_hafta, "date_to_pay": user_data_list[0]['date_to_pay'] +
+                                                                                    relativedelta(months=no_of_hafta)}))
         # add entry of each installment
         for i in range(no_of_hafta):
             add_hafta_track_entry(
@@ -117,7 +131,9 @@ def extend_hafta(customer_id, amount, no_of_hafta, loan_id, user_type="loan"):
                    'no_of_installment': no_installments + i, 'tx_status': 0})
 
         entry_table.query.filter_by(id=customer_id, transaction_id=loan_id).update(
-            {"last_installment_date": entry_table.query.filter_by(id=customer_id, transaction_id=loan_id).first().last_installment_date + relativedelta(months=no_of_hafta),
+            {"last_installment_date": entry_table.query.filter_by(id=customer_id,
+                                                                  transaction_id=loan_id).first().last_installment_date + relativedelta(
+                months=no_of_hafta),
              "no_installment": no_installments + no_of_hafta})
         db.session.commit()
         return {"code": 200, "status": "hafta extend done"}
@@ -142,7 +158,7 @@ def add_new_hafta_entry(user_type="loan", **kwargs):
         db.session.commit()
 
         time.sleep(1)
-        if user_type=="loan":
+        if user_type == "loan":
             Customer.query.filter_by(id=add_query.id).update({"customer_type_loan": 1})
         else:
             Customer.query.filter_by(id=add_query.id).update({"customer_type_account": 1})
@@ -166,13 +182,17 @@ def party_to_party_transaction(**kwargs):
     pass
 
 
-def add_installment(installment_num=0, paid_date=datetime.datetime.now(), user_type="loan", **kwargs):
+def add_installment(installment_num=0, paid_date=datetime.now(), user_type="loan", **kwargs):
     table = META_DATA.tables[str(kwargs['id'])]
     try:
         db.engine.execute(
             table.update().where(
                 (table.c.loan_id == kwargs['transaction_id']) & (table.c.no_of_installment == installment_num)).values(
                 {'paid_amount': kwargs['paid_amount'], 'paid_date': paid_date, 'tx_status': 1}))
+        if user_type == 'loan':
+            sum_sub_value_in_balance_amount(kwargs['paid_amount'], 'sum')
+        else:
+            sum_sub_value_in_balance_amount(kwargs['paid_amount'], 'sub')
         if kwargs['emi_amount'] != kwargs['paid_amount']:
             user_d = db.engine.execute(table.select().where(
                 (table.c.loan_id == kwargs['transaction_id']) & (table.c.no_of_installment == installment_num + 1)))
@@ -183,7 +203,11 @@ def add_installment(installment_num=0, paid_date=datetime.datetime.now(), user_t
                         (table.c.loan_id == kwargs['transaction_id']) & (
                                 table.c.no_of_installment == installment_num + 1)).values(
                         {'emi_amount': user_data_list[0]['emi_amount'] + (
-                                    kwargs['emi_amount'] - kwargs['paid_amount'])}))
+                                kwargs['emi_amount'] - kwargs['paid_amount'])}))
+            if user_type == 'loan':
+                sum_sub_value_in_balance_amount(kwargs['paid_amount'], 'sum')
+            else:
+                sum_sub_value_in_balance_amount(kwargs['paid_amount'], 'sub')
         return {"code": 200, "status": "installment updated successfully"}
     except Exception as e:
         print(e)
@@ -201,7 +225,8 @@ def get_user_data(id=None, loan_type="hafta", user_type='loan'):
             user_data = []
             user_active_loans = [val.transaction_id for val in entry_table.query.filter_by(id=id, loan_status=0).all()]
             for loan in user_active_loans:
-                user_d = db.engine.execute(user_table.select().where(user_table.c.loan_id == loan).order_by(user_table.c.tx_status.desc()))
+                user_d = db.engine.execute(
+                    user_table.select().where(user_table.c.loan_id == loan).order_by(user_table.c.tx_status.desc()))
                 user_d_list = [{column: value for column, value in rowproxy.items()} for rowproxy in user_d]
                 user_data += user_d_list
             user_data = sorted(user_data, key=itemgetter('tx_status'))
@@ -216,12 +241,14 @@ def get_user_info_by_id(user_id=None):
         data = Customer.query.filter_by(id=user_id).all()
         return data
 
+
 def get_pending_installment_of_loan_id(user_id, loan_id):
     user_table = META_DATA.tables[str(user_id)]
     data = db.engine.execute(user_table.select().where(
         (user_table.c.loan_id == loan_id) & (user_table.c.user_id == user_id) & (user_table.c.tx_status == 0)))
     user_d_list = [{column: value for column, value in rowproxy.items()} for rowproxy in data]
     return user_d_list
+
 
 def get_users_details(loan_type="both", user_type="loan"):
     if user_type == 'loan':
@@ -245,6 +272,8 @@ def get_users_details(loan_type="both", user_type="loan"):
             data['customer_type'] = "both"
         customer_data[i] = data
     return customer_data
+
+
 def get_user_loan_entries_by_user_id(user_id, only_active=True, user_type="loan"):
     if user_type == "loan":
         entry_table = HaftEntry
@@ -257,6 +286,7 @@ def get_user_loan_entries_by_user_id(user_id, only_active=True, user_type="loan"
 
     data = [convert_table_to_dict_data(d) for d in data]
     return data
+
 
 ######## PERSONAL ACCOUNT #####
 def add_new_account_entry(**kwargs):
@@ -303,7 +333,7 @@ def close_loan(user_id, loan_id, amount, user_type="loan"):
             table.update().where(
                 (table.c.loan_id == loan_id) & (
                         table.c.no_of_installment == latest_installment_no)).values(
-                {'paid_amount': amount, 'paid_date':datetime.datetime.now().date(), 'tx_status': 1}))
+                {'paid_amount': amount, 'paid_date': datetime.datetime.now().date(), 'tx_status': 1}))
         for d in user_data_list:
             db.engine.execute(
                 table.update().where(
