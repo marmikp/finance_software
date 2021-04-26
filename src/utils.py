@@ -1,11 +1,14 @@
 from datetime import datetime
 
+import pandas as pd
 from dateutil.relativedelta import relativedelta
 from flask import session
+from weasyprint import HTML
 
 from database import db_utils
-from database.db_utils import get_pending_installment_of_loan_id, META_DATA
-from database.model import db, HaftEntry, CrDrEntry
+from database.db_utils import get_pending_installment_of_loan_id, META_DATA, convert_table_to_dict_data, \
+    get_pending_installments_of_user
+from database.model import db, HaftEntry, CrDrEntry, AccountEntry, Customer
 
 calculate_emi = lambda a, b: a / b
 
@@ -38,7 +41,8 @@ def create_entry_new_hafta(user_type="loan", **kwargs):
         query_data['start_date'] = datetime.strptime(str(kwargs['startdate']), "%Y-%m-%d")
         query_data['installment_period'] = kwargs['period']
         query_data['loan_type'] = kwargs['loan_type']
-        query_data['last_installment_date'] = query_data['start_date'] + relativedelta(months=query_data['no_installment'])
+        query_data['last_installment_date'] = query_data['start_date'] + relativedelta(
+            months=query_data['no_installment'])
         if user_type == "loan":
             query_data['guarantor_1_name'] = kwargs['guarantor_1_name']
             query_data['guarantor_1_phone'] = int(kwargs['guarantor_1_phone'])
@@ -57,7 +61,10 @@ def create_entry_new_hafta(user_type="loan", **kwargs):
             if resp['code'] == 200 and query_data['loan_type'] == 'flat':
                 query_data['paid_amount'] = float(kwargs['paid_amount']) if kwargs['paid_amount'] != '' else 1000
                 resp = db_utils.add_installment(user_type=user_type, **query_data)
-            db_utils.sum_sub_value_in_balance_amount(query_data['base_amount'], 'sub')
+            if user_type == "loan":
+                db_utils.sum_sub_value_in_balance_amount(query_data['base_amount'], 'sub')
+            else:
+                db_utils.sum_sub_value_in_balance_amount(query_data['base_amount'], 'sum')
     return resp
 
 
@@ -78,7 +85,7 @@ def add_user_track_data(user_type="loan", **kwargs):
                 **{'user_id': kwargs['id'], 'loan_id': kwargs['transaction_id'], 'emi_amount': kwargs['base_amount'],
                    'date_to_pay': kwargs['start_date'] + relativedelta(
                        months=installment + 1), 'tx_status': 0,
-                   'no_of_installment': installment+1})
+                   'no_of_installment': installment + 1})
         return {"code": 200, "status": "pending", "emi_amount": emi_amount}
     except Exception as e:
         print(e)
@@ -97,7 +104,8 @@ def get_loan_entries_by_user_id(user_id, user_type="loan"):
         if val['loan_type'] == "flat":
             val['pending_total_amount'] = val['base_amount']
         else:
-            val['pending_total_amount'] = (val['base_amount'] / val['no_installment']) * val['no_of_pending_installments']
+            val['pending_total_amount'] = (val['base_amount'] / val['no_installment']) * val[
+                'no_of_pending_installments']
         val['user_alias'] = user_data[0].user_alias
         val['user_name'] = user_data[0].user_name
         val['user_phone'] = user_data[0].user_phone
@@ -135,4 +143,56 @@ def get_user_details(user_id, user_type='loan'):
         data.append(val)
     return data
 
+
+def get_report_of_pending_installments_by_date(date, user_type='loan'):
+    if user_type == 'loan':
+        table_name = HaftEntry
+    else:
+        table_name = AccountEntry
+    columns = ['User ID', 'User Alias', 'User Name', 'User Phone', 'User Address', 'Loan ID', 'Pending Emis',
+               'Pending Amount']
+    df = pd.DataFrame(columns=columns)
+    active_users = table_name.query.filter_by(loan_status=0).all()
+    checked_users = []
+    user_data_dict = dict()
+    for user_data in active_users:
+        user_data = convert_table_to_dict_data(user_data)
+        if user_data['id'] not in checked_users:
+            checked_users.append(user_data['id'])
+            user_data_pending_installments, _ = get_pending_installments_of_user(user_data['id'], date)
+            if user_data_pending_installments:
+                user_data_dict[user_data['id']] = {}
+                user_data_dict[user_data['id']]['loans'] = user_data_pending_installments
+                user_info = convert_table_to_dict_data(Customer.query.filter_by(id=user_data['id']).first())
+                for loan_id, loan_pending_installment_details in user_data_pending_installments.items():
+                    row = pd.Series([user_info['id'], user_info['user_alias'], user_info['user_name'],
+                                     user_info['user_phone'], user_info['user_address'], loan_id,
+                                     loan_pending_installment_details[1], loan_pending_installment_details[0]], columns)
+                    df = df.append(row, ignore_index=True)
+
+    return df
+
+
+def get_user_entries_between_date(user_id, from_date, to_date, user_type='loan'):
+    columns = ['User ID', 'Loan ID', 'No of Installment', 'EMI Date', 'Paid Date', 'Paid Amount']
+    df = pd.DataFrame(columns=columns)
+    user_entries_proxy = db_utils.get_user_entries_between_date(user_id, from_date, to_date)
+    for val in user_entries_proxy:
+        row = pd.Series([user_id, val['loan_id'], val['no_of_installment'], val['date_to_pay'],
+                         val['paid_date'].date(), "{:.2f}".format(val['paid_amount'])], columns)
+
+        df = df.append(row, ignore_index=True)
+    pd.set_option('display.max_columns', None)
+    df_html = df.to_html(classes='mystyle')
+    html_string = f'''
+    <html>
+      <head><title>HTML Pandas Dataframe with CSS</title></head>
+      <link rel="stylesheet" type="text/css" href="df_style.css"/>
+      <body>
+        {df_html}
+      </body>
+    </html>
+    '''
+    HTML(string=html_string).write_pdf('html_view.pdf', stylesheets=["df_style.css"])
+    return df
 

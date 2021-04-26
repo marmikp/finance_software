@@ -1,11 +1,13 @@
 import datetime
 
+import pandas as pd
 from flask import Flask, request, render_template, session, redirect
 from markupsafe import Markup
 from sqlalchemy import MetaData
 
 import src.utils
 from database import db_utils, model
+from database.db_utils import get_user_data, get_users_details
 from database.model import db
 from src import utils
 from src.utils import is_logged_in, create_entry_new_hafta
@@ -113,7 +115,7 @@ def new_hafta_entry_dialog(id=None):
       <option value="flat">Flat</option>
       <option value="hafta">Hafta</option>
     </select>
-    Is Debit account: <input type='checkbox' name="is_debit"></br>
+    Is Debit account: <input type='checkbox' name="is_debit" value='off'></br>
     <input type=text name=guarantor_1_name placeholder=guarantor_1_name></br>
     <input type=text name=guarantor_1_phone placeholder=guarantor_1_phone></br>
     <input type=text name=guarantor_1_address placeholder=guarantor_1_address></br>
@@ -188,10 +190,13 @@ def new_hafta_entry(current_user=False):
     entry_added_flag = False
     try:
         if resp['code'] == 200:
-            if data['is_debit'] != 'on':
-                resp = create_entry_new_hafta(**data)
+            if 'is_debit' in list(data.keys()):
+                if data['is_debit'] != 'on':
+                    resp = create_entry_new_hafta(**data)
+                else:
+                    resp = create_entry_new_hafta(**data, user_type='debit')
             else:
-                resp = create_entry_new_hafta(**data, user_type='debit')
+                resp = create_entry_new_hafta(**data)
             if resp['code'] == 200:
                 entry_added_flag = True
     except Exception as e:
@@ -334,6 +339,7 @@ def account_extend_hafta():
     resp = db_utils.extend_hafta(user_type="account", **user_data)
     return str(resp)
 
+
 @app.route('/api/account/new_account_entry_dialog', methods=['POST', 'GET'])
 def new_account_entry_dialog(id=None):
     if not session.get('username'):
@@ -443,6 +449,7 @@ def customer_detail_dialog():
 def pay_installment():
     return None
 
+
 @app.route('/api/account/add_collection_dialog', methods=['POST', 'GET'])
 def add_account_collection_dialog():
     if request.method == "POST":
@@ -450,6 +457,7 @@ def add_account_collection_dialog():
     else:
         data = src.utils.get_user_details(int(request.args['user_id']), user_type="account")
     return render_template('templates/user_add_collection_account.html', data=data)
+
 
 @app.route('/api/account/add_collection', methods=['POST', 'GET'])
 def add_account_collection():
@@ -462,6 +470,7 @@ def add_account_collection():
     db_data['emi_amount'] = float(request.form['base_amount'])
     resp = db_utils.add_installment(**db_data, user_type="account")
     return resp
+
 
 @app.route('/api/account/close_loan_dialog', methods=['POST', 'GET'])
 def close_account_loan_dialog():
@@ -479,16 +488,47 @@ def close_account_loan():
     print(resp)
     return resp
 
+
 ########## REPORT ############
-@app.route('/api/report/pending_installment', methods=['POST'])
-def pending_installment():
-    return None
+@app.route('/api/report', methods=['POST', 'GET'])
+def report():
+    data = get_users_details(all_entries=True)
+    return render_template('index.html', data=Markup(render_template('templates/report_page.html', data=data)))
 
 
-@app.route('/api/report/p2p_transactions', methods=['POST'])
-def p2p_transactions():
-    return None
+@app.route('/api/report/pending_installment_by_date', methods=['POST'])
+def pending_installment_by_date():
+    emis = src.utils.get_report_of_pending_installments_by_date(datetime.datetime.strptime(str(request.form['date']), "%Y-%m-%d"))
+    return emis.to_html()
 
+
+@app.route('/api/report/user_entries_between_date', methods=['POST'])
+def user_entries_between_date():
+    report = src.utils.get_user_entries_between_date(int(request.form['user_id']),
+                                                     datetime.datetime.strptime(str(request.form['from_date']),
+                                                                                "%Y-%m-%d"),
+                                                     datetime.datetime.strptime(str(request.form['to_date']),
+                                                                                "%Y-%m-%d"))
+    return report.to_html()
+
+@app.route('/api/report/day_report', methods=['POST', 'GET'])
+def day_report():
+    df, total_collections = db_utils.get_day_wise_installments(datetime.datetime.strptime(str(request.form['date']), "%Y-%m-%d"))
+    return df.to_html()
+
+
+@app.route('/api/report/user_pending_installments', methods=['POST', 'GET'])
+def user_pending_installments():
+    print(request.form['user_id'], request.form['date'])
+    _, data = db_utils.get_pending_installments_of_user(int(request.form['user_id']), datetime.datetime.strptime(
+        str(request.form['date']), "%Y-%m-%d"))
+    columns = ['User ID', 'Loan ID', 'Installment ID', 'Amount', 'Date to Pay']
+    df = pd.DataFrame(columns=columns)
+    for val in data:
+        row = pd.Series([int(request.form['user_id']), val['loan_id'], val['no_of_installment'], val['emi_amount'],
+                         val['date_to_pay']], columns)
+        df = df.append(row, ignore_index=True)
+    return df.to_html()
 
 @app.route('/api/report/account_transactions', methods=['POST'])
 def account_transactions():

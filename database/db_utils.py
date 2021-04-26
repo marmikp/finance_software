@@ -2,9 +2,9 @@ import datetime
 import time
 from operator import itemgetter
 
+import pandas as pd
 from dateutil.relativedelta import relativedelta
 from flask import session
-from sqlalchemy import MetaData, create_engine, func
 from database.model import *
 
 META_DATA = None
@@ -250,22 +250,34 @@ def get_pending_installment_of_loan_id(user_id, loan_id):
     return user_d_list
 
 
-def get_users_details(loan_type="both", user_type="loan"):
+def get_users_details(loan_type="both", user_type="loan", all_entries=False):
     if user_type == 'loan':
-        customer_data = Customer.query.filter_by(customer_type_loan=1).all()
+        if all_entries:
+            customer_data = Customer.query.all()
+        else:
+            customer_data = Customer.query.filter_by(customer_type_loan=1).all()
     elif user_type == 'account':
-        customer_data = Customer.query.filter_by(customer_type_account=1).all()
+        if all_entries:
+            customer_data = Customer.query.all()
+        else:
+            customer_data = Customer.query.filter_by(customer_type_account=1).all()
     else:
         customer_data = Customer.query.all()
     for i, data in enumerate(customer_data):
         data = convert_table_to_dict_data(data)
         data['num_loan_account'], data['num_loan_hafta'] = 0, 0
         if data['customer_type_account']:
-            data['num_loan_account'] = len(AccountEntry.query.filter_by(id=data['id'], loan_status=0).all())
+            if all_entries:
+                data['num_loan_account'] = len(AccountEntry.query.filter_by(id=data['id']).all())
+            else:
+                data['num_loan_account'] = len(AccountEntry.query.filter_by(id=data['id'], loan_status=0).all())
             data['customer_type'] = "account"
             pass
         if data['customer_type_loan']:
-            loan_data = HaftEntry.query.filter_by(id=data['id'], loan_status=0).all()
+            if all_entries:
+                loan_data = HaftEntry.query.filter_by(id=data['id']).all()
+            else:
+                loan_data = HaftEntry.query.filter_by(id=data['id'], loan_status=0).all()
             data['num_loan_hafta'] = len(loan_data)
             data['customer_type'] = "loan"
         if data['customer_type_account'] and data['customer_type_loan']:
@@ -333,18 +345,70 @@ def close_loan(user_id, loan_id, amount, user_type="loan"):
             table.update().where(
                 (table.c.loan_id == loan_id) & (
                         table.c.no_of_installment == latest_installment_no)).values(
-                {'paid_amount': amount, 'paid_date': datetime.datetime.now().date(), 'tx_status': 1}))
+                {'paid_amount': amount, 'paid_date': datetime.now().date(), 'tx_status': 1}))
         for d in user_data_list:
             db.engine.execute(
                 table.update().where(
                     (table.c.loan_id == loan_id) & (
                             table.c.no_of_installment == d['no_of_installment'])).values(
-                    {'paid_amount': 0, 'paid_date': datetime.datetime.now().date(), 'tx_status': 1}))
+                    {'paid_amount': 0, 'paid_date': datetime.now().date(), 'tx_status': 1}))
 
         entry_table.query.filter_by(id=user_id, transaction_id=loan_id).update({'loan_status': 1})
         db.session.commit()
+        if user_type == 'loan':
+            sum_sub_value_in_balance_amount(amount, 'sum')
+        else:
+            sum_sub_value_in_balance_amount(amount, 'sub')
 
         return {'code': 200, 'status': 'loan closed successfully'}
     except Exception as e:
         print(e)
         return {"code": 500, "status": "some error occured during closing the loan"}
+
+
+def get_pending_installments_of_user(user_id, date):
+    META_DATA.reflect()
+    user_table = META_DATA.tables[str(user_id)]
+    # select pending values and payment
+    emis = db.engine.execute(user_table.select(user_table.c.emi_amount).where(
+        (user_table.c.date_to_pay <= date) &
+        (user_table.c.tx_status == 0)))
+    emis_dict = [{column: value for column, value in rowproxy.items()} for rowproxy in emis]
+    loan_id_dict = {}
+    for val in emis_dict:
+        if val['loan_id'] not in list(loan_id_dict.keys()):
+            loan_id_dict[val['loan_id']] = [0, 0]
+        loan_id_dict[val['loan_id']][0] += val['emi_amount']
+        loan_id_dict[val['loan_id']][1] += 1
+    return loan_id_dict, emis_dict
+
+
+def get_user_entries_between_date(user_id, from_date, to_date):
+    META_DATA.reflect()
+    user_table = META_DATA.tables[str(user_id)]
+    user_entries = db.engine.execute(user_table.select().where(
+        (user_table.c.paid_date >= from_date) & (user_table.c.paid_date <= to_date) & (user_table.c.tx_status == 1)))
+    user_entries = [{column: value for column, value in rowproxy.items()} for rowproxy in user_entries]
+    return user_entries
+
+
+def get_day_wise_installments(date, user_type='loan'):
+    columns = ['User ID', 'Loan ID', 'No of Installment', 'EMI Date', 'Paid Date', 'Paid Amount']
+    entry_list_df = pd.DataFrame(columns=columns)
+    user_data_list = Customer.query.all()
+    for data in user_data_list:
+        data_dict = convert_table_to_dict_data(data)
+        META_DATA.reflect()
+        try:
+            user_entry_table = META_DATA.tables[str(data_dict['id'])]
+            user_entries = db.engine.execute(user_entry_table.select().where(user_entry_table.c.paid_date == date))
+            user_entries = [{column: value for column, value in rowproxy.items()} for rowproxy in user_entries]
+            for entry in user_entries:
+                row = pd.Series([data_dict['id'], entry['loan_id'], entry['no_of_installment'], entry['date_to_pay'],
+                                 entry['paid_date'], entry['paid_amount']], columns)
+                entry_list_df = entry_list_df.append(row, ignore_index=True)
+        except Exception as e:
+            print(e)
+            continue
+
+    return entry_list_df, entry_list_df['Paid Amount'].sum()

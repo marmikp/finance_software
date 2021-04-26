@@ -26,9 +26,9 @@
 </head>
 <script>
 $(document).ready(function(){
-    $(".new_loan").click(function(){
-    if (confirm("Press OK to New Loan")){
-        $.post('/api/hafta/current_user_hafta_entry_dialog', {'user_id': $(this).attr('user_id')},
+    $(".pending_date_installment_btn").click(function(){
+        var date = document.getElementById("pending_installment_date_date").value;
+        $.post('/api/report/pending_installment_by_date', {'date': date},
                 function(returnedData){
                     var w = window.open('about:blank');
                     w.document.open();
@@ -38,15 +38,13 @@ $(document).ready(function(){
                   console.log("error");
             });
 
-    }
+
   });
-  $(".extend_hafta").click(function(){
-    if (confirm("Press OK to Extend hafta")){
-        var amount = document.getElementById("extend_amount").value;
-        var months = document.getElementById("extend_month").value;
-        var loan_id = document.getElementById("extend_loan_id").value;
-        $.post('/api/hafta/extend_hafta', {'user_id': $(this).attr('user_id'),
-                                'loan_id': loan_id, 'amount': amount, 'months': months},
+  $(".user_entry_btn").click(function(){
+        var from_date = document.getElementById("user_entry_from_date").value;
+        var to_date = document.getElementById("user_entry_to_date").value;
+        var user_id = document.getElementById("user_entry_dropdown_select_user_id").value;
+        $.post('/api/report/user_entries_between_date', {'user_id': user_id, 'from_date': from_date, 'to_date': to_date},
                 function(returnedData){
                     var w = window.open('about:blank');
                     w.document.open();
@@ -55,8 +53,33 @@ $(document).ready(function(){
             }).fail(function(){
                   console.log("error");
             });
+  });
 
-    }
+  $(".day_report_btn").click(function(){
+        var date = document.getElementById("day_report_date").value;
+        $.post('/api/report/day_report', {'date': date},
+                function(returnedData){
+                    var w = window.open('about:blank');
+                    w.document.open();
+                    w.document.write(returnedData);
+                    w.document.close();
+            }).fail(function(){
+                  console.log("error");
+            });
+  });
+
+  $(".user_pending_installments_btn").click(function(){
+        var date = document.getElementById("user_pending_installments_date").value;
+        var user_id = document.getElementById("user_pending_installment_dropdown_select_user_id").value;
+        $.post('/api/report/user_pending_installments', {'date': date, 'user_id': user_id},
+                function(returnedData){
+                    var w = window.open('about:blank');
+                    w.document.open();
+                    w.document.write(returnedData);
+                    w.document.close();
+            }).fail(function(){
+                  console.log("error");
+            });
   });
 });
 </script>
@@ -81,10 +104,10 @@ $(document).ready(function(){
           <div class="col-md-3">
             <h4>To: </h4>
           </div>
-        <div class="col-md-9"><input type="date"></div>
+        <div class="col-md-9"><input type="date" id="pending_installment_date_date"></div>
       </div>
       <div class="col-md-3">
-        <div><input type="button" class="btn btn-primary" value="Get report"></div>
+        <div><input type="button" class="pending_date_installment_btn btn btn-primary" value="Get report"></div>
       </div>
     </div>
 
@@ -96,34 +119,24 @@ $(document).ready(function(){
           <div class="col-md-5">
             <h4>Cutomer: </h4>
           </div>
-        <div class="col-md-7"><select class="form-select">
-            <option>A</option>
-            <option>A</option>
-            <option>A</option>
-            <option>A</option>
-            <option>A</option>
-            <option>A</option>
-            <option>A</option>
-            <option>A</option>
-            <option>A</option>
-            <option>A</option>
-            <option>A</option>
-            <option>A</option>
-            <option>A</option>
+        <div class="col-md-7"><select class="form-select" id="user_entry_dropdown_select_user_id">
+            {% for d in data %}
+                <option value="{{d.id}}">{{d.id}}&ensp;-&ensp;{{d.user_name}}</option>
+            {% endfor %}
         </select></div>
       </div>
       <div class="col-md-3">
-          <div class="col-md-2">
+          <div class="col-md-2" >
             <h4>From: </h4>
           </div>
-        <div class="col-md-4"><input type="date"></div>
+        <div class="col-md-4"><input type="date" id="user_entry_from_date"></div>
           <div class="col-md-2">
             <h4>To: </h4>
           </div>
-        <div class="col-md-4"><input type="date"></div>
+        <div class="col-md-4"><input type="date" id="user_entry_to_date"></div>
       </div>
       <div class="col-md-3">
-        <div><input type="button" class="btn btn-primary" value="Get report"></div>
+        <div><input type="button" class="user_entry_btn btn btn-primary" value="Get report"></div>
       </div>
     </div>
 
@@ -135,84 +148,41 @@ $(document).ready(function(){
           <div class="col-md-3">
             <h4>Date: </h4>
           </div>
-        <div class="col-md-9"><input type="date"></div>
+        <div class="col-md-9"><input type="date" id="day_report_date"></div>
       </div>
       <div class="col-md-3">
       </div>
       <div class="col-md-3">
-        <div><input type="button" class="btn btn-primary" value="Get report"></div>
+        <div><input type="button" class="day_report_btn btn btn-primary" value="Get report"></div>
       </div>
     </div>
 
     <div class="row align-items-center top-buffer" style="background-color: rgb(166, 164, 163); border-radius: 50px">
       <div class="col-md-3" align="center">
-          <div><h4>User Pending Insallments</h4></div>
+          <div><h4>User Pending Installments</h4></div>
       </div>
       <div class="col-md-3">
           <div class="col-md-5">
             <h4>Cutomer: </h4>
           </div>
-        <div class="col-md-7"><select class="form-select">
-            <option>A</option>
-            <option>A</option>
-            <option>A</option>
-            <option>A</option>
-            <option>A</option>
-            <option>A</option>
-            <option>A</option>
-            <option>A</option>
-            <option>A</option>
-            <option>A</option>
-            <option>A</option>
-            <option>A</option>
-            <option>A</option>
+        <div class="col-md-7"><select class="form-select" id="user_pending_installment_dropdown_select_user_id">
+            {% for d in data %}
+                <option value="{{d.id}}">{{d.id}}&ensp;-&ensp;{{d.user_name}}</option>
+            {% endfor %}
         </select></div>
       </div>
       <div class="col-md-3">
           <div class="col-md-2">
             <h4>To: </h4>
           </div>
-        <div class="col-md-4"><input type="date"></div>
+        <div class="col-md-4"><input type="date" id="user_pending_installments_date"></div>
       </div>
       <div class="col-md-3">
-        <div><input type="button" class="btn btn-primary" value="Get report"></div>
+        <div><input type="button" class="user_pending_installments_btn btn btn-primary" value="Get report"></div>
       </div>
     </div>
 
-    <div class="row align-items-center top-buffer" style="background-color: rgb(166, 164, 163); border-radius: 50px">
-      <div class="col-md-3" align="center">
-          <div><h4>Party to Party transaction</h4></div>
-      </div>
-      <div class="col-md-3">
-          <div class="col-md-5">
-            <h4>Cutomer: </h4>
-          </div>
-        <div class="col-md-7"><select class="form-select">
-            <option>A</option>
-            <option>A</option>
-            <option>A</option>
-            <option>A</option>
-            <option>A</option>
-            <option>A</option>
-            <option>A</option>
-            <option>A</option>
-            <option>A</option>
-            <option>A</option>
-            <option>A</option>
-            <option>A</option>
-            <option>A</option>
-        </select></div>
-      </div>
-      <div class="col-md-3">
-          <div class="col-md-2">
-            <h4>To: </h4>
-          </div>
-        <div class="col-md-4"><input type="date"></div>
-      </div>
-      <div class="col-md-3">
-        <div><input type="button" class="btn btn-primary" value="Get report"></div>
-      </div>
-    </div>
+
 
 
 
