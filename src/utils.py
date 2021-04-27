@@ -31,6 +31,7 @@ def create_entry_new_hafta(user_type="loan", **kwargs):
         db.session.add(crdr_query)
         db.session.commit()
         db_utils.sum_sub_value_in_balance_amount(query_data['base_amount'], 'sub')
+        Customer.query.filter_by(id=int(kwargs['id'])).update({'account_type_crdr': 1})
         resp = {'code': 200, 'status': 'entry for debit account created'}
     else:
         query_data['id'] = int(kwargs['id'])
@@ -114,34 +115,48 @@ def get_loan_entries_by_user_id(user_id, user_type="loan"):
     return data
 
 
-def get_user_details(user_id, user_type='loan'):
-    data = db_utils.get_user_data(user_id, user_type=user_type)
-    for val in data:
-        val['today'] = datetime.now().date()
-        val['paid_date'] = val['paid_date'].date() if val['paid_date'] is not None else None
-        user_data = db_utils.get_user_info_by_id(val['user_id'])
-        val['loan_type'] = db_utils.get_loan_type_by_loan_id(val['user_id'], val['loan_id'], user_type=user_type)
-        val['user_alias'] = user_data[0].user_alias
-        val['user_name'] = user_data[0].user_name
-        val['user_phone'] = user_data[0].user_phone
-        val['user_address'] = user_data[0].user_address
-        val['user_city'] = user_data[0].user_city
+def get_user_details(user_id, user_type='loan', account_type='hafta'):
 
-    if len(data) == 0:
-        val = dict()
-        val['today'] = datetime.now().date()
-        val['paid_date'] = None
-        user_data = db_utils.get_user_info_by_id(user_id)
-        val['loan_type'] = None
-        val['user_id'] = user_id
-        val['user_alias'] = user_data[0].user_alias
-        val['user_name'] = user_data[0].user_name
-        val['user_phone'] = user_data[0].user_phone
-        val['user_address'] = user_data[0].user_address
-        val['user_city'] = user_data[0].user_city
-        val['loan_id'] = None
-        data.append(val)
-    return data
+    if account_type == 'debit':
+        data = CrDrEntry.query.filter_by(id=user_id).order_by(CrDrEntry.paid_date.desc()).all()
+        for i, d in enumerate(data):
+            user_data = Customer.query.filter_by(id=user_id).first()
+            d = convert_table_to_dict_data(d)
+            d['user_alias'] = user_data.user_alias
+            d['user_name'] = user_data.user_name
+            d['user_phone'] = user_data.user_phone
+            d['user_address'] = user_data.user_address
+            d['user_city'] = user_data.user_city
+            data[i] = d
+        return data
+    else:
+        data = db_utils.get_user_data(user_id, user_type=user_type)
+        for val in data:
+            val['today'] = datetime.now().date()
+            val['paid_date'] = val['paid_date'].date() if val['paid_date'] is not None else None
+            user_data = db_utils.get_user_info_by_id(val['user_id'])
+            val['loan_type'] = db_utils.get_loan_type_by_loan_id(val['user_id'], val['loan_id'], user_type=user_type)
+            val['user_alias'] = user_data[0].user_alias
+            val['user_name'] = user_data[0].user_name
+            val['user_phone'] = user_data[0].user_phone
+            val['user_address'] = user_data[0].user_address
+            val['user_city'] = user_data[0].user_city
+
+        if len(data) == 0:
+            val = dict()
+            val['today'] = datetime.now().date()
+            val['paid_date'] = None
+            user_data = db_utils.get_user_info_by_id(user_id)
+            val['loan_type'] = None
+            val['user_id'] = user_id
+            val['user_alias'] = user_data[0].user_alias
+            val['user_name'] = user_data[0].user_name
+            val['user_phone'] = user_data[0].user_phone
+            val['user_address'] = user_data[0].user_address
+            val['user_city'] = user_data[0].user_city
+            val['loan_id'] = None
+            data.append(val)
+        return data
 
 
 def get_report_of_pending_installments_by_date(date, user_type='loan'):

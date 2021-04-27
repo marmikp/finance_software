@@ -261,6 +261,11 @@ def get_users_details(loan_type="both", user_type="loan", all_entries=False):
             customer_data = Customer.query.all()
         else:
             customer_data = Customer.query.filter_by(customer_type_account=1).all()
+    elif user_type == 'debit':
+        if all_entries:
+            customer_data = Customer.query.all()
+        else:
+            customer_data = Customer.query.filter_by(customer_type_crdr=1).all()
     else:
         customer_data = Customer.query.all()
     for i, data in enumerate(customer_data):
