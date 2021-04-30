@@ -126,8 +126,12 @@ def new_hafta_entry_dialog(id=None):
 
 @app.route('/api/hafta/current_user_hafta_entry_dialog', methods=['POST', 'GET'])
 def current_user_hafta_entry_dialog(id=None):
-    print(request.form['user_id'])
-    data = src.utils.get_user_details(request.form['user_id'])
+    if request.method == "POST":
+        data = src.utils.get_user_details(request.form['user_id'])
+        request_data = request.form.to_dict()
+    else:
+        data = src.utils.get_user_details(request.args['user_id'])
+        request_data = request.args.to_dict()
     try:
         resp = f"""
             <html>
@@ -136,7 +140,7 @@ def current_user_hafta_entry_dialog(id=None):
             </head> 
             <body>
             <form action="/api/hafta/new_hafta_entry" method=POST></br>
-            <input type=text name=id value={request.form['user_id']}></br>
+            <input type=text name=id value={request_data['user_id']}></br>
             <input type=text name=name value={data[0]['user_name']} placeholder=Name></br>
             <input type=text name=alias value={data[0]['user_name']} placeholder=Alias></br>
             <input type=text name=address value={data[0]['user_address']} placeholder=Address></br>
@@ -165,7 +169,6 @@ def current_user_hafta_entry_dialog(id=None):
             </html>"""
     except Exception as e:
         print(e)
-    print(resp)
     return resp
 
 
@@ -496,13 +499,11 @@ def debit_accounts():
 
 @app.route('/api/debit_account/add_new', methods=['post', 'get'])
 def debit_add_new():
-    data = src.utils.get_user_details(request.form['user_id'], account_type='debit')
+    if request.method == "GET":
+        data = src.utils.get_user_details(request.args['user_id'], account_type='debit')
+    else:
+        data = src.utils.get_user_details(request.form['user_id'], account_type='debit')
     loan_id_list = []
-    for d in data:
-        if d['loan_id'] in loan_id_list:
-            continue
-        else:
-            loan_id_list.append(d['loan_id'])
     data_rander = {'data': data, 'loan_id_list': loan_id_list}
     return render_template('templates/new_extend_form.html', data=data_rander)
 
