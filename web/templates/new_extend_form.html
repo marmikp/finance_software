@@ -98,7 +98,6 @@ $(document).ready(function(){
                 <th>Paid Date</th>
                 <th>Paid Amount</th>
                 <th>Status</th>
-                <th>Installment Amount (Editable)</th>
             </tr>
         </thead>
         <tbody>
@@ -108,10 +107,9 @@ $(document).ready(function(){
                 <td>{{d.no_of_installment}}</td>
                 <td>{{d.emi_amount}}</td>
                 <td>{{d.date_to_pay}}</td>
-                <td><input type="Date" id="paid_date_{{d.loan_id}}_{{d.no_of_installment}}" value="{{d.today if d.tx_status in [0, None] else d.paid_date}}" {{"disabled" if d.tx_status == 1}}></td>
+                <td><input type="Date" id="paid_date_{{d.loan_id}}_{{d.no_of_installment}}" value="{{'' if d.tx_status in [0, None] else d.paid_date}}" readonly></td>
                 <td>{{d.paid_amount}}</td>
                 <td>{{"Pending" if d.tx_status in [0, None] else "Done"}}</td>
-                <td><input type="text" id="paid_amount_{{d.loan_id}}_{{d.no_of_installment}}" value="{{d.emi_amount if d.tx_status in [0, None] else d.paid_amount}}" {{"disabled" if d.tx_status == 1}}></td>
 <!--                <td>-->
 <!--                    <div class="row">-->
 <!--                        <div class="col-md-4">-->

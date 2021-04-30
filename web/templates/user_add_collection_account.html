@@ -30,7 +30,7 @@ $(document).ready(function(){
     if (confirm("Press OK to add collection")){
         var paid_date = document.getElementById("paid_date_".concat($(this).attr('loan_id'), "_", $(this).attr('noi'))).value;
         var paid_amount = document.getElementById("paid_amount_".concat($(this).attr('loan_id'), "_", $(this).attr('noi'))).value;
-        $.post('/api/account/add_collection', {'user_id': $(this).attr('user_id'), 'loan_id': $(this).attr('loan_id'), 'no_of_installment': $(this).attr('noi'),
+        $.post('/api/test', {'url': 'http://127.0.0.1:5000/api/account/add_collection', 'user_id': $(this).attr('user_id'), 'loan_id': $(this).attr('loan_id'), 'no_of_installment': $(this).attr('noi'),
          'paid_date': paid_date, 'paid_amount': paid_amount, 'base_amount':$(this).attr('emi_amount')},
 
                 function(returnedData){

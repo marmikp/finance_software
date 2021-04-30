@@ -34,7 +34,10 @@ with app.app_context():
 @app.route("/api/test", methods=['POST', 'GET'])
 def test():
     try:
-        request_data = request.form.to_dict()
+        if request.method == "POST":
+            request_data = request.form.to_dict()
+        else:
+            request_data = request.args.to_dict()
         url = request_data['url']
         data = {}
         for key, val in request_data.items():
@@ -128,45 +131,16 @@ def new_hafta_entry_dialog(id=None):
 def current_user_hafta_entry_dialog(id=None):
     if request.method == "POST":
         data = src.utils.get_user_details(request.form['user_id'])
+        data = data[0]
         request_data = request.form.to_dict()
+        data['max_id'] = request.form['user_id']
     else:
         data = src.utils.get_user_details(request.args['user_id'])
+        data = data[0]
         request_data = request.args.to_dict()
+        data['max_id'] = request.args['user_id']
     try:
-        resp = f"""
-            <html>
-            <head> 
-            <title>HTML Redirect</title>  
-            </head> 
-            <body>
-            <form action="/api/hafta/new_hafta_entry" method=POST></br>
-            <input type=text name=id value={request_data['user_id']}></br>
-            <input type=text name=name value={data[0]['user_name']} placeholder=Name></br>
-            <input type=text name=alias value={data[0]['user_name']} placeholder=Alias></br>
-            <input type=text name=address value={data[0]['user_address']} placeholder=Address></br>
-            <input type=text name=phone value={data[0]['user_phone']} placeholder=Phone></br>
-            <input type=text name=city value={data[0]['user_city']} placeholder=City></br>
-            <input type=text name=base_amount placeholder=BaseAmount></br>
-            <input type=text name=interest placeholder=Interest></br>
-            <input type=text name=noi placeholder=Installations></br>
-            <input type=date name=startdate value={datetime.datetime.now().date()} placeholder=StartDate></br>
-            <input type=text name=period placeholder=Period value=monthly></br>
-            <select id="cars" name=loan_type>
-              <option value="flat">Flat</option>
-              <option value="hafta">Hafta</option>
-            </select>
-            <input type=text name=guarantor_1_name placeholder=guarantor_1_name></br>
-            <input type=text name=guarantor_1_phone placeholder=guarantor_1_phone></br>
-            <input type=text name=guarantor_1_address placeholder=guarantor_1_address></br>
-            <input type=text name=guarantor_2_name placeholder=guarantor_2_name></br>
-            <input type=text name=guarantor_2_phone placeholder=guarantor_2_phone></br>
-            <input type=text name=guarantor_2_address placeholder=guarantor_2_address></br>
-            <input type=text name=paid_amount placeholder=Paid_amount></br>
-            
-            <input type=submit value=Submit>
-            </form>
-            </body>
-            </html>"""
+        resp = render_template('templates/usermain.html', data=data)
     except Exception as e:
         print(e)
     return resp
@@ -225,10 +199,16 @@ def extend_hafta_dialog():
 @app.route('/api/hafta/extend_hafta', methods=['POST', 'GET'])
 def extend_hafta():
     user_data = dict()
-    user_data['customer_id'] = int(request.form['user_id'])
-    user_data['loan_id'] = int(request.form['loan_id'])
-    user_data['amount'] = float(request.form['amount'])
-    user_data['no_of_hafta'] = int(request.form['months'])
+    if request.method == "POST":
+        user_data['customer_id'] = int(request.form['user_id'])
+        user_data['loan_id'] = int(request.form['loan_id'])
+        user_data['amount'] = float(request.form['amount'])
+        user_data['no_of_hafta'] = int(request.form['months'])
+    else:
+        user_data['customer_id'] = int(request.args['user_id'])
+        user_data['loan_id'] = int(request.args['loan_id'])
+        user_data['amount'] = float(request.args['amount'])
+        user_data['no_of_hafta'] = int(request.args['months'])
     resp = db_utils.extend_hafta(**user_data)
     return resp
 
@@ -347,33 +327,8 @@ def new_account_entry_dialog(id=None):
         # TODO : code to close current dialog and open login screen in mainwindow
         return "logged out"
     max_id = db_utils.get_max_customer_id(id)
-    return f"""
-    <html>
-    <head> 
-    <title>HTML Redirect</title>  
-    </head> 
-    <body>
-    <form action="/api/account/new_account_entry" method=POST></br>
-    <input type=text name=id value={max_id}></br>
-    <input type=text name=name placeholder=Name></br>
-    <input type=text name=alias placeholder=Alias></br>
-    <input type=text name=address placeholder=Address></br>
-    <input type=text name=phone placeholder=Phone></br>
-    <input type=text name=city placeholder=City></br>
-    <input type=text name=base_amount placeholder=BaseAmount></br>
-    <input type=text name=interest placeholder=Interest></br>
-    <input type=text name=noi placeholder=Installations></br>
-    <input type=date name=startdate placeholder=StartDate></br>
-    <input type=text name=period placeholder=Period value=monthly></br>
-    <select id="cars" name=loan_type>
-      <option value="flat">Flat</option>
-      <option value="hafta">Hafta</option>
-    </select>
-    <input type=text name=paid_amount placeholder=Paid_amount></br>
-    <input type=submit value=Submit>
-    </form>
-    </body>
-    </html>"""
+    data = {'max_id': max_id}
+    return render_template("templates/account_usermain.html", data=data)
 
 
 @app.route('/api/account/current_user_account_entry', methods=['POST', 'GET'])
@@ -423,7 +378,10 @@ def new_account_entry(current_user=False):
 
 @app.route('/api/account/account_hafta_extend_dialog', methods=['POST', 'GET'])
 def account_hafta_extend_dialog():
-    data = src.utils.get_user_details(request.form['user_id'], user_type='account')
+    if request.method == "POST":
+        data = src.utils.get_user_details(request.form['user_id'], user_type='account')
+    else:
+        data = src.utils.get_user_details(request.args['user_id'], user_type='account')
     loan_id_list = []
     for d in data:
         if d['loan_id'] is None:

@@ -1,7 +1,7 @@
 <script>
 $(document).ready(function(){
     $(".new_customer").click(function(){
-          $.post('/api/test', {'url': 'http://127.0.0.1:5000/account/new_account_entry_dialog'}
+          $.post('/api/test', {'url': 'http://127.0.0.1:5000/api/account/new_account_entry_dialog'},
             function(returnedData){
                  var w = window.open('about:blank');
                     w.document.open();
