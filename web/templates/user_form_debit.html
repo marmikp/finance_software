@@ -1,7 +1,7 @@
 <script>
 $(document).ready(function(){
     $(".new_customer").click(function(){
-          $.post('/api/hafta/new_hafta_entry_dialog',
+          $.post('/api/test', {'url': 'http://127.0.0.1:5000/api/hafta/new_hafta_entry_dialog'},
             function(returnedData){
                  var w = window.open('about:blank');
                     w.document.open();
@@ -13,7 +13,7 @@ $(document).ready(function(){
   });
 
   $(".new").click(function(){
-    $.post('/api/debit_account/add_new', { 'user_id': $(this).attr('user_id')},
+    $.post('/api/test', {'url': 'http://127.0.0.1:5000/api/debit_account/add_new', 'user_id': $(this).attr('user_id')},
             function(returnedData){
                 var w = window.open('about:blank');
                 w.document.open();
@@ -24,30 +24,6 @@ $(document).ready(function(){
               console.log("error");
         });
   });
-  $(".add_collection").click(function(){
-    $.post('/api/hafta/add_collection_dialog', { 'user_id': $(this).attr('data'), 'loan_id': $(this).attr('loan_id')},
-            function(returnedData){
-            var w = window.open('about:blank');
-            w.document.open();
-            w.document.write(returnedData);
-            w.document.close();
-                 console.log(returnedData);
-        }).fail(function(){
-              console.log("error");
-        });
-  });
-  $(".close_loan").click(function(){
-    $.post('/api/hafta/close_loan_dialog', { 'user_id': $(this).attr('data')},
-            function(returnedData){var w = window.open('about:blank');
-            w.document.open();
-            w.document.write(returnedData);
-            w.document.close();
-                 console.log(returnedData);
-        }).fail(function(){
-              console.log("error");
-        });
-  });
-
 });
 </script>
 <div style="padding: 50px;padding-top:100px; ">
