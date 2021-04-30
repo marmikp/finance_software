@@ -421,12 +421,21 @@ def add_account_collection_dialog():
 @app.route('/api/account/add_collection', methods=['POST', 'GET'])
 def add_account_collection():
     db_data = dict()
-    db_data['id'] = int(request.form['user_id'])
-    db_data['transaction_id'] = int(request.form['loan_id'])
-    db_data['installment_num'] = int(request.form['no_of_installment'])
-    db_data['paid_date'] = datetime.datetime.strptime(request.form['paid_date'], '%Y-%m-%d')
-    db_data['paid_amount'] = float(request.form['paid_amount'])
-    db_data['emi_amount'] = float(request.form['base_amount'])
+    if request.method == 'POST':
+        db_data['id'] = int(request.form['user_id'])
+        db_data['transaction_id'] = int(request.form['loan_id'])
+        db_data['installment_num'] = int(request.form['no_of_installment'])
+        db_data['paid_date'] = datetime.datetime.strptime(request.form['paid_date'], '%Y-%m-%d')
+        db_data['paid_amount'] = float(request.form['paid_amount'])
+        db_data['emi_amount'] = float(request.form['base_amount'])
+    else:
+        db_data['id'] = int(request.args['user_id'])
+        db_data['transaction_id'] = int(request.args['loan_id'])
+        db_data['installment_num'] = int(request.args['no_of_installment'])
+        db_data['paid_date'] = datetime.datetime.strptime(request.args['paid_date'], '%Y-%m-%d')
+        db_data['paid_amount'] = float(request.args['paid_amount'])
+        db_data['emi_amount'] = float(request.args['base_amount'])
+
     resp = db_utils.add_installment(**db_data, user_type="account")
     return resp
 
@@ -434,9 +443,9 @@ def add_account_collection():
 @app.route('/api/account/close_loan_dialog', methods=['POST', 'GET'])
 def close_account_loan_dialog():
     if request.method == 'POST':
-        data = src.utils.get_loan_entries_by_user_id(request.form['user_id'], user_type="account")
+        data = src.utils.get_loan_entries_by_user_id(int(request.form['user_id']), user_type="account")
     else:
-        data = src.utils.get_loan_entries_by_user_id(request.args['user_id'])
+        data = src.utils.get_loan_entries_by_user_id(int(request.args['user_id']), user_type="account")
     return render_template('templates/close_account_loan.html', data=data, user_type="account")
 
 
@@ -555,6 +564,7 @@ class MainWindow(QMainWindow):
         # self.label = QLabel("Another Window % d" % randint(0,100))
         # layout.addWidget(self.label)
         self.browser = QWebEngineView(self)
+        self.showMaximized()
         # self.browser.setPage(CustomWebEnginePage(self))
         # self.browser.setGeometry(0,0,700,700)
         self.browser.setUrl(QUrl("http://127.0.0.1:5000"))
