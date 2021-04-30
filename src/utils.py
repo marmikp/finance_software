@@ -3,7 +3,7 @@ from datetime import datetime
 import pandas as pd
 from dateutil.relativedelta import relativedelta
 from flask import session
-from weasyprint import HTML
+# from weasyprint import HTML
 
 from database import db_utils
 from database.db_utils import get_pending_installment_of_loan_id, META_DATA, convert_table_to_dict_data, \
@@ -208,6 +208,6 @@ def get_user_entries_between_date(user_id, from_date, to_date, user_type='loan')
       </body>
     </html>
     '''
-    HTML(string=html_string).write_pdf('html_view.pdf', stylesheets=["df_style.css"])
+    # HTML(string=html_string).write_pdf('html_view.pdf', stylesheets=["df_style.css"])
     return df
 

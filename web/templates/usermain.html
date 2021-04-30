@@ -156,7 +156,7 @@
                             <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
                                 <h3 class="register-heading">Apply as a Employee</h3>
                                 <form action="/api/hafta/new_hafta_entry" method=POST>
-                                    <input type="text" class="form-control" name="id" value="{{data.max_id}}" />
+                                    <input type="hidden" class="form-control" name="id" value="{{data.max_id}}" />
                                 <div class="row register-form">
                                     <div class="col-md-6">
                                         <div class="form-group input-container">
