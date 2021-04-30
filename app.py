@@ -9,7 +9,7 @@ from PyQt5.QtWebEngineWidgets import QWebEngineView
 from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QLabel, QVBoxLayout, QPushButton, QAction
 from PyQt5.uic.uiparser import QtWidgets
 from flask import Flask, request, render_template, session, redirect
-from furl import furl
+# from furl import furl
 from markupsafe import Markup
 from sqlalchemy import MetaData
 
@@ -19,7 +19,7 @@ from database.db_utils import get_user_data, get_users_details
 from database.model import db
 from src import utils
 from src.utils import is_logged_in, create_entry_new_hafta
-from pyfladesk import init_gui
+# from pyfladesk import init_gui
 import threading
 from qt_thread_updater import get_updater
 
@@ -120,41 +120,8 @@ def new_hafta_entry_dialog(id=None):
         # TODO : code to close current dialog and open login screen in mainwindow
         return "logged out"
     max_id = db_utils.get_max_customer_id(id)
-    return f"""
-    <html>
-    <head> 
-    <title>HTML Redirect</title>  
-    </head> 
-    <body>
-    <form action="/api/hafta/new_hafta_entry" method=POST></br>
-    <input type=text name=id value={max_id}></br>
-    <input type=text name=name placeholder=Name></br>
-    <input type=text name=alias placeholder=Alias></br>
-    <input type=text name=address placeholder=Address></br>
-    <input type=text name=phone placeholder=Phone></br>
-    <input type=text name=city placeholder=City></br>
-    <input type=text name=base_amount placeholder=BaseAmount></br>
-    <input type=text name=interest placeholder=Interest></br>
-    <input type=text name=noi placeholder=Installations></br>
-    <input type=date name=startdate placeholder=StartDate></br>
-    <input type=text name=period placeholder=Period value=monthly></br>
-    <select id="cars" name=loan_type>
-      <option value="flat">Flat</option>
-      <option value="hafta">Hafta</option>
-    </select>
-    Is Debit account: <input type='checkbox' name="is_debit"></br>
-    <input type=text name=guarantor_1_name placeholder=guarantor_1_name></br>
-    <input type=text name=guarantor_1_phone placeholder=guarantor_1_phone></br>
-    <input type=text name=guarantor_1_address placeholder=guarantor_1_address></br>
-    <input type=text name=guarantor_2_name placeholder=guarantor_2_name></br>
-    <input type=text name=guarantor_2_phone placeholder=guarantor_2_phone></br>
-    <input type=text name=guarantor_2_address placeholder=guarantor_2_address></br>
-    <input type=text name=paid_amount placeholder=Paid_amount></br>
-    <input type=textarea name='remark' placeholder='Remark'></br>
-    <input type=submit value=Submit>
-    </form>
-    </body>
-    </html>"""
+    data = {'max_id': max_id, 'today': datetime.datetime.now().date()}
+    return render_template('templates/usermain.html', data=data)
 
 
 @app.route('/api/hafta/current_user_hafta_entry_dialog', methods=['POST', 'GET'])
