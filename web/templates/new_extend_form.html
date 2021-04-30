@@ -63,25 +63,30 @@ $(document).ready(function(){
 </script>
 <div class="container">
     <div class="row"><h2>Extend Hafta or Add new Loan</h2></div>
+
     <div class="row">
         {% if data.data|length > 0 %}
         <div class="col-md-3"><h4>Name: {{data.data.0.user_name if 'user_name' in data.data.0.keys()}}</h4></div>
-        <div class="col-md-3"><h4>Phone: {{data.data.0.user_phone}}</h4></div>
-        <div class="col-md-3"><h4>Address: {{data.data.0.user_address}}</h4></div>
-        <div class="col-md-3"><h4>City: {{data.data.0.user_city}}</h4></div>
+        <div class="col-md-2"><h4>Phone: {{data.data.0.user_phone}}</h4></div>
+        <div class="col-md-2"><h4>Address: {{data.data.0.user_address}}</h4></div>
+        <div class="col-md-2"><h4>City: {{data.data.0.user_city}}</h4></div>
         <div class="col-md-3"><input type="button" class="new_loan btn btn-primary" value="New Loan" user_id="{{data.data[0].user_id}}"></div>
         {% endif %}
-    </div>
+    </div> <br> <hr>
     <div class="row">
-        <div class="col-md-6">
-            <div class="col-md-2"><input type="text" value="{{data.data[0].emi_amount}}" placeholder="Emi Amount" id="extend_amount"></div>
-            <div class="col-md-2"><input type="text" value="0" placeholder="Extend Months" id="extend_month"></div>
-            <select id="extend_loan_id" name=loan_id_extend>
+        <div class="col-md-12">
+            <div class="col-md-3">Hafta Amount<input type="text" value="{{data.data[0].emi_amount}}" placeholder="Emi Amount" id="extend_amount"></div>
+            <div class="col-md-3">No Of Months<input type="text" value="0" placeholder="Extend Months" id="extend_month"></div>
+            <div class="col-md-3">
+                Loan Id<br>
+              <select id="extend_loan_id" name=loan_id_extend>
                 {% for d in data.loan_id_list %}
                   <option value="{{d}}">{{d}}</option>
                 {% endfor %}
             </select>
-            <div class="col-md-2"><input type="button" class="extend_hafta btn btn-primary" value="Extend Hafta" user_id="{{data.data[0].user_id}}"  {{"disable" if data.data[0].loan_type != "flat"}}></div>
+            </div>
+
+            <div class="col-md-3"><input type="button" class="extend_hafta btn btn-primary" value="Extend Hafta" user_id="{{data.data[0].user_id}}"  {{"disable" if data.data[0].loan_type != "flat"}}></div>
         </div>
     </div>
 

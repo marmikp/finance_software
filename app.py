@@ -57,6 +57,7 @@ def test():
 ######## GENERAL ########
 @app.route('/', methods=['GET', 'POST'])
 def index():
+    session['username'] = 'marmik'
     if session.get('username'):
         return render_template('index.html')
     else:
@@ -555,6 +556,7 @@ class MainWindow(QMainWindow):
         # self.label = QLabel("Another Window % d" % randint(0,100))
         # layout.addWidget(self.label)
         self.browser = QWebEngineView(self)
+        self.showMaximized()
         # self.browser.setPage(CustomWebEnginePage(self))
         # self.browser.setGeometry(0,0,700,700)
         self.browser.setUrl(QUrl("http://127.0.0.1:5000"))
