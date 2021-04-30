@@ -28,7 +28,7 @@
 $(document).ready(function(){
     $(".new_loan").click(function(){
     if (confirm("Press OK to New Loan")){
-        $.post('/api/account/current_user_account_entry_dialog', {'user_id': $(this).attr('user_id')},
+        $.post('/api/test', {'url':'http://127.0.0.1:5000/api/account/current_user_account_entry_dialog', 'user_id': $(this).attr('user_id')},
                 function(returnedData){
                     var w = window.open('about:blank');
                     w.document.open();
@@ -45,7 +45,7 @@ $(document).ready(function(){
         var amount = document.getElementById("extend_amount").value;
         var months = document.getElementById("extend_month").value;
         var loan_id = document.getElementById("extend_loan_id").value;
-        $.post('/api/account/extend_hafta', {'user_id': $(this).attr('user_id'),
+        $.post('/api/test', {'url':'http://127.0.0.1:5000/api/account/extend_hafta', 'user_id': $(this).attr('user_id'),
                                 'loan_id': loan_id, 'amount': amount, 'months': months},
                 function(returnedData){
                     var w = window.open('about:blank');
