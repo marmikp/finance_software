@@ -45,7 +45,7 @@ $(document).ready(function(){
         var from_date = document.getElementById("user_entry_from_date").value;
         var to_date = document.getElementById("user_entry_to_date").value;
         var user_id = document.getElementById("user_entry_dropdown_select_user_id").value;
-        $.post('/api/report/user_entries_between_date', {'url': 'http://127.0.0.1:5000/api/report/user_entries_between_date',
+        $.post('/api/test', {'url': 'http://127.0.0.1:5000/api/report/user_entries_between_date',
                                                          'user_id': user_id, 'from_date': from_date, 'to_date': to_date},
                 function(returnedData){
                     var w = window.open('about:blank');

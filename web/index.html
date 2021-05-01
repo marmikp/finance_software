@@ -41,7 +41,8 @@
                 <ul class="nav" id="nav">
                     <li id="loan">
                         <a href="/api/hafta">
-                            <i class="far fa-credit-card"></i>
+                            <i class="fas fa-wallet"></i>
+
                             <p>Loan</p>
                         </a>
                     </li>
@@ -53,14 +54,21 @@
                     </li>
                     <li id="debit_accounts">
                         <a href="/api/debit_account">
-                            <i class="far fa-credit-card"></i>
+                            <i class="fa fa-credit-card"></i>
                             <p>Debit Account</p>
                         </a>
                     </li>
                     <li id="report">
                         <a href="/api/report">
-                            <i class="fas fa-shopping-cart"></i>
+                            <i class="fa fa-file"></i>
                             <p>Report</p>
+                        </a>
+                    </li>
+
+                    <li id="report">
+                        <a href="/api/profile">
+                            <i class="fa fa-user"></i>
+                            <p>Profile</p>
                         </a>
                     </li>
 
@@ -89,54 +97,53 @@
                 </div>
             </nav>
                 <div class="main_content">
-                    {{data}}
                     <a href="" ><h3 class="" align="center">Welcome To Financial Dashbord</h3></a>
                     <div class="container" style="padding-top:150px;">
 
                     <div class="row">
                         <div class="col-sm-4">
-                        <div class="card text-white bg-primary mb-4" style="max-width: 18rem;">
+                        <div class="card text-white bg-primary mb-4">
 
                           <div class="card-body">
                             <h5 class="card-title" align="center">Total Loan Customer</h5>
-                            <a href="" ><h3 class="" align="center">12</h3></a>
+                            <a href="/api/hafta" ><h3 class="" align="center">{{data.loan_customer}}</h3></a>
                           </div>
                         </div>
                         </div>
 
                         <div class="col-sm-4">
-                        <div class="card text-white bg-primary mb-4" style="max-width: 18rem;">
+                        <div class="card text-white bg-primary mb-4">
 
                           <div class="card-body">
                             <h5 class="card-title" align="center">Total Acount Customer</h5>
-                            <a href="" ><h3 class="" align="center">12</h3></a>
+                            <a href="/api/account" ><h3 class="" align="center">{{data.account_customer}}</h3></a>
                           </div>
                         </div>
                         </div>
-                        <div class="col-sm-4">
-                        <div class="card text-white bg-primary mb-4" style="max-width: 18rem;">
+                        <div class="col-sm-4" style="padding-right: 90px;">
+                        <div class="card text-white bg-primary mb-4">
 
                           <div class="card-body">
                             <h5 class="card-title" align="center">Total Debit Customer</h5>
-                            <a href="" ><h3 class="" align="center">12</h3></a>
+                            <a href="/api/debit_account" ><h3 class="" align="center">{{data.debit_accounts}}</h3></a>
                           </div>
                         </div>
                         </div>
                     </div>
 
                         <div class="row">
-                        <div class="col-sm-4">
-                        <div class="card text-white bg-primary mb-4" style="max-width: 18rem;">
+                        <div class="col-sm-6">
+                        <div class="card text-white bg-primary mb-6">
 
                           <div class="card-body">
                             <h5 class="card-title" align="center">Total Available Balance</h5>
-                            <a href="" ><h3 class="" align="center">12</h3></a>
+                            <a href="" ><h3 class="" align="center">{{data.total_balance}}</h3></a>
                           </div>
                         </div>
                         </div>
 
-                        <div class="col-sm-4">
-                        <div class="card text-white bg-primary mb-4" style="max-width: 18rem;">
+                        <div class="col-sm-6" style="padding-right: 90px;">
+                        <div class="card text-white bg-primary mb-6">
 
                           <div class="card-body">
                             <h5 class="card-title" align="center">Total Pending Balance</h5>
@@ -144,15 +151,7 @@
                           </div>
                         </div>
                         </div>
-                        <div class="col-sm-4">
-                        <div class="card text-white bg-primary mb-4" style="max-width: 18rem;">
 
-                          <div class="card-body">
-                            <h5 class="card-title" align="center">Total Debit Customer</h5>
-                            <a href="" ><h3 class="" align="center">12</h3></a>
-                          </div>
-                        </div>
-                        </div>
                     </div>
 
                     </div>

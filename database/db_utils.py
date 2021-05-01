@@ -423,3 +423,16 @@ def get_day_wise_installments(date, user_type='loan'):
             continue
 
     return entry_list_df, entry_list_df['Paid Amount'].sum()
+
+
+def get_index_form_data_total():
+    active_customer = db.session.query(Customer).filter(or_(Customer.customer_type_loan == 1 , Customer.customer_type_account == 1 , Customer.customer_type_crdr == 1))
+    total_customer = len(list(active_customer))
+    active_customer = db.session.query(Customer).filter(Customer.customer_type_loan == 1)
+    loan_customer = len(list(active_customer))
+    active_customer = db.session.query(Customer).filter(Customer.customer_type_account == 1)
+    account_customer = len(list(active_customer))
+    active_customer = db.session.query(Customer).filter(Customer.customer_type_crdr == 1)
+    debit_accounts = len(list(active_customer))
+    total_balance = "{:.2f}".format(General.query.filter_by(username = session.get('username')).first().total_balance)
+    return {'total_customer': total_customer, 'loan_customer': loan_customer, 'account_customer': account_customer, 'debit_accounts': debit_accounts, 'total_balance': total_balance}

@@ -59,7 +59,8 @@ def test():
 def index():
     session['username'] = 'marmik'
     if session.get('username'):
-        return render_template('index.html')
+        data = db_utils.get_index_form_data_total()
+        return render_template('index.html', data=data)
     else:
         return redirect('/api/user/login')
 
@@ -510,37 +511,60 @@ def report():
 
 @app.route('/api/report/pending_installment_by_date', methods=['POST', 'GET'])
 def pending_installment_by_date():
+    if request.method == "POST":
+        request_data = request.form.to_dict()
+    else:
+        request_data = request.args.to_dict()
     emis = src.utils.get_report_of_pending_installments_by_date(
-        datetime.datetime.strptime(str(request.form['date']), "%Y-%m-%d"))
+        datetime.datetime.strptime(str(request_data['date']), "%Y-%m-%d"))
     return emis.to_html()
+
+###############Profile####################
+@app.route('/api/profile', methods=['GET', 'POST'])
+def profile_accounts():
+    data = db_utils.get_users_details(user_type='debit')
+    return render_template('sidebar.html', data=Markup(render_template('templates/profile.html', data=data)))
+
+
 
 
 @app.route('/api/report/user_entries_between_date', methods=['POST', 'GET'])
 def user_entries_between_date():
-    report = src.utils.get_user_entries_between_date(int(request.form['user_id']),
-                                                     datetime.datetime.strptime(str(request.form['from_date']),
+    if request.method == "POST":
+        request_data = request.form.to_dict()
+    else:
+        request_data = request.args.to_dict()
+    report = src.utils.get_user_entries_between_date(int(request_data['user_id']),
+                                                     datetime.datetime.strptime(str(request_data['from_date']),
                                                                                 "%Y-%m-%d"),
-                                                     datetime.datetime.strptime(str(request.form['to_date']),
+                                                     datetime.datetime.strptime(str(request_data['to_date']),
                                                                                 "%Y-%m-%d"))
     return report.to_html()
 
 
 @app.route('/api/report/day_report', methods=['POST', 'GET'])
 def day_report():
+    if request.method == 'POST':
+        request_data = request.form.to_dict()
+    else:
+        request_data = request.args.to_dict()
     df, total_collections = db_utils.get_day_wise_installments(
-        datetime.datetime.strptime(str(request.form['date']), "%Y-%m-%d"))
+        datetime.datetime.strptime(str(request_data['date']), "%Y-%m-%d"))
     return df.to_html()
 
 
 @app.route('/api/report/user_pending_installments', methods=['POST', 'GET'])
 def user_pending_installments():
-    print(request.form['user_id'], request.form['date'])
-    _, data = db_utils.get_pending_installments_of_user(int(request.form['user_id']), datetime.datetime.strptime(
-        str(request.form['date']), "%Y-%m-%d"))
+    if request.method == 'POST':
+        request_data = request.form.to_dict()
+    else:
+        request_data = request.args.to_dict()
+    _, data = db_utils.get_pending_installments_of_user(int(request_data['user_id']), datetime.datetime.strptime(
+        str(request_data['date']), "%Y-%m-%d"))
     columns = ['User ID', 'Loan ID', 'Installment ID', 'Amount', 'Date to Pay']
     df = pd.DataFrame(columns=columns)
     for val in data:
-        row = pd.Series([int(request.form['user_id']), val['loan_id'], val['no_of_installment'], val['emi_amount'],
+        row = pd.Series([int(request_data['user_id']), val['loan_id'], val['no_of_installment'], val['emi_amount'],
                          val['date_to_pay']], columns)
         df = df.append(row, ignore_index=True)
     return df.to_html()

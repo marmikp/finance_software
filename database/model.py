@@ -11,7 +11,7 @@ db = SQLAlchemy()
 
 
 def init_database(app):
-    app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///resources/{config.db_name}.sqlite3?check_same_thread=False'
+    app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///db_resources/{config.db_name}.sqlite3?check_same_thread=False'
     with app.test_request_context():
         db.init_app(app)
         db.create_all()

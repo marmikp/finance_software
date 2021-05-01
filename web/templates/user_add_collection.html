@@ -41,8 +41,30 @@ $(document).ready(function(){
             window.location.href = "http://127.0.0.1:5000/api/hafta/add_collection_dialog?user_id=".concat($(this).attr('user_id'))
     }
   });
+
+  $(".edit_emi").click(function(){
+    if (confirm("Press OK to add collection")){
+        var paid_date = document.getElementById("paid_date_".concat($(this).attr('loan_id'), "_", $(this).attr('noi'))).value;
+        var paid_amount = document.getElementById("paid_amount_".concat($(this).attr('loan_id'), "_", $(this).attr('noi'))).value;
+        $.post('/api/hafta/add_collection', {'user_id': $(this).attr('user_id'), 'loan_id': $(this).attr('loan_id'), 'no_of_installment': $(this).attr('noi'),
+         'paid_date': paid_date, 'paid_amount': paid_amount, 'base_amount':$(this).attr('emi_amount')},
+
+                function(returnedData){
+                     console.log(returnedData);
+            }).fail(function(){
+                  console.log("error");
+            });
+            window.location.href = "http://127.0.0.1:5000/api/hafta/add_collection_dialog?user_id=".concat($(this).attr('user_id'))
+    }
+  });
+
 });
 </script>
+<style>
+    .disabled-link {
+  pointer-events: none;
+}
+</style>
 <div class="container">
     <div class="row"><h2>Add Collections</h2></div>
     <div class="row">
@@ -54,6 +76,7 @@ $(document).ready(function(){
 
 
 </div>
+
 
 <div style="padding: 50px;">
 <table id="example" class="table table-striped table-bordered" style="width:100%; padding-top: 50px;">
@@ -82,8 +105,10 @@ $(document).ready(function(){
                 <td>{{"Pending" if d.tx_status in [0, None] else "Done"}}</td>
                 <td><input type="text" id="paid_amount_{{d.loan_id}}_{{d.no_of_installment}}" value="{{d.emi_amount if d.tx_status in [0, None] else d.paid_amount}}" {{"disabled" if d.tx_status == 1}}></td>
                 <td>
-                    <a class="add_emi add" title="Pay Installment" data-toggle="tooltip"  user_id="{{d.user_id}}" emi_amount="{{d.emi_amount}}"
-                                   loan_id="{{d.loan_id}}" noi="{{d.no_of_installment}}" {{"disabled" if d.tx_status == 1}}><i class="fab fa-amazon-pay"></i></a>
+                    <a class="add_emi add {{'disabled-link' if d.tx_status == 1}}" title="Pay Installment" data-toggle="tooltip"  user_id="{{d.user_id}}" emi_amount="{{d.emi_amount}}"
+                                   loan_id="{{d.loan_id}}" noi="{{d.no_of_installment}}"><i class="fab fa-amazon-pay"></i></a>
+                    <a class="edit_emi add" title="Edit" data-toggle="tooltip"  user_id="{{d.user_id}}" emi_amount="{{d.emi_amount}}"
+                                   loan_id="{{d.loan_id}}" noi="{{d.no_of_installment}}"><i class="far fa-edit"></i></a>
 
 
                 </td>
