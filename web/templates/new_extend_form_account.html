@@ -72,10 +72,10 @@ $(document).ready(function(){
         {% endif %}
     </div> <br>
     <div class="row">
-        <div class="col-md-12">
+
             <div class="col-md-3">Hafta Amount<input type="text" value="{{data.data[0].emi_amount}}" placeholder="Emi Amount" id="extend_amount"></div>
-            <div class="col-md-3">No Of Months<input type="text" value="0" placeholder="Extend Months" id="extend_month"></div>
-            <div class="col-md-3">
+            <div class="col-md-2">No Of Months<input type="text" value="0" placeholder="Extend Months" id="extend_month"></div>
+            <div class="col-md-2">
                 Loan Id<br>
               <select id="extend_loan_id" name=loan_id_extend>
                 {% for d in data.loan_id_list %}
@@ -84,8 +84,12 @@ $(document).ready(function(){
             </select>
             </div>
 
+            <div class="col-md-2">
+            <h1></h1>
+            </div>
+
             <div class="col-md-3"><input type="button" class="extend_hafta btn btn-primary" value="Extend Hafta" user_id="{{data.data[0].user_id}}"  {{"disable" if data.data[0].loan_type != "flat"}}></div>
-        </div>
+
     </div>
 
 

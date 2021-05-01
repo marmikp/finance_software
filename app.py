@@ -112,7 +112,7 @@ def add_new_customer():
 def hafta():
     if session.get('username'):
         data = db_utils.get_users_details()
-        return render_template('index.html', data=Markup(render_template('templates/user_form.html', data=data)))
+        return render_template('sidebar.html', data=Markup(render_template('templates/user_form.html', data=data)))
     else:
         return redirect('/api/user/login')
 
@@ -197,6 +197,31 @@ def extend_hafta_dialog():
     return render_template('templates/new_extend_form.html', data=data_rander)
 
 
+@app.route('/api/hafta/customer_edit_dialog', methods=['POST', 'GET'])
+def customer_edit_dialog():
+    if request.method == "POST":
+        data = db_utils.get_user_info_by_id(request.form['user_id'], return_type="dict")
+    else:
+        data = db_utils.get_user_info_by_id(request.args['user_id'], return_type="dict")
+
+    print(data)
+    return render_template('templates/customer_edit_form.html', data=data[0])
+
+
+@app.route('/api/hafta/customeredit', methods=['POST', 'GET'])
+def extend_edit_dialog():
+    data = request.form.to_dict()
+    data_query = dict()
+    data_query['id'] = int(data['id'])
+    data_query['user_name'] = data['name']
+    data_query['user_alias'] = data['alias']
+    data_query['user_address'] = data['address']
+    data_query['user_phone'] = int(data['phone'])
+    data_query['user_city'] = data['city']
+    db_resp = db_utils.add_new_customer(**data_query)
+    return db_resp
+
+
 @app.route('/api/hafta/extend_hafta', methods=['POST', 'GET'])
 def extend_hafta():
     user_data = dict()
@@ -263,7 +288,7 @@ def close_loan():
 def account():
     if session.get('username'):
         data = db_utils.get_users_details(user_type="account")
-        return render_template('index.html',
+        return render_template('sidebar.html',
                                data=Markup(render_template('templates/user_form_account.html', data=data)))
     else:
         return redirect('/api/user/login')
@@ -462,7 +487,7 @@ def close_account_loan():
 @app.route('/api/debit_account', methods=['GET', 'POST'])
 def debit_accounts():
     data = db_utils.get_users_details(user_type='debit')
-    return render_template('index.html', data=Markup(render_template('templates/user_form_debit.html', data=data)))
+    return render_template('sidebar.html', data=Markup(render_template('templates/user_form_debit.html', data=data)))
 
 
 @app.route('/api/debit_account/add_new', methods=['post', 'get'])
@@ -480,7 +505,7 @@ def debit_add_new():
 @app.route('/api/report', methods=['POST', 'GET'])
 def report():
     data = get_users_details(all_entries=True)
-    return render_template('index.html', data=Markup(render_template('templates/report_page.html', data=data)))
+    return render_template('sidebar.html', data=Markup(render_template('templates/report_page.html', data=data)))
 
 
 @app.route('/api/report/pending_installment_by_date', methods=['POST', 'GET'])

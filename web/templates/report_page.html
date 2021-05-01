@@ -97,88 +97,79 @@ $(document).ready(function(){
   </div>
 
 
-    <div class="row align-items-center" style="background-color: rgb(166, 164, 163); border-radius: 50px">
-      <div class="col-md-3" align="center">
+    <div class="row align-items-center" style="background-color: white; border-radius: 10px">
+      <div class="col-md-6" align="left">
         <div><h4>Pending Installment by date</h4></div>
       </div>
+
       <div class="col-md-3">
+          <h4>To: </h4>
+          <input type="date" id="pending_installment_date_date">
       </div>
+
+
       <div class="col-md-3">
-          <div class="col-md-3">
-            <h4>To: </h4>
-          </div>
-        <div class="col-md-9"><input type="date" id="pending_installment_date_date"></div>
-      </div>
-      <div class="col-md-3">
-        <div><input type="button" class="pending_date_installment_btn btn btn-primary" value="Get report"></div>
+        <input type="button" class="pending_date_installment_btn btn btn-primary" value="Get report">
       </div>
     </div>
 
-    <div class="row align-items-center top-buffer" style="background-color: rgb(166, 164, 163); border-radius: 50px">
-      <div class="col-md-3" align="center">
+    <div class="row align-items-center top-buffer" style="background-color: white; border-radius: 10px">
+      <div class="col-md-3" align="left">
           <div><h4>User Entries</h4></div>
       </div>
+
       <div class="col-md-3">
-          <div class="col-md-5">
-            <h4>Cutomer: </h4>
-          </div>
-        <div class="col-md-7"><select class="form-select" id="user_entry_dropdown_select_user_id">
-            {% for d in data %}
-                <option value="{{d.id}}">{{d.id}}&ensp;-&ensp;{{d.user_name}}</option>
-            {% endfor %}
-        </select></div>
+           <h4>Cutomer: </h4>
+            <select class="form-select" id="user_entry_dropdown_select_user_id">
+                {% for d in data %}
+                    <option value="{{d.id}}">{{d.id}}&ensp;-&ensp;{{d.user_name}}</option>
+                {% endfor %}
+            </select>
       </div>
       <div class="col-md-3">
-          <div class="col-md-2" >
             <h4>From: </h4>
-          </div>
-        <div class="col-md-4"><input type="date" id="user_entry_from_date"></div>
-          <div class="col-md-2">
+            <input type="date" id="user_entry_from_date">
             <h4>To: </h4>
-          </div>
-        <div class="col-md-4"><input type="date" id="user_entry_to_date"></div>
+            <input type="date" id="user_entry_to_date">
       </div>
       <div class="col-md-3">
         <div><input type="button" class="user_entry_btn btn btn-primary" value="Get report"></div>
       </div>
     </div>
 
-    <div class="row align-items-center top-buffer" style="background-color: rgb(166, 164, 163); border-radius: 50px">
-      <div class="col-md-3" align="center">
+    <div class="row align-items-center top-buffer" style="background-color: white; border-radius: 10px">
+      <div class="col-md-3" align="left">
         <div><h4>Day Report</h4></div>
       </div>
+        <div class="col-md-3">
+      </div>
       <div class="col-md-3">
-          <div class="col-md-3">
             <h4>Date: </h4>
-          </div>
-        <div class="col-md-9"><input type="date" id="day_report_date"></div>
+            <input type="date" id="day_report_date">
       </div>
-      <div class="col-md-3">
-      </div>
+
       <div class="col-md-3">
         <div><input type="button" class="day_report_btn btn btn-primary" value="Get report"></div>
       </div>
     </div>
 
-    <div class="row align-items-center top-buffer" style="background-color: rgb(166, 164, 163); border-radius: 50px">
-      <div class="col-md-3" align="center">
+    <div class="row align-items-center top-buffer" style="background-color: white; border-radius: 10px">
+      <div class="col-md-3" align="left">
           <div><h4>User Pending Installments</h4></div>
       </div>
       <div class="col-md-3">
-          <div class="col-md-5">
+
             <h4>Cutomer: </h4>
-          </div>
-        <div class="col-md-7"><select class="form-select" id="user_pending_installment_dropdown_select_user_id">
+
+        <select class="form-select" id="user_pending_installment_dropdown_select_user_id">
             {% for d in data %}
                 <option value="{{d.id}}">{{d.id}}&ensp;-&ensp;{{d.user_name}}</option>
             {% endfor %}
-        </select></div>
+        </select>
       </div>
       <div class="col-md-3">
-          <div class="col-md-2">
             <h4>To: </h4>
-          </div>
-        <div class="col-md-4"><input type="date" id="user_pending_installments_date"></div>
+            <input type="date" id="user_pending_installments_date">
       </div>
       <div class="col-md-3">
         <div><input type="button" class="user_pending_installments_btn btn btn-primary" value="Get report"></div>

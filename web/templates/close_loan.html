@@ -79,12 +79,9 @@ $(document).ready(function(){
                 <td>{{"Pending" if d.loan_status in [0, None] else "Done"}}</td>
                 <td><input type="text" id="paid_amount_{{d.transaction_id}}" value="{{d.pending_total_amount}}"></td>
                 <td>
-                    <div class="row">
-                        <div class="col-md-4">
-                            <input type="button" class="close_loan btn btn-primary" value="Close" user_id="{{d.id}}"
-                                   loan_id="{{d.transaction_id}}">
-                        </div>
-                    </div>
+                    <a class="close_loan add" title="Close" data-toggle="tooltip"  user_id="{{d.id}}" loan_id="{{d.transaction_id}}"><i class="fa fa-times"></i></a>
+
+
                 </td>
             </tr>
         {% endfor %}

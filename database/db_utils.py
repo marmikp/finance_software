@@ -95,6 +95,7 @@ def add_new_customer(user_type="loan", **kwargs):
         return {'code': 500, 'status': 'server side error occured'}
 
 
+
 ######## HAFTA #######
 def fetch_customers(type="flat"):
     # TODO: code for fetch customers from Customer Table
@@ -236,10 +237,15 @@ def get_user_data(id=None, loan_type="hafta", user_type='loan'):
         return {"code": 500, "status": "user id is not available"}
 
 
-def get_user_info_by_id(user_id=None):
+def get_user_info_by_id(user_id=None, return_type = "object"):
     if user_id is not None:
         data = Customer.query.filter_by(id=user_id).all()
-        return data
+        if return_type == "object":
+            return data
+        else:
+            for i, d in enumerate(data):
+                data[i] = convert_table_to_dict_data(d)
+            return data
 
 
 def get_pending_installment_of_loan_id(user_id, loan_id):

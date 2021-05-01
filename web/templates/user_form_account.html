@@ -38,6 +38,21 @@ $(document).ready(function(){
               console.log("error");
         });
   });
+
+  $(".edit").click(function(){
+    $.post('/api/test', {'url': 'http://127.0.0.1:5000/api/hafta/customer_edit_dialog', 'user_id': $(this).attr('user_id')},
+            function(returnedData){
+                var w = window.open('about:blank');
+                w.document.open();
+                w.document.write(returnedData);
+                w.document.close();
+
+        }).fail(function(){
+              console.log("error");
+        });
+  });
+
+
   $(".close_loan").click(function(){
     $.post('/api/test', {'url':'http://127.0.0.1:5000/api/account/close_loan_dialog', 'user_id': $(this).attr('data')},
             function(returnedData){var w = window.open('about:blank');
@@ -52,10 +67,20 @@ $(document).ready(function(){
 
 });
 </script>
+
+
+
+
 <div style="padding: 50px;padding-top:100px; ">
-<div class="col-md-3">
-        <input type="button" class="new_customer btn btn-primary" value="New Customer">
+    <div class="row">
+        <div class="col-sm-9">
+
+        </div>
+        <div class="col-md-3">
+            <a class="new_customer btn btn-primary" title="ADD CUSTOMER" data-toggle="tooltip"><i class="fa fa-user-plus" aria-hidden="true"> Customer</i></a>
+        </div>
     </div>
+
 <table id="example" class="table table-striped table-bordered" style="width:100%; padding-top: 50px;">
         <thead>
             <tr>
@@ -78,18 +103,13 @@ $(document).ready(function(){
                 <td>{{d.num_loan_hafta}}</td>
                 <td>{{d.num_loan_account}}</td>
                 <td>
-                    <div class="row">
-                        <div class="col-md-3">
-                            <input type="button" class="new btn btn-danger" value="New/Extend" user_id="{{d.id}}">
-                        </div>
-                        <div class="col-md-3">
-                            <input type="button" class="add_collection btn btn-danger" value="Add Collection" data="{{d.id}}">
-                        </div>
-                        <div class="col-md-3">
-                            <input type="button" class="close_loan btn btn-danger" value="Close Loan" data="{{d.id}}">
-                        </div>
+                    <a class="edit add" title="Edit" data-toggle="tooltip"  user_id="{{d.id}}"><i class='far fa-edit'></i></a>
 
-                    </div>
+                    <a class="new add" title="New/Extend" data-toggle="tooltip"  user_id="{{d.id}}"><i class="fa fa-plus"></i></a>
+                    <a class="add_collection" title="Add Collection" data-toggle="tooltip" data="{{d.id}}"><i class="fa fa-plus"></i></a>
+                    <a class="close_loan" title="Close Loan" data-toggle="tooltip" data="{{d.id}}"><i class="fa fa-times"></i></a>
+
+
                 </td>
             </tr>
         {% endfor %}
