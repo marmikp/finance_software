@@ -29,7 +29,7 @@ $(document).ready(function(){
     $(".pending_date_installment_btn").click(function(){
         var date = document.getElementById("pending_installment_date_date").value;
         $.post('/api/test', {'url':'http://127.0.0.1:5000/api/report/pending_installment_by_date',
-                                                            'date': date},
+                                                            'date': date, 'doc_flag': 1},
                 function(returnedData){
                     var w = window.open('about:blank');
                     w.document.open();
@@ -46,7 +46,8 @@ $(document).ready(function(){
         var to_date = document.getElementById("user_entry_to_date").value;
         var user_id = document.getElementById("user_entry_dropdown_select_user_id").value;
         $.post('/api/test', {'url': 'http://127.0.0.1:5000/api/report/user_entries_between_date',
-                                                         'user_id': user_id, 'from_date': from_date, 'to_date': to_date},
+                                                         'user_id': user_id, 'from_date': from_date,
+                                                         'to_date': to_date, 'doc_flag': 1},
                 function(returnedData){
                     var w = window.open('about:blank');
                     w.document.open();
@@ -59,7 +60,7 @@ $(document).ready(function(){
 
   $(".day_report_btn").click(function(){
         var date = document.getElementById("day_report_date").value;
-        $.post('/api/test', {'url':'http://127.0.0.1:5000/api/report/day_report', 'date': date},
+        $.post('/api/test', {'url':'http://127.0.0.1:5000/api/report/day_report', 'date': date, 'doc_flag': 1},
                 function(returnedData){
                     var w = window.open('about:blank');
                     w.document.open();
@@ -74,7 +75,7 @@ $(document).ready(function(){
         var date = document.getElementById("user_pending_installments_date").value;
         var user_id = document.getElementById("user_pending_installment_dropdown_select_user_id").value;
         $.post('/api/test', {'url':'http://127.0.0.1:5000/api/report/user_pending_installments',
-                                                        'date': date, 'user_id': user_id},
+                                                        'date': date, 'user_id': user_id, 'doc_flag': 1},
                 function(returnedData){
                     var w = window.open('about:blank');
                     w.document.open();

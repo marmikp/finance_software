@@ -171,6 +171,9 @@ class General(db.Model):
     total_base_amount_pending = db.Column(db.Integer, index=True, nullable=False, default=0)
     total_available_balance = db.Column(db.Integer, index=True, nullable=False, default=0)
     interest_rate = db.Column(db.Float, index=True, nullable=False, default=0)
+    email = db.Column(db.String(50), index=True, nullable=False, default=0)
+    phone = db.Column(db.Integer, index=True, nullable=False, default=0)
+    name = db.Column(db.String(50), index=True, nullable=False, default=0)
 
     def get_id(self):
         return self.id

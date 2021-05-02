@@ -1,13 +1,17 @@
 import datetime
+import os
 import sys
+import time
 from functools import partial
 from random import random, randint
 
 import pandas as pd
+from PyQt5 import QtWebEngineWidgets
 from PyQt5.QtCore import QUrl, Qt
 from PyQt5.QtWebEngineWidgets import QWebEngineView
-from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QLabel, QVBoxLayout, QPushButton, QAction
-from PyQt5.uic.uiparser import QtWidgets
+from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QLabel, QVBoxLayout, QPushButton, QAction, QDialog, \
+    QMessageBox
+from PyQt5.uic.uiparser import QtWidgets, QtCore
 from flask import Flask, request, render_template, session, redirect
 # from furl import furl
 from markupsafe import Markup
@@ -502,6 +506,35 @@ def debit_add_new():
     return render_template('templates/new_extend_form.html', data=data_rander)
 
 
+###############Profile####################
+@app.route('/api/profile', methods=['GET', 'POST'])
+def profile_accounts():
+    data = db_utils.finance_user_details()
+    data['msg'] = ""
+    return render_template('sidebar.html', data=Markup(render_template('templates/profile.html', data=data)))
+
+
+@app.route('/api/update_profile', methods=['POST', 'GET'])
+def update_profile():
+    if request.method == "POST":
+        request_data = request.form.to_dict()
+    else:
+        request_data = request.args.to_dict()
+    if request_data['old_password'] == '':
+        return {'code': 500, "status": "Please enter Current password"}
+    elif db_utils.login(session.get('username'), request_data['old_password'])['code'] == 200:
+        del request_data['old_password']
+        if request_data['new_password'] == '':
+            del request_data['new_password']
+        else:
+            request_data['password'] = request_data['new_password']
+            del request_data['new_password']
+        resp = db_utils.update_finance_user(**request_data)
+        return resp
+    else:
+        return {'code': 500, "status": "Invalid password"}
+
+
 ########## REPORT ############
 @app.route('/api/report', methods=['POST', 'GET'])
 def report():
@@ -517,15 +550,8 @@ def pending_installment_by_date():
         request_data = request.args.to_dict()
     emis = src.utils.get_report_of_pending_installments_by_date(
         datetime.datetime.strptime(str(request_data['date']), "%Y-%m-%d"))
-    return emis.to_html()
-
-###############Profile####################
-@app.route('/api/profile', methods=['GET', 'POST'])
-def profile_accounts():
-    data = db_utils.get_users_details(user_type='debit')
-    return render_template('sidebar.html', data=Markup(render_template('templates/profile.html', data=data)))
-
-
+    return render_template("templates/report_page_table.html",
+                           data={'table': Markup(emis.to_html()), 'name': 'Pending Installments by Date'})
 
 
 @app.route('/api/report/user_entries_between_date', methods=['POST', 'GET'])
@@ -539,7 +565,9 @@ def user_entries_between_date():
                                                                                 "%Y-%m-%d"),
                                                      datetime.datetime.strptime(str(request_data['to_date']),
                                                                                 "%Y-%m-%d"))
-    return report.to_html()
+
+    return render_template("templates/report_page_table.html",
+                           data={'table': Markup(report.to_html()), 'name': 'User Entries'})
 
 
 @app.route('/api/report/day_report', methods=['POST', 'GET'])
@@ -550,7 +578,8 @@ def day_report():
         request_data = request.args.to_dict()
     df, total_collections = db_utils.get_day_wise_installments(
         datetime.datetime.strptime(str(request_data['date']), "%Y-%m-%d"))
-    return df.to_html()
+    return render_template("templates/report_page_table.html",
+                           data={'table': Markup(df.to_html()), 'name': 'Day Report'})
 
 
 @app.route('/api/report/user_pending_installments', methods=['POST', 'GET'])
@@ -567,7 +596,8 @@ def user_pending_installments():
         row = pd.Series([int(request_data['user_id']), val['loan_id'], val['no_of_installment'], val['emi_amount'],
                          val['date_to_pay']], columns)
         df = df.append(row, ignore_index=True)
-    return df.to_html()
+    return render_template("templates/report_page_table.html", data={'table': Markup(df.to_html()), 'name': 'Pending '
+                                                                                                            'Installments'})
 
 
 @app.route('/api/report/account_transactions', methods=['POST', 'GET'])
@@ -578,31 +608,60 @@ def account_transactions():
 def run_flask_server():
     app.run()
 
+
 class AnotherWindow(QWidget):
     """
     This "window" is a QWidget. If it has no parent, it
     will appear as a free-floating window as we want.
     """
+
     def __init__(self, url, data):
         super().__init__()
         layout = QVBoxLayout()
-        self.setGeometry(0,0,700,700)
-        # self.label = QLabel("Another Window % d" % randint(0,100))
-        # layout.addWidget(self.label)
+        self.setGeometry(0, 0, 1100, 700)
         self.browser = QWebEngineView(self)
-        # self.browser.setPage(CustomWebEnginePage(self))
-        # self.browser.setGeometry(0,0,700,700)
+        doc_flag = False
+        if 'doc_flag' in data.keys():
+            doc_flag = True
+            del data['doc_flag']
         if data:
-            # f = furl('')
-            # f.args = data
             url_param = '&'.join(["{}={}".format(k, v) for k, v in data.items()])
-            url = url + "?" + url_param
-        self.browser.setUrl(QUrl(url))
+            url_f = url + "?" + url_param
+        else:
+            url_f = url
+        self.browser.setUrl(QUrl(url_f))
         self.browser.setContextMenuPolicy(Qt.NoContextMenu)
         layout.addWidget(self.browser)
-
-        # self.setCentralWidget(self.browser)
         self.setLayout(layout)
+        if doc_flag:
+            self.export_button = QPushButton(self)
+            self.export_button.move(30, 30)
+            self.browser.move(0, 40)
+            self.export_button.setText("Export")
+            file_name = os.path.join("Documents", url.split("/")[-1] + time.strftime("%Y%m%d-%H%M%S") + ".pdf")
+            loader = QtWebEngineWidgets.QWebEngineView()
+            loader.setZoomFactor(1)
+            loader.page().pdfPrintingFinished.connect(
+                lambda *args: print('finished:', args))
+            loader.load(QUrl(url_f))
+
+            def emit_pdf(finished):
+                loader.page().printToPdf(file_name)
+                msg = QMessageBox()
+                msg.setIcon(QMessageBox.Information)
+
+                msg.setText("File Downloaded")
+                msg.setInformativeText("File Downloaded to " + file_name)
+                msg.setStandardButtons(QMessageBox.Ok)
+
+                def msgbtn():
+                    msg.close()
+
+                msg.buttonClicked.connect(msgbtn)
+
+                msg.exec_()
+
+            self.export_button.clicked.connect(emit_pdf)
 
 
 class MainWindow(QMainWindow):
@@ -611,12 +670,8 @@ class MainWindow(QMainWindow):
         super().__init__()
         layout = QVBoxLayout()
         self.setGeometry(0, 0, 700, 700)
-        # self.label = QLabel("Another Window % d" % randint(0,100))
-        # layout.addWidget(self.label)
         self.browser = QWebEngineView(self)
         self.showMaximized()
-        # self.browser.setPage(CustomWebEnginePage(self))
-        # self.browser.setGeometry(0,0,700,700)
         self.browser.setUrl(QUrl("http://127.0.0.1:5000"))
         self.browser.setContextMenuPolicy(Qt.NoContextMenu)
         layout.addWidget(self.browser)
@@ -629,6 +684,7 @@ class MainWindow(QMainWindow):
         self.wa = AnotherWindow(url=url, data=data)
         self.w.append(self.wa)
         self.wa.show()
+
 
 if __name__ == '__main__':
     app_ = QApplication(sys.argv)

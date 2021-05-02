@@ -35,9 +35,12 @@ def signup(**kwargs):
 
 
 def login(username, password):
-    data = General.query.filter_by(username=username, password=password).all()
+    # data = db.session.query.filter_by(username=username, password=password).all()
+    data = db.session.query(General).filter(
+        and_(General.username == username, General.password == password))
+    data_len = len(list(data))
     print(data)
-    if len(data) > 0:
+    if data_len > 0:
         return {'code': 200, 'status': "success"}
     else:
         return {'code': 500, 'status': "invalid"}
@@ -93,7 +96,6 @@ def add_new_customer(user_type="loan", **kwargs):
     except Exception as e:
         print(e)
         return {'code': 500, 'status': 'server side error occured'}
-
 
 
 ######## HAFTA #######
@@ -186,6 +188,31 @@ def party_to_party_transaction(**kwargs):
 def add_installment(installment_num=0, paid_date=datetime.now(), user_type="loan", **kwargs):
     table = META_DATA.tables[str(kwargs['id'])]
     try:
+        user_data_tx_status = db.engine.execute(table.select().where(
+            (table.c.loan_id == kwargs['transaction_id']) & (table.c.no_of_installment == installment_num)))
+        user_data_list = [{column: value for column, value in rowproxy.items()} for rowproxy in user_data_tx_status]
+        tx_status = user_data_list[0]['tx_status']
+        if tx_status:
+            total_balance = General.query.filter_by(username=session.get('username')).first().total_balance
+            if user_type == "loan":
+                General.query.filter_by(username=session.get('username')).update({'total_balance': total_balance - user_data_list[0]['paid_amount']})
+            else:
+                General.query.filter_by(username=session.get('username')).update(
+                    {'total_balance': total_balance + user_data_list[0]['paid_amount']})
+            db.session.commit()
+            user_d_next = db.engine.execute(table.select().where(
+                (table.c.loan_id == kwargs['transaction_id']) & (table.c.tx_status == 0)).order_by(table.c.no_of_installment))
+            user_data_list_next = [{column: value for column, value in rowproxy.items()} for rowproxy in user_d_next]
+            user_d_current = db.engine.execute(table.select().where(
+                (table.c.loan_id == kwargs['transaction_id']) & (table.c.no_of_installment == installment_num)))
+            user_data_list_current = [{column: value for column, value in rowproxy.items()} for rowproxy in user_d_current]
+
+            amount_diff = kwargs['emi_amount'] - user_data_list_current[0]['paid_amount']
+            db.engine.execute(table.update().where(
+                (table.c.loan_id == kwargs['transaction_id']) & (table.c.no_of_installment == user_data_list_next[0]['no_of_installment'])).values(
+                {'emi_amount': user_data_list_next[0]['emi_amount'] - amount_diff}))
+
+
         db.engine.execute(
             table.update().where(
                 (table.c.loan_id == kwargs['transaction_id']) & (table.c.no_of_installment == installment_num)).values(
@@ -196,13 +223,14 @@ def add_installment(installment_num=0, paid_date=datetime.now(), user_type="loan
             sum_sub_value_in_balance_amount(kwargs['paid_amount'], 'sub')
         if kwargs['emi_amount'] != kwargs['paid_amount']:
             user_d = db.engine.execute(table.select().where(
-                (table.c.loan_id == kwargs['transaction_id']) & (table.c.no_of_installment == installment_num + 1)))
+                (table.c.loan_id == kwargs['transaction_id']) & (table.c.tx_status == 0)).order_by(table.c.no_of_installment))
             user_data_list = [{column: value for column, value in rowproxy.items()} for rowproxy in user_d]
+            update_row_installment_no = user_data_list[0]['no_of_installment']
             if len(user_data_list):
                 db.engine.execute(
                     table.update().where(
                         (table.c.loan_id == kwargs['transaction_id']) & (
-                                table.c.no_of_installment == installment_num + 1)).values(
+                                table.c.no_of_installment == update_row_installment_no)).values(
                         {'emi_amount': user_data_list[0]['emi_amount'] + (
                                 kwargs['emi_amount'] - kwargs['paid_amount'])}))
             if user_type == 'loan':
@@ -237,7 +265,7 @@ def get_user_data(id=None, loan_type="hafta", user_type='loan'):
         return {"code": 500, "status": "user id is not available"}
 
 
-def get_user_info_by_id(user_id=None, return_type = "object"):
+def get_user_info_by_id(user_id=None, return_type="object"):
     if user_id is not None:
         data = Customer.query.filter_by(id=user_id).all()
         if return_type == "object":
@@ -426,7 +454,8 @@ def get_day_wise_installments(date, user_type='loan'):
 
 
 def get_index_form_data_total():
-    active_customer = db.session.query(Customer).filter(or_(Customer.customer_type_loan == 1 , Customer.customer_type_account == 1 , Customer.customer_type_crdr == 1))
+    active_customer = db.session.query(Customer).filter(
+        or_(Customer.customer_type_loan == 1, Customer.customer_type_account == 1, Customer.customer_type_crdr == 1))
     total_customer = len(list(active_customer))
     active_customer = db.session.query(Customer).filter(Customer.customer_type_loan == 1)
     loan_customer = len(list(active_customer))
@@ -434,5 +463,24 @@ def get_index_form_data_total():
     account_customer = len(list(active_customer))
     active_customer = db.session.query(Customer).filter(Customer.customer_type_crdr == 1)
     debit_accounts = len(list(active_customer))
-    total_balance = "{:.2f}".format(General.query.filter_by(username = session.get('username')).first().total_balance)
-    return {'total_customer': total_customer, 'loan_customer': loan_customer, 'account_customer': account_customer, 'debit_accounts': debit_accounts, 'total_balance': total_balance}
+    total_balance = "{:.2f}".format(General.query.filter_by(username=session.get('username')).first().total_balance)
+    return {'total_customer': total_customer, 'loan_customer': loan_customer, 'account_customer': account_customer,
+            'debit_accounts': debit_accounts, 'total_balance': total_balance}
+
+
+def finance_user_details():
+    general_details = General.query.filter_by(username=session.get('username')).first()
+    general_details = convert_table_to_dict_data(general_details)
+    del general_details['password']
+    del general_details['username']
+    return general_details
+
+
+def update_finance_user(**kwargs):
+    try:
+        General.query.filter_by(username=session.get('username')).update(kwargs)
+        db.session.commit()
+        return {'code': 200, 'status': 'data updated successfully'}
+    except Exception as e:
+        print(e)
+        return {'code': 500, 'status': 'server side error occured'}
