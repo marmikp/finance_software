@@ -141,6 +141,120 @@
   opacity: 1;
 }
 
+@import url(http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400);
+body, html {
+  height: 100%;
+  font-size: 20px;
+  font-family: Source Sans Pro;
+}
+
+.b, .bb {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: url("http://i.imgur.com/kje4L5j.jpg");
+  background-attachment: fixed;
+  background-size: cover;
+  background-position: center;
+}
+
+.bb {
+  background: url("http://i.imgur.com/bDBs0et.jpg");
+  background-attachment: fixed;
+  background-size: cover;
+  background-position: center;
+  display: none;
+}
+
+#go {
+  position: absolute;
+  top: 30px;
+  left: 50%;
+  transform: translate(-50%, 0%);
+  color: white;
+  border: 0;
+  background: #71c341;
+  width: 100px;
+  height: 30px;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: background 0.2s ease;
+  outline: none;
+}
+#go:hover {
+  background: #8ecf68;
+}
+#go:active {
+  background: #5a9f32;
+}
+
+.message {
+  position: absolute;
+  top: -200px;
+  left: 50%;
+  transform: translate(-50%, 0%);
+  width: 300px;
+  background: white;
+  border-radius: 8px;
+  padding: 30px;
+  text-align: center;
+  font-weight: 300;
+  color: #2c2928;
+  opacity: 0;
+  transition: top 0.3s cubic-bezier(0.31, 0.25, 0.5, 1.5), opacity 0.2s ease-in-out;
+}
+.message .check {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(4);
+  width: 120px;
+  height: 110px;
+  background: #71c341;
+  color: white;
+  font-size: 3.8rem;
+  padding-top: 10px;
+  border-radius: 50%;
+  opacity: 0;
+  transition: transform 0.2s 0.25s cubic-bezier(0.31, 0.25, 0.5, 1.5), opacity 0.1s 0.25s ease-in-out;
+}
+.message .scaledown {
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 1;
+}
+.message p {
+  font-size: 1.1rem;
+  margin: 25px 0px;
+  padding: 0;
+}
+.message p:nth-child(2) {
+  font-size: 2.3rem;
+  margin: 40px 0px 0px 0px;
+}
+.message #ok {
+  position: relative;
+  color: white;
+  border: 0;
+  background: #71c341;
+  width: 100%;
+  height: 50px;
+  border-radius: 6px;
+  font-size: 1.2rem;
+  transition: background 0.2s ease;
+  outline: none;
+}
+.message #ok:hover {
+  background: #8ecf68;
+}
+.message #ok:active {
+  background: #5a9f32;
+}
+
+.comein {
+  top: 150px;
+  opacity: 1;
+}
+
 </style>
 <div class="container register">
     <div class="row">
@@ -155,39 +269,58 @@
             <div class="tab-content" id="myTabContent">
                 <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
                     <h3 class="register-heading">Add Customer</h3>
-                    <form action="/api/hafta/new_hafta_entry" method=POST>
 
-                        <input type="hidden" class="form-control" name="id" value="{{data.max_id}}" />
+                    <div class='b'></div>
+                                <div class='bb'></div>
+
+                                <div class='message'>
+                                  <div class='check'>
+                                    &#10004;
+                                  </div>
+                                  <p>
+                                    Success
+                                  </p>
+                                  <p>
+                                    Debit Account ADD Successfully!
+                                  </p>
+                                  <button id='ok'>
+                                    OK
+                                  </button>
+                                </div>
+
+<!--                    <form action="/api/hafta/new_hafta_entry" method=POST>-->
+
+                        <input type="hidden" class="form-control" name="id" value="{{data.max_id}}" id="id" />
                     <div class="row register-form">
                         <input type="hidden" class="debit" name="debit" id="debit" value="1" />
                         <div class="col-md-6">
                             <div class="form-group input-container">
                               <i class="fa fa-user icon"></i>
-                                <input type="text" class="form-control" name="name" placeholder="Username *" value="{{data.user_name if 'user_name' in data.keys() else ''}}" />
+                                <input type="text" class="form-control" id="name" name="name" placeholder="Username *" value="{{data.user_name if 'user_name' in data.keys() else ''}}" />
 
                             </div>
                             <div class="form-group input-container">
                               <i class="fa fa-user icon"></i>
-                                <input type="text" class="form-control" placeholder="alias *" value="{{data.user_alias if 'user_alias' in data.keys() else ''}}" name="alias" />
+                                <input type="text" class="form-control" id="alias" placeholder="alias *" value="{{data.user_alias if 'user_alias' in data.keys() else ''}}" name="alias" />
                             </div>
                             <div class="form-group input-container">
                                <i class="fas fa-pencil-alt icon"></i>
 
-                                <textarea class="form-control" name="address" placeholder="Address *" id="exampleFormControlTextarea4" rows="1" cols="88" >{{data.user_address if 'user_address' in data.keys() else ''}}</textarea>
+                                <textarea class="form-control" name="address" id="address" placeholder="Address *" id="exampleFormControlTextarea4" rows="1" cols="88" >{{data.user_address if 'user_address' in data.keys() else ''}}</textarea>
                             </div>
                             <div class="form-group input-container">
 
                                 <i class="fa fa-phone icon"></i>
-                                <input class="form-control" type="text" placeholder="phone *" name="phone" value="{{data.user_phone if 'user_phone' in data.keys() else ''}}">
+                                <input class="form-control" type="text" id="phone" placeholder="phone *" name="phone" value="{{data.user_phone if 'user_phone' in data.keys() else ''}}">
                             </div>
                             <div class="form-group input-container">
                                 <i class="fas fa-city icon"></i>
-                                <input class="form-control" type="text" placeholder="city *" name="city" value="{{data.user_city if 'user_city' in data.keys() else ''}}">
+                                <input class="form-control" type="text" id="city" placeholder="city *" name="city" value="{{data.user_city if 'user_city' in data.keys() else ''}}">
                             </div>
 
                             <div class="form-group input-container">
                               <i class="fas fa-pencil-alt icon"></i>
-                                <textarea class="form-control" name="remark" placeholder="Remark" id="exampleFormControlTextarea4" rows="1" cols="88"></textarea>
+                                <textarea class="form-control" name="remark" id="remark" placeholder="Remark" id="exampleFormControlTextarea4" rows="1" cols="88"></textarea>
                             </div>
 
 
@@ -195,64 +328,67 @@
                         <div class="col-md-6">
                             <div class="form-group input-container">
                               <i class="fa fa-money icon"></i>
-                                <input class="form-control" type="text" placeholder="BaseAmount *" name="base_amount" value="">
+                                <input class="form-control" type="text" id="base_amount" placeholder="BaseAmount *" name="base_amount" value="">
                             </div>
                             <div class="form-group input-container">
                                 <i class="fa fa-calendar icon"></i>
-                                  <input class="form-control" type="date" placeholder="Date *" name="startdate" value="{{data.today}}">
+                                  <input class="form-control" type="date" id="startdate" placeholder="Date *" name="startdate" value="{{data.today}}">
                             </div>
 
 
                             <input type="submit" class="btnRegister"  value="ADD"/>
                         </div>
                     </div>
-                    </form>
+<!--                    </form>-->
                 </div>
-                <div class="tab-pane fade show" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-                    <h3  class="register-heading">Apply as a Hirer</h3>
-                    <div class="row register-form">
-                        <div class="col-md-6">
-                            <div class="form-group input-container">
 
-                              <i class="fa fa-money icon"></i>
-                                <input class="input-field" type="text" placeholder="BaseAmount" name="base_amount">
-                            </div>
-                            <div class="form-group">
-                                <input type="text" class="form-control" placeholder="Last Name *" value="" />
-                            </div>
-                            <div class="form-group">
-                                <input type="email" class="form-control" placeholder="Email *" value="" />
-                            </div>
-                            <div class="form-group">
-                                <input type="text" maxlength="10" minlength="10" class="form-control" placeholder="Phone *" value="" />
-                            </div>
-
-
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <input type="password" class="form-control" placeholder="Password *" value="" />
-                            </div>
-                            <div class="form-group">
-                                <input type="password" class="form-control" placeholder="Confirm Password *" value="" />
-                            </div>
-                            <div class="form-group">
-                                <select class="form-control">
-                                    <option class="hidden"  selected disabled>Please select your Sequrity Question</option>
-                                    <option>What is your Birthdate?</option>
-                                    <option>What is Your old Phone Number</option>
-                                    <option>What is your Pet Name?</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <input type="text" class="form-control" placeholder="`Answer *" value="" />
-                            </div>
-                            <input type="submit" class="btnRegister"  value="Register"/>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
 
 </div>
+
+
+<script>
+$(document).ready(function(){
+    $(".btnRegister").click(function(){
+    var id = document.getElementById('id').value;
+    var debit = document.getElementById('debit').value;
+    var name = document.getElementById('name').value;
+    var alias = document.getElementById('alias').value;
+    var address = document.getElementById('address').value;
+    var city = document.getElementById('city').value;
+    var phone = document.getElementById('phone').value;
+    var remark = document.getElementById('remark').value;
+    var base_amount = document.getElementById('base_amount').value;
+    var startdate = document.getElementById('startdate').value;
+
+    $.post('/api/hafta/new_hafta_entry', {'id': id, 'debit': debit, 'name': name, 'alias': alias, 'address': address, 'phone': phone,
+                                        'city': city, 'remark': remark, 'base_amount': base_amount, 'startdate': startdate},
+            function(returnedData){
+            console.log(returnedData);
+                if (returnedData.code == 200){
+                    $('.bb').fadeToggle(200);
+                    $('.message').toggleClass('comein');
+                    $('.check').toggleClass('scaledown');
+                    $('.register-form').hide();
+
+                }
+
+        }).fail(function(){
+              console.log("error");
+        });
+  });
+
+  $("#ok").click(function(){
+    $('.register-form').show();
+    $('.bb').hide();
+    $('.message').hide();
+    $('.check').hide();
+    location.reload();
+  });
+
+  });
+
+
+</script>

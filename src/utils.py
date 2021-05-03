@@ -129,6 +129,7 @@ def get_user_details(user_id, user_type='loan', account_type='hafta'):
             d['user_phone'] = user_data.user_phone
             d['user_address'] = user_data.user_address
             d['user_city'] = user_data.user_city
+
             data[i] = d
         return data
     else:

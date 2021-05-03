@@ -5,12 +5,14 @@ from sqlalchemy import *
 from sqlalchemy.sql.ddl import CreateTable
 
 import config
-
+import sqlcipher3
 db = SQLAlchemy()
 
 
 def init_database(app):
-    app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///db_resources/{config.db_name}.sqlite3?check_same_thread=False'
+    # app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///db_resources/{config.db_name}.sqlite3?check_same_thread=False'
+    app.config[
+        'SQLALCHEMY_DATABASE_URI'] = f'sqlite+pysqlcipher://:testing@/db_resources/{config.db_name}.sqlite3?cipher=aes-256-cfb&kdf_iter=64000&check_same_thread=False'
     # 'sqlite+pysqlcipher://:testing@/foo.db?cipher=aes-256-cfb&kdf_iter=64000'
     with app.test_request_context():
         db.init_app(app)

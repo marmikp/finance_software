@@ -127,7 +127,8 @@ def new_hafta_entry_dialog(id=None):
         # TODO : code to close current dialog and open login screen in mainwindow
         return "logged out"
     max_id = db_utils.get_max_customer_id(id)
-    data = {'max_id': max_id, 'today': datetime.datetime.now().date()}
+    total_balance = db_utils.get_amount_value_from_general(session.get("username"))
+    data = {'max_id': max_id, 'today': datetime.datetime.now().date(), 'total_balance': total_balance}
     if 'debit' in request_data.keys():
         return render_template('templates/usermain_debit.html', data=data)
     else:
@@ -146,6 +147,8 @@ def current_user_hafta_entry_dialog(id=None):
         data = data[0]
         request_data = request.args.to_dict()
         data['max_id'] = request.args['user_id']
+    total_balance = db_utils.get_amount_value_from_general(session.get('username'))
+    data['total_balance'] = total_balance
     try:
         resp = render_template('templates/usermain.html', data=data)
     except Exception as e:
@@ -481,7 +484,11 @@ def close_account_loan_dialog():
         data = src.utils.get_loan_entries_by_user_id(int(request.form['user_id']), user_type="account")
     else:
         data = src.utils.get_loan_entries_by_user_id(int(request.args['user_id']), user_type="account")
-    return render_template('templates/close_account_loan.html', data=data, user_type="account")
+    code = 201
+    if len(data) == 0:
+        code = 501
+        data.append({})
+    return render_template('templates/close_account_loan.html', code=code, data=data, user_type="account")
 
 
 @app.route('/api/account/close_loan', methods=['POST', 'GET'])

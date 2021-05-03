@@ -67,6 +67,13 @@ $(document).ready(function(){
                 <th>Pending Installments</th>
                 <th>Loan Status</th>
                 <th>Pending Amount</th>
+                <th>User Guarantor1 Name</th>
+                <th>User guarantor1 Phone</th>
+                <th>User guarantor1 Address</th>
+                <th>User guarantor2 Name</th>
+                <th>User guarantor2 Phone</th>
+                <th>User guarantor2 Address</th>
+
                 <th>Action</th>
             </tr>
         </thead>
@@ -78,6 +85,12 @@ $(document).ready(function(){
                 <td>{{d.no_of_pending_installments}}</td>
                 <td>{{"Pending" if d.loan_status in [0, None] else "Done"}}</td>
                 <td><input type="text" id="paid_amount_{{d.transaction_id}}" value="{{d.pending_total_amount}}"></td>
+                <td>{{d.guarantor_1_name}}</td>
+                <td>{{d.guarantor_1_phone}}</td>
+                <td>{{d.guarantor_1_address}}</td>
+                <td>{{d.guarantor_2_name}}</td>
+                <td>{{d.guarantor_2_phone}}</td>
+                <td>{{d.guarantor_2_address}}</td>
                 <td>
                     <a class="close_loan add" title="Close" data-toggle="tooltip"  user_id="{{d.id}}" loan_id="{{d.transaction_id}}"><i class="fa fa-times"></i></a>
 
@@ -93,6 +106,12 @@ $(document).ready(function(){
                 <th>Pending Installments</th>
                 <th>Loan Status</th>
                 <th>Pending Amount</th>
+                <th>User Guarantor1 Name</th>
+                <th>User guarantor1 Phone</th>
+                <th>User guarantor1 Address</th>
+                <th>User guarantor2 Name</th>
+                <th>User guarantor2 Phone</th>
+                <th>User guarantor2 Address</th>
                 <th>Action</th>
             </tr>
         </tfoot>
