@@ -27,7 +27,20 @@
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
 <!--    <link href="https://cdn.datatables.net/1.10.24/css/dataTables.bootstrap.min.css" />-->
 
+<style>
+  .nav a.active {
+  background-color: #9c27b0;
+  color: white;
+}
+    </style>
+<script>
+    $(document).ready(function() {
+	// get current URL path and assign 'active' class
+	var pathname = window.location.pathname;
+	$('.nav > li > a[href="'+pathname+'"]').parent().addClass('active');
+})
 
+</script>
 </head>
 <body  ng-app="myApp" ng-controller="customersCtrl">
     <div class="wrapper">
