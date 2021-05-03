@@ -1,31 +1,25 @@
 import datetime
 import os
 import sys
+import threading
 import time
 from functools import partial
-from random import random, randint
 
 import pandas as pd
 from PyQt5 import QtWebEngineWidgets
 from PyQt5.QtCore import QUrl, Qt
 from PyQt5.QtWebEngineWidgets import QWebEngineView
-from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QLabel, QVBoxLayout, QPushButton, QAction, QDialog, \
-    QMessageBox
-from PyQt5.uic.uiparser import QtWidgets, QtCore
+from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QPushButton, QMessageBox
 from flask import Flask, request, render_template, session, redirect
-# from furl import furl
 from markupsafe import Markup
+from qt_thread_updater import get_updater
 from sqlalchemy import MetaData
 
 import src.utils
 from database import db_utils, model
-from database.db_utils import get_user_data, get_users_details
+from database.db_utils import get_users_details
 from database.model import db
-from src import utils
 from src.utils import is_logged_in, create_entry_new_hafta
-# from pyfladesk import init_gui
-import threading
-from qt_thread_updater import get_updater
 
 app = Flask(__name__, template_folder='web', static_folder='web')
 app.secret_key = '123456'
@@ -61,9 +55,9 @@ def test():
 ######## GENERAL ########
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    session['username'] = 'marmik'
     if session.get('username'):
         data = db_utils.get_index_form_data_total()
+        data['pending_amount'] = db_utils.get_total_pending_amount()
         return render_template('index.html', data=data)
     else:
         return redirect('/api/user/login')
@@ -124,13 +118,20 @@ def hafta():
 
 @app.route('/api/hafta/new_hafta_entry_dialog', methods=['POST', 'GET'])
 def new_hafta_entry_dialog(id=None):
-    print(id)
+    if request.method == "POST":
+        request_data = request.form.to_dict()
+    else:
+        request_data = request.args.to_dict()
+
     if not session.get('username'):
         # TODO : code to close current dialog and open login screen in mainwindow
         return "logged out"
     max_id = db_utils.get_max_customer_id(id)
     data = {'max_id': max_id, 'today': datetime.datetime.now().date()}
-    return render_template('templates/usermain.html', data=data)
+    if 'debit' in request_data.keys():
+        return render_template('templates/usermain_debit.html', data=data)
+    else:
+        return render_template('templates/usermain.html', data=data)
 
 
 @app.route('/api/hafta/current_user_hafta_entry_dialog', methods=['POST', 'GET'])
@@ -162,17 +163,20 @@ def new_hafta_entry(current_user=False):
     if not is_logged_in():
         # TODO : code to close current dialog and open login screen in mainwindow
         return "logged out"
-    data = request.form.to_dict()
+    if request.method == "POST":
+        data = request.form.to_dict()
+    else:
+        data = request.args.to_dict()
     if not current_user:
-        resp = add_new_customer()
+        if 'debit' in data.keys():
+            resp = add_new_customer()
+        else:
+            resp = add_new_customer()
     entry_added_flag = False
     try:
         if resp['code'] == 200:
-            if 'is_debit' in list(data.keys()):
-                if data['is_debit'] != 'on':
-                    resp = create_entry_new_hafta(**data)
-                else:
-                    resp = create_entry_new_hafta(**data, user_type='debit')
+            if 'debit' in list(data.keys()):
+                resp = create_entry_new_hafta(**data, user_type='debit')
             else:
                 resp = create_entry_new_hafta(**data)
             if resp['code'] == 200:
