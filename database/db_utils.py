@@ -195,7 +195,8 @@ def add_installment(installment_num=0, paid_date=datetime.now(), user_type="loan
         if tx_status:
             total_balance = General.query.filter_by(username=session.get('username')).first().total_balance
             if user_type == "loan":
-                General.query.filter_by(username=session.get('username')).update({'total_balance': total_balance - user_data_list[0]['paid_amount']})
+                General.query.filter_by(username=session.get('username')).update(
+                    {'total_balance': total_balance - user_data_list[0]['paid_amount']})
             else:
                 General.query.filter_by(username=session.get('username')).update(
                     {'total_balance': total_balance + user_data_list[0]['paid_amount']})
@@ -233,10 +234,20 @@ def add_installment(installment_num=0, paid_date=datetime.now(), user_type="loan
                                 table.c.no_of_installment == update_row_installment_no)).values(
                         {'emi_amount': user_data_list[0]['emi_amount'] + (
                                 kwargs['emi_amount'] - kwargs['paid_amount'])}))
-            if user_type == 'loan':
-                sum_sub_value_in_balance_amount(kwargs['paid_amount'], 'sum')
+            # if user_type == 'loan':
+            #     sum_sub_value_in_balance_amount(kwargs['paid_amount'], 'sum')
+            # else:
+            #     sum_sub_value_in_balance_amount(kwargs['paid_amount'], 'sub')
+
+        user_data_tx_status = db.engine.execute(table.select().where(
+            (table.c.loan_id == kwargs['transaction_id']) & (table.c.tx_status == 0)))
+        user_data_list = [{column: value for column, value in rowproxy.items()} for rowproxy in user_data_tx_status]
+        if len(user_data_list) == 0:
+            if user_type == "loan":
+                HaftEntry.query.filter_by(transaction_id=kwargs['transaction_id']).update({'loan_status': 1})
             else:
-                sum_sub_value_in_balance_amount(kwargs['paid_amount'], 'sub')
+                AccountEntry.query.filter_by(transaction_id=kwargs['transaction_id']).update({'loan_status': 1})
+            db.session.commit()
         return {"code": 200, "status": "installment updated successfully"}
     except Exception as e:
         print(e)
@@ -484,3 +495,17 @@ def update_finance_user(**kwargs):
     except Exception as e:
         print(e)
         return {'code': 500, 'status': 'server side error occured'}
+
+
+def get_total_pending_amount():
+    total_active_loans = Customer.query.filter_by(customer_type_loan=1).all()
+    total_pending_amount = 0
+    for loan in total_active_loans:
+        table = META_DATA.tables[str(loan.id)]
+        pending_transactions = db.engine.execute(table.select().where(table.c.tx_status == 0))
+        pending_transactions_list = [{column: value for column, value in rowproxy.items()} for rowproxy in pending_transactions]
+        for transaction in pending_transactions_list:
+            total_pending_amount += transaction['emi_amount']
+
+
+    return total_pending_amount

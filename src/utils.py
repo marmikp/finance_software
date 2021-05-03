@@ -3,12 +3,12 @@ from datetime import datetime
 import pandas as pd
 from dateutil.relativedelta import relativedelta
 from flask import session
-# from weasyprint import HTML
 
 from database import db_utils
-from database.db_utils import get_pending_installment_of_loan_id, META_DATA, convert_table_to_dict_data, \
+from database.db_utils import get_pending_installment_of_loan_id, convert_table_to_dict_data, \
     get_pending_installments_of_user
 from database.model import db, HaftEntry, CrDrEntry, AccountEntry, Customer
+
 
 calculate_emi = lambda a, b: a / b
 
@@ -32,7 +32,8 @@ def create_entry_new_hafta(user_type="loan", **kwargs):
         db.session.add(crdr_query)
         db.session.commit()
         db_utils.sum_sub_value_in_balance_amount(query_data['base_amount'], 'sub')
-        Customer.query.filter_by(id=int(kwargs['id'])).update({'account_type_crdr': 1})
+        Customer.query.filter_by(id=int(kwargs['id'])).update({'customer_type_crdr': 1})
+        db.session.commit()
         resp = {'code': 200, 'status': 'entry for debit account created'}
     else:
         query_data['id'] = int(kwargs['id'])
