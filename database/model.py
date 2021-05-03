@@ -11,7 +11,6 @@ db = SQLAlchemy()
 
 def init_database(app):
     app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///db_resources/{config.db_name}.sqlite3?check_same_thread=False'
-    # 'sqlite+pysqlcipher://:testing@/foo.db?cipher=aes-256-cfb&kdf_iter=64000'
     with app.test_request_context():
         db.init_app(app)
         db.create_all()
