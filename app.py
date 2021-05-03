@@ -514,8 +514,31 @@ def debit_add_new():
         data = src.utils.get_user_details(request.form['user_id'], account_type='debit')
     loan_id_list = []
     data_rander = {'data': data, 'loan_id_list': loan_id_list}
-    return render_template('templates/new_extend_form.html', data=data_rander)
+    return render_template('templates/new_extend_form_debit.html', data=data_rander)
 
+
+@app.route('/api/debit/current_user_debit_entry_dialog', methods=['POST', 'GET'])
+def current_user_debit_entry_dialog(id=None):
+    if request.method == "POST":
+        data = src.utils.get_user_details(request.form['user_id'], account_type='debit')
+        data = data[0]
+        request_data = request.form.to_dict()
+        data['max_id'] = request.form['user_id']
+    else:
+        data = src.utils.get_user_details(int(request.args['user_id']), account_type='debit')
+        data = data[0]
+        request_data = request.args.to_dict()
+        data['max_id'] = request.args['user_id']
+    try:
+        resp = render_template('templates/usermain_debit.html', data=data)
+    except Exception as e:
+        print(e)
+    return resp
+
+
+@app.route('/api/debit/current_user_hafta_entry', methods=['POST', 'GET'])
+def current_user_debit_entry():
+    return new_hafta_entry(current_user=True)
 
 ###############Profile####################
 @app.route('/api/profile', methods=['GET', 'POST'])
