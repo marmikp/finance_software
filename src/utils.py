@@ -201,16 +201,5 @@ def get_user_entries_between_date(user_id, from_date, to_date, user_type='loan')
 
         df = df.append(row, ignore_index=True)
     pd.set_option('display.max_columns', None)
-    df_html = df.to_html(classes='mystyle')
-    html_string = f'''
-    <html>
-      <head><title>HTML Pandas Dataframe with CSS</title></head>
-      <link rel="stylesheet" type="text/css" href="df_style.css"/>
-      <body>
-        {df_html}
-      </body>
-    </html>
-    '''
-    # HTML(string=html_string).write_pdf('html_view.pdf', stylesheets=["df_style.css"])
     return df
 
