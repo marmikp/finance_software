@@ -355,7 +355,8 @@ body, html {
                                     <div class="col-md-6">
                                         <div class="form-group input-container">
                                           <i class="fa fa-money icon"></i>
-                                            <input class="form-control" type="text" id="base_amount" placeholder="BaseAmount *" name="base_amount" value="">
+                                            <input class="form-control base_amount" type="text" id="base_amount" placeholder="BaseAmount *" name="base_amount" value="" onkeyup="validate()">
+                                            <input class="form-control total_amount" type="hidden" id="total_amount" placeholder="BaseAmount *" name="base_amount" value="{{data.total_balance}}">
                                         </div>
                                         <div class="form-group input-container">
                                             <i class="fa fa-money icon"></i>
@@ -457,54 +458,62 @@ body, html {
 <script>
 $(document).ready(function(){
     $(".btnRegister").click(function(){
-    var id = document.getElementById('id').value;
-    var name = document.getElementById('name').value;
-    var alias = document.getElementById('alias').value;
-    var address = document.getElementById('address').value;
-    var city = document.getElementById('city').value;
-    var phone = document.getElementById('phone').value;
+        var after_apply=$('.total_amount').val()-$('.base_amount').val();
+        if (after_apply < 0){
+            alert("Amount should be less");
+        }
+          else{
+            var id = document.getElementById('id').value;
+            var name = document.getElementById('name').value;
+            var alias = document.getElementById('alias').value;
+            var address = document.getElementById('address').value;
+            var city = document.getElementById('city').value;
+            var phone = document.getElementById('phone').value;
 
-    var loan_type = document.getElementById('loan_type').value;
-    var guarantor_1_phone = document.getElementById('guarantor_1_phone').value;
-    var guarantor_1_name = document.getElementById('guarantor_1_name').value;
-    var guarantor_1_address = document.getElementById('guarantor_1_address').value;
-    var remark = document.getElementById('remark').value;
-    var base_amount = document.getElementById('base_amount').value;
-    var interest = document.getElementById('interest').value;
+            var loan_type = document.getElementById('loan_type').value;
+            var guarantor_1_phone = document.getElementById('guarantor_1_phone').value;
+            var guarantor_1_name = document.getElementById('guarantor_1_name').value;
+            var guarantor_1_address = document.getElementById('guarantor_1_address').value;
+            var remark = document.getElementById('remark').value;
+            var base_amount = document.getElementById('base_amount').value;
+            var interest = document.getElementById('interest').value;
 
-    var noi = document.getElementById('noi').value;
-    var startdate = document.getElementById('startdate').value;
-    var period = document.getElementById('period').value;
-    var paid_amount = document.getElementById('paid_amount').value;
-    var guarantor_2_name = document.getElementById('guarantor_2_name').value;
-    var guarantor_2_address = document.getElementById('guarantor_2_address').value;
-    var guarantor_2_phone = document.getElementById('guarantor_2_phone').value;
-
-
-
-
-
-    $.post('/api/hafta/new_hafta_entry', {'id': id, 'name': name, 'alias': alias, 'address': address, 'phone': phone,
-                                        'city': city, 'loan_type': loan_type, 'guarantor_1_phone': guarantor_1_phone,
-                                        'guarantor_1_name': guarantor_1_name, 'guarantor_1_address': guarantor_1_address,
-                                        'remark': remark, 'base_amount': base_amount, 'interest': interest, 'noi': noi, 'startdate': startdate,
-                                        'period': period, 'paid_amount': paid_amount, 'guarantor_2_name': guarantor_2_name, 'guarantor_2_address': guarantor_2_address,
-                                        'guarantor_2_phone': guarantor_2_phone},
-            function(returnedData){
-            console.log(returnedData);
-                if (returnedData.code == 200){
-                    $('.bb').fadeToggle(200);
-                    $('.message').toggleClass('comein');
-                    $('.check').toggleClass('scaledown');
-                    $('.register-form').hide();
+            var noi = document.getElementById('noi').value;
+            var startdate = document.getElementById('startdate').value;
+            var period = document.getElementById('period').value;
+            var paid_amount = document.getElementById('paid_amount').value;
+            var guarantor_2_name = document.getElementById('guarantor_2_name').value;
+            var guarantor_2_address = document.getElementById('guarantor_2_address').value;
+            var guarantor_2_phone = document.getElementById('guarantor_2_phone').value;
 
 
-                }
+            $.post('/api/hafta/new_hafta_entry', {'id': id, 'name': name, 'alias': alias, 'address': address, 'phone': phone,
+                                                'city': city, 'loan_type': loan_type, 'guarantor_1_phone': guarantor_1_phone,
+                                                'guarantor_1_name': guarantor_1_name, 'guarantor_1_address': guarantor_1_address,
+                                                'remark': remark, 'base_amount': base_amount, 'interest': interest, 'noi': noi, 'startdate': startdate,
+                                                'period': period, 'paid_amount': paid_amount, 'guarantor_2_name': guarantor_2_name, 'guarantor_2_address': guarantor_2_address,
+                                                'guarantor_2_phone': guarantor_2_phone},
+                    function(returnedData){
+                    console.log(returnedData);
+                        if (returnedData.code == 200){
+                            $('.bb').fadeToggle(200);
+                            $('.message').toggleClass('comein');
+                            $('.check').toggleClass('scaledown');
+                            $('.register-form').hide();
 
-        }).fail(function(){
-              console.log("error");
-        });
+
+                        }
+
+                }).fail(function(){
+                      console.log("error");
+                });
+            }
   });
+
+
+
+
+
 
   $("#ok").click(function(){
     $('.register-form').show();
@@ -517,4 +526,12 @@ $(document).ready(function(){
   });
 
 
+</script>
+<script>
+function validate() {
+  var after_apply=$('.total_amount').val()-$('.base_amount').val();
+  if (after_apply < 0){
+    alert("Amount should be less");
+  }
+}
 </script>

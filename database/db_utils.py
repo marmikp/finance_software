@@ -6,6 +6,7 @@ import pandas as pd
 from dateutil.relativedelta import relativedelta
 from flask import session
 from database.model import *
+import hashlib
 
 META_DATA = None
 
@@ -36,6 +37,7 @@ def signup(**kwargs):
 
 def login(username, password):
     # data = db.session.query.filter_by(username=username, password=password).all()
+    password = hashlib.md5(password.encode()).hexdigest()
     data = db.session.query(General).filter(
         and_(General.username == username, General.password == password))
     data_len = len(list(data))
