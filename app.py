@@ -21,7 +21,7 @@ import uuid
 import src.utils
 from database import db_utils, model
 from database.db_utils import get_users_details
-from database.model import db
+from database.model import db, General
 from src.utils import is_logged_in, create_entry_new_hafta
 
 if os.path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
@@ -137,6 +137,8 @@ if os.path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
                 return "logged out"
             max_id = db_utils.get_max_customer_id(id)
             data = {'max_id': max_id, 'today': datetime.datetime.now().date()}
+            total_balance = General.query.filter_by(username=session.get('username')).first().total_balance
+            data['total_amount'] = total_balance
             if 'debit' in request_data.keys():
                 return render_template('templates/usermain_debit.html', data=data)
             else:
@@ -156,6 +158,8 @@ if os.path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
                 request_data = request.args.to_dict()
                 data['max_id'] = request.args['user_id']
             try:
+                total_balance = General.query.filter_by(username=session.get('username')).first().total_balance
+                data['total_amount'] = total_balance
                 resp = render_template('templates/usermain.html', data=data)
             except Exception as e:
                 print(e)

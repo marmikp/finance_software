@@ -387,35 +387,35 @@ def close_loan(user_id, loan_id, amount, user_type="loan"):
         entry_table = HaftEntry
     else:
         entry_table = AccountEntry
-    try:
-        table = META_DATA.tables[str(user_id)]
-        installment_data = db.engine.execute(table.select(table.c.no_of_installment).where(
-            (table.c.loan_id == loan_id) * (table.c.tx_status == 0)).order_by(table.c.no_of_installment.asc()))
-        user_data_list = [{column: value for column, value in rowproxy.items()} for rowproxy in installment_data]
-        latest_installment_no = user_data_list[0]['no_of_installment']
+    # try:
+    table = META_DATA.tables[str(user_id)]
+    installment_data = db.engine.execute(table.select(table.c.no_of_installment).where(
+        (table.c.loan_id == loan_id) * (table.c.tx_status == 0)).order_by(table.c.no_of_installment.asc()))
+    user_data_list = [{column: value for column, value in rowproxy.items()} for rowproxy in installment_data]
+    latest_installment_no = user_data_list[0]['no_of_installment']
+    db.engine.execute(
+        table.update().where(
+            (table.c.loan_id == loan_id) & (
+                    table.c.no_of_installment == latest_installment_no)).values(
+            {'paid_amount': amount, 'paid_date': datetime.now().date(), 'tx_status': 1}))
+    for d in user_data_list:
         db.engine.execute(
             table.update().where(
                 (table.c.loan_id == loan_id) & (
-                        table.c.no_of_installment == latest_installment_no)).values(
-                {'paid_amount': amount, 'paid_date': datetime.now().date(), 'tx_status': 1}))
-        for d in user_data_list:
-            db.engine.execute(
-                table.update().where(
-                    (table.c.loan_id == loan_id) & (
-                            table.c.no_of_installment == d['no_of_installment'])).values(
-                    {'paid_amount': 0, 'paid_date': datetime.now().date(), 'tx_status': 1}))
+                        table.c.no_of_installment == d['no_of_installment'])).values(
+                {'paid_amount': 0, 'paid_date': datetime.now().date(), 'tx_status': 1}))
 
-        entry_table.query.filter_by(id=user_id, transaction_id=loan_id).update({'loan_status': 1})
-        db.session.commit()
-        if user_type == 'loan':
-            sum_sub_value_in_balance_amount(amount, 'sum')
-        else:
-            sum_sub_value_in_balance_amount(amount, 'sub')
+    entry_table.query.filter_by(id=user_id, transaction_id=loan_id).update({'loan_status': 1})
+    db.session.commit()
+    if user_type == 'loan':
+        sum_sub_value_in_balance_amount(amount, 'sum')
+    else:
+        sum_sub_value_in_balance_amount(amount, 'sub')
 
-        return {'code': 200, 'status': 'loan closed successfully'}
-    except Exception as e:
-        print(e)
-        return {"code": 500, "status": "some error occured during closing the loan"}
+    return {'code': 200, 'status': 'loan closed successfully'}
+    # except Exception as e:
+    #     print(e)
+    #     return {"code": 500, "status": "some error occured during closing the loan"}
 
 
 def get_pending_installments_of_user(user_id, date):
