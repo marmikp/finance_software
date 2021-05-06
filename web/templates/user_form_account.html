@@ -1,3 +1,15 @@
+<style>
+
+.selected {
+    color: red;
+    background-color: white;
+}
+.display-table {
+  font-weight: 900;
+}
+
+
+</style>
 <script>
 $(document).ready(function(){
     $(".new_customer").click(function(){
@@ -81,16 +93,16 @@ $(document).ready(function(){
         </div>
     </div>
 
-<table id="example" class="table table-striped table-bordered" style="width:100%; padding-top: 50px;">
+<table id="example" class="table table-bordered display-table" style="width:100%; padding-top: 50px;">
         <thead>
-            <tr>
-                <th>User Id</th>
-                <th>Name</th>
-                <th>Phone</th>
-                <th>User Type</th>
-                <th>No. of Loan </th>
-                <th>No. of Account</th>
-                <th>Actions</th>
+            <tr style="background-color:black; color:white;">
+                <th><b>User Id</b></th>
+                <th><b>Name</b></th>
+                <th><b>Phone</b></th>
+                <th><b>User Type</b></th>
+                <th><b>No. of Loan </b></th>
+                <th><b>No. of Account</b></th>
+                <th><b>Actions</b></th>
             </tr>
         </thead>
         <tbody>
@@ -128,7 +140,15 @@ $(document).ready(function(){
     </table>
 
     </div>
-<script> $(document).ready(function() {
+<script>
+$(document).ready(function() {
     $('#example').DataTable();
-} ); </script>
+
+   $(".display-table tr").click(function(){
+   $(this).addClass('selected').siblings().removeClass('selected');
+   var value=$(this).find('td:first').html();
+
+   });
+} );
+</script>
 

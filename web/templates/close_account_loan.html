@@ -23,6 +23,18 @@
     <link href="{{ url_for('static', filename='assets/css/jquery-ui.css')}}" rel="stylesheet" />
     <link href="{{ url_for('static', filename='assets/css/style.css')}}" rel="stylesheet" />
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+    <style>
+
+.selected {
+    color: red;
+    background-color: yellow;
+}
+.display-table {
+  font-weight: 900;
+}
+
+
+</style>
 </head>
 <script>
 $(document).ready(function(){
@@ -59,7 +71,7 @@ $(document).ready(function(){
 
 </div>
 <div style="padding: 50px;">
-<table id="example" class="table table-striped table-bordered" style="width:100%; padding-top: 50px;">
+<table id="example" class="table table-bordered display-table" style="width:100%; padding-top: 50px;">
         <thead>
             <tr>
                 <th>User ID</th>
@@ -100,9 +112,19 @@ $(document).ready(function(){
     </table>
 
     </div>
-<script> $(document).ready(function() {
+<script>
+$(document).ready(function() {
     $('#example').DataTable();
-} ); </script>
+
+   $(".display-table tr").click(function(){
+   $(this).addClass('selected').siblings().removeClass('selected');
+   var value=$(this).find('td:first').html();
+
+   });
+
+
+} );
+</script>
 <script>
     function getDate(){
     var today = new Date();
