@@ -52,9 +52,10 @@ class Customer(db.Model):
     __table_args__ = {'extend_existing': True}
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_name = db.Column(db.String(50), index=True, nullable=False)
-    user_alias = db.Column(db.String(5), index=True, nullable=False)
+    user_alias = db.Column(db.String(5), index=True, nullable=True)
     user_address = db.Column(db.String(50), index=True, nullable=False)
     user_phone = db.Column(db.Integer, index=True, nullable=False)
+    user_phone_2 = db.Column(db.Integer, index=True, nullable=True)
     user_city = db.Column(db.String(10), index=True, nullable=False)
     customer_type_loan = db.Column(db.Integer, index=True, nullable=False, default=0)
     customer_type_account = db.Column(db.Integer, index=True, nullable=False, default=0)
@@ -111,6 +112,7 @@ class HaftEntry(db.Model):
     guarantor_2_phone = db.Column(db.Integer, index=True, nullable=True)
     guarantor_1_address = db.Column(db.String(50), index=True, nullable=True)
     guarantor_2_address = db.Column(db.String(50), index=True, nullable=True)
+    remark = db.Column(db.String(500), index=True, nullable=True, default='')
 
     def get_id(self):
         return self.id
@@ -143,6 +145,7 @@ class AccountEntry(db.Model):
     loan_type = db.Column(db.String(5), index=True, nullable=False, default="flat")
     last_installment_date = db.Column(db.DateTime, index=True, nullable=False)
     loan_status = db.Column(db.Integer, index=True, nullable=False, default=0)
+    remark = db.Column(db.String(500), index=True, nullable=True, default='')
 
     def get_id(self):
         return self.id

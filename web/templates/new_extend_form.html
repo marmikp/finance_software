@@ -125,10 +125,11 @@ $(document).ready(function(){
                 <td>{{d.loan_id}}</td>
                 <td>{{d.no_of_installment}}</td>
                 <td>{{d.emi_amount}}</td>
-                <td>{{d.date_to_pay}}</td>
+                <td>{{d.date_to_pay.strftime("%d/%m/%Y")}}</td>
                 <td><input type="Date" id="paid_date_{{d.loan_id}}_{{d.no_of_installment}}" value="{{'' if d.tx_status in [0, None] else d.paid_date}}" readonly></td>
                 <td>{{d.paid_amount}}</td>
-                <td>{{"Pending" if d.tx_status in [0, None] else "Done"}}</td>
+
+                <td style="color:{{'green' if d.tx_status == 1 else 'red' if d.tx_status in [0, None] and d.date_to_pay < data.date_today else 'black'}}">{{"Pending" if d.tx_status in [0, None] else "Paid"}}</td>
 <!--                <td>-->
 <!--                    <div class="row">-->
 <!--                        <div class="col-md-4">-->

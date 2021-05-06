@@ -313,6 +313,11 @@ body, html {
                                             <input class="form-control" type="text" id="phone" placeholder="phone *" name="phone" value="{{data.user_phone if 'user_phone' in data.keys() else ''}}">
                                         </div>
                                         <div class="form-group input-container">
+
+                                            <i class="fa fa-phone icon"></i>
+                                            <input class="form-control" type="text" id="phone_2" placeholder="phone 2 *" name="phone_2" value="{{data.user_phone_2 if 'user_phone_2' in data.keys() else ''}}">
+                                        </div>
+                                        <div class="form-group input-container">
                                             <i class="fas fa-city icon"></i>
                                             <input class="form-control" type="text" id="city" placeholder="city *" name="city" value="{{data.user_city if 'user_city' in data.keys() else ''}}">
                                         </div>
@@ -469,6 +474,7 @@ $(document).ready(function(){
             var address = document.getElementById('address').value;
             var city = document.getElementById('city').value;
             var phone = document.getElementById('phone').value;
+            var phone_2 = document.getElementById('phone_2').value;
 
             var loan_type = document.getElementById('loan_type').value;
             var guarantor_1_phone = document.getElementById('guarantor_1_phone').value;
@@ -488,7 +494,7 @@ $(document).ready(function(){
 
 
             $.post('/api/hafta/new_hafta_entry', {'id': id, 'name': name, 'alias': alias, 'address': address, 'phone': phone,
-                                                'city': city, 'loan_type': loan_type, 'guarantor_1_phone': guarantor_1_phone,
+                                                'phone_2': phone_2, 'city': city, 'loan_type': loan_type, 'guarantor_1_phone': guarantor_1_phone,
                                                 'guarantor_1_name': guarantor_1_name, 'guarantor_1_address': guarantor_1_address,
                                                 'remark': remark, 'base_amount': base_amount, 'interest': interest, 'noi': noi, 'startdate': startdate,
                                                 'period': period, 'paid_amount': paid_amount, 'guarantor_2_name': guarantor_2_name, 'guarantor_2_address': guarantor_2_address,

@@ -277,8 +277,40 @@ def get_user_data(id=None, loan_type="hafta", user_type='loan'):
     else:
         return {"code": 500, "status": "user id is not available"}
 
+def get_user_id_from_loan_id(loan_id, loan_type='hafta'):
+    if loan_type == "hafta":
+        entry_table = HaftEntry
+    else:
+        entry_table = AccountEntry
+    return entry_table.query.filter_by(transaction_id=loan_id).first().id
 
-def get_user_info_by_id(user_id=None, return_type="object"):
+def get_user_data_by_loan_id(loan_id=None, loan_type="hafta", user_type='loan'):
+    if id is not None:
+
+        if user_type == 'loan':
+            entry_table = HaftEntry
+        else:
+            entry_table = AccountEntry
+        if loan_type == "hafta":
+            user_data = []
+            user_id = get_user_id_from_loan_id(loan_id)
+            user_table = META_DATA.tables[str(user_id)]
+            user_d = db.engine.execute(
+                user_table.select().where(user_table.c.loan_id == loan_id).order_by(user_table.c.tx_status.desc()))
+            user_d_list = [{column: value for column, value in rowproxy.items()} for rowproxy in user_d]
+            user_data += user_d_list
+            user_data = sorted(user_data, key=itemgetter('tx_status'))
+            print(user_data)
+            return user_data
+    else:
+        return {"code": 500, "status": "user id is not available"}
+
+
+def get_user_info_by_id(user_id=None, return_type="object", user_type='loan'):
+    if user_type == 'loan':
+        entry_table = HaftEntry
+    else:
+        entry_table = AccountEntry
     if user_id is not None:
         data = Customer.query.filter_by(id=user_id).all()
         if return_type == "object":
@@ -286,6 +318,10 @@ def get_user_info_by_id(user_id=None, return_type="object"):
         else:
             for i, d in enumerate(data):
                 data[i] = convert_table_to_dict_data(d)
+                loans = []
+                for val in entry_table.query.filter_by(id=user_id, loan_status=0).all():
+                    loans.append(val.transaction_id)
+                data[i]['loans'] = loans
             return data
 
 
@@ -425,13 +461,18 @@ def get_pending_installments_of_user(user_id, date):
     emis = db.engine.execute(user_table.select(user_table.c.emi_amount).where(
         (user_table.c.date_to_pay <= date) &
         (user_table.c.tx_status == 0)))
+    emis_count = db.engine.execute(user_table.select(user_table.c.emi_amount).where(
+        user_table.c.tx_status == 0))
     emis_dict = [{column: value for column, value in rowproxy.items()} for rowproxy in emis]
+    emis_dict_count = [{column: value for column, value in rowproxy.items()} for rowproxy in emis_count]
     loan_id_dict = {}
     for val in emis_dict:
         if val['loan_id'] not in list(loan_id_dict.keys()):
-            loan_id_dict[val['loan_id']] = [0, 0]
+            loan_id_dict[val['loan_id']] = [0, 0, 0, 0]
         loan_id_dict[val['loan_id']][0] += val['emi_amount']
         loan_id_dict[val['loan_id']][1] += 1
+        loan_id_dict[val['loan_id']][2] = val['date_to_pay']
+        loan_id_dict[val['loan_id']][3] = len(emis_dict_count)
     return loan_id_dict, emis_dict
 
 
@@ -511,3 +552,17 @@ def get_total_pending_amount():
 
 
     return total_pending_amount
+
+def get_guarantor_details_by_loan_id(user_id, loan_id):
+    data = convert_table_to_dict_data(HaftEntry.query.filter_by(id=user_id, transaction_id=loan_id).first())
+
+    return data
+
+def update_guarantor_details(user_id, loan_id, data_query):
+    try:
+        HaftEntry.query.filter_by(id=user_id, transaction_id=loan_id).update(data_query)
+        db.session.commit()
+        return {'code': 200, 'status': 'update success'}
+    except Exception as e:
+        print(e)
+        return {'code': 500, 'status': 'server side error occured in guarantor update'}

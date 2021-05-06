@@ -74,10 +74,10 @@ $(document).ready(function(){
 <div class="container">
     <div class="row"><h2>Add Collections</h2></div>
     <div class="row">
-        <div class="col-md-3"><h4>Name : {{data.0.user_name}}</h4></div>
-        <div class="col-md-3"><h4>Phone : {{data.0.user_phone}}</h4></div>
-        <div class="col-md-3"><h4>Address : {{data.0.user_address}}</h4></div>
-        <div class="col-md-3"><h4>City : {{data.0.user_city}}</h4></div>
+        <div class="col-md-3"><h4>Name : {{data.data.0.user_name}}</h4></div>
+        <div class="col-md-3"><h4>Phone : {{data.data.0.user_phone}}</h4></div>
+        <div class="col-md-3"><h4>Address : {{data.data.0.user_address}}</h4></div>
+        <div class="col-md-3"><h4>City : {{data.data.0.user_city}}</h4></div>
     </div>
 
 
@@ -100,15 +100,15 @@ $(document).ready(function(){
             </tr>
         </thead>
         <tbody>
-        {% for d in data %}
+        {% for d in data.data %}
             <tr>
                 <td>{{d.loan_id}}</td>
                 <td>{{d.no_of_installment}}</td>
                 <td>{{d.emi_amount}}</td>
-                <td>{{d.date_to_pay}}</td>
+                <td>{{d.date_to_pay.strftime("%d/%m/%Y")}}</td>
                 <td><input type="Date" id="paid_date_{{d.loan_id}}_{{d.no_of_installment}}" class="paid_date_{{d.loan_id}}_{{d.no_of_installment}}" value="{{d.today if d.tx_status in [0, None] else d.paid_date}}" {{"disabled" if d.tx_status == 1}}></td>
                 <td>{{d.paid_amount}}</td>
-                <td>{{"Pending" if d.tx_status in [0, None] else "Done"}}</td>
+                <td style="color:{{'green' if d.tx_status == 1 else 'red' if d.tx_status in [0, None] and d.date_to_pay < data.date_today else 'black'}}">{{"Pending" if d.tx_status in [0, None] else "Done"}}</td>
                 <td><input type="text" id="paid_amount_{{d.loan_id}}_{{d.no_of_installment}}" class="paid_amount_{{d.loan_id}}_{{d.no_of_installment}}" value="{{d.emi_amount if d.tx_status in [0, None] else d.paid_amount}}" {{"disabled" if d.tx_status == 1}}></td>
                 <td>
                     <a class="add_emi add {{'disabled-link' if d.tx_status == 1}} add_pay_{{d.loan_id}}_{{d.no_of_installment}}" id="add_pay_{{d.loan_id}}_{{d.no_of_installment}}" title="Pay Installment" data-toggle="tooltip"  user_id="{{d.user_id}}" emi_amount="{{d.emi_amount}}"

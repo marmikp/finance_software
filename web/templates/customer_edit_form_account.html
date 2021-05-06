@@ -293,12 +293,12 @@ body, html {
                                     <div class="col-md-6">
                                         <div class="form-group input-container">
                                           <i class="fa fa-user icon"></i>
-                                            <input type="text" class="form-control" name="name" id='name' placeholder="Name *" value="{{data.user_name if 'user_name' in data.keys() else ''}}" />
+                                            <input type="text" class="form-control" name="name" id='name' placeholder="Username *" value="{{data.user_name if 'user_name' in data.keys() else ''}}" />
 
                                         </div>
                                         <div class="form-group input-container">
                                           <i class="fa fa-user icon"></i>
-                                            <input type="text" class="form-control" placeholder="Alias" id='alias' value="{{data.user_alias if 'user_alias' in data.keys() else ''}}" name="alias" />
+                                            <input type="text" class="form-control" placeholder="alias *" id='alias' value="{{data.user_alias if 'user_alias' in data.keys() else ''}}" name="alias" />
                                         </div>
                                         <div class="form-group input-container">
                                            <i class="fas fa-pencil-alt icon"></i>
@@ -308,72 +308,19 @@ body, html {
                                         <div class="form-group input-container">
 
                                             <i class="fa fa-phone icon"></i>
-                                            <input class="form-control" type="text" placeholder="Phone *" name="phone" id='phone' value="{{data.user_phone if 'user_phone' in data.keys() else ''}}">
-                                        </div>
-                                        <div class="form-group input-container">
-
-                                            <i class="fa fa-phone icon"></i>
-                                            <input class="form-control" type="text" placeholder="Phone 2" name="phone" id='phone_2' value="{{data.user_phone_2 if 'user_phone_2' in data.keys() else ''}}">
+                                            <input class="form-control" type="text" placeholder="phone *" name="phone" id='phone' value="{{data.user_phone if 'user_phone' in data.keys() else ''}}">
                                         </div>
                                         <div class="form-group input-container">
                                             <i class="fas fa-city icon"></i>
                                             <input class="form-control" type="text" placeholder="city *" name="city" id='city' value="{{data.user_city if 'user_city' in data.keys() else ''}}">
                                         </div>
 
-                                        <div class="form-group input-container">
-                                          <i class="fa fa-key icon"></i>
-                                            <select class="input-field" id="loan_id" name="loan_id">
-                                                {% for d in data.loans %}
-                                                    <option value="{{d}}">{{d}}</option>
-                                                {% endfor %}
-                                            </select>
-                                        </div>
-
-
-
-
 
                                     </div>
                                     <div class="col-md-6">
 
-                                        <div class="form-group input-container">
-                                          <i class="fa fa-user icon"></i>
-                                            <input type="text" class="form-control" id="guarantor_1_name" name="guarantor_1_name" placeholder="Guarantor 1 Name" value="" />
 
-                                        </div>
-
-                                        <div class="form-group input-container">
-
-                                           <i class="fa fa-phone icon"></i>
-                                            <input class="form-control" type="text" id="guarantor_1_phone" placeholder="Guarantor 1 Phone" name="guarantor_1_phone" value="">
-                                        </div>
-
-                                        <div class="form-group input-container">
-                                          <i class="fas fa-pencil-alt icon"></i>
-                                            <textarea class="form-control" id="guarantor_1_address" name="guarantor_1_address" placeholder="Guarantor 1 Address" id="exampleFormControlTextarea4" rows="1" cols="88"></textarea>
-                                        </div>
-
-
-                                        <div class="form-group input-container">
-                                          <i class="fa fa-user icon"></i>
-                                            <input type="text" class="form-control" id="guarantor_2_name" name="guarantor_2_name" placeholder="Guarantor 2 Name " value="" />
-
-                                        </div>
-
-                                        <div class="form-group input-container">
-                                          <i class="fas fa-pencil-alt icon"></i>
-                                            <textarea class="form-control" name="guarantor_2_address" id="guarantor_2_address" placeholder="Guarantor 2 Address" id="exampleFormControlTextarea4" rows="1" cols="88"></textarea>
-                                        </div>
-
-                                        <div class="form-group input-container">
-
-                                           <i class="fa fa-phone icon"></i>
-                                            <input class="form-control" type="text" id="guarantor_2_phone" placeholder="guarantor_2_phone" name="Guarantor 2 Phone" value="">
-                                        </div>
-
-
-
-                                        <button type="button" class="btnRegister btn btn-primary" style="display: none;">Update</button>
+                                        <button type="button" class="btnRegister btn btn-primary">Update</button>
 
 <!--                                        <input type="submit" class="btnRegister"  value="Cancle"/>-->
 
@@ -396,21 +343,8 @@ $(document).ready(function(){
     var address = document.getElementById('address').value;
     var city = document.getElementById('city').value;
     var phone = document.getElementById('phone').value;
-    var phone_2 = document.getElementById('phone_2').value;
-    var guarantor_1_name = document.getElementById('guarantor_1_name').value;
-    var guarantor_1_phone = document.getElementById('guarantor_1_phone').value;
-    var guarantor_1_address = document.getElementById('guarantor_1_address').value;
-    var guarantor_2_name = document.getElementById('guarantor_2_name').value;
-    var guarantor_2_phone = document.getElementById('guarantor_2_phone').value;
-    var guarantor_2_address = document.getElementById('guarantor_2_address').value;
-    var loan_id = document.getElementById('loan_id').value;
-    $.post('/api/hafta/customeredit', {'id': id, 'loan_id': loan_id,'name': name, 'alias': alias, 'address': address, 'phone': phone,
-                                        'phone_2': phone_2, 'city': city,
-                                        'guarantor_1_name': guarantor_1_name, 'guarantor_1_phone': guarantor_1_phone,
-                                        'guarantor_1_address': guarantor_1_address,
-                                        'guarantor_2_name': guarantor_2_name,
-                                        'guarantor_2_phone': guarantor_2_phone,
-                                        'guarantor_2_address': guarantor_2_address},
+    $.post('/api/hafta/customeredit_account', {'id': id, 'name': name, 'alias': alias, 'address': address, 'phone': phone,
+                                        'city': city},
             function(returnedData){
             console.log(returnedData);
                 if (returnedData.code == 200){
@@ -434,50 +368,6 @@ $(document).ready(function(){
     $('.check').hide();
     location.reload();
   });
-
-  });
-
-
-</script>
-
-<script>
-$(document).ready(function(){
-    $("#loan_id").click(function(){
-
-    var loan_id = document.getElementById('loan_id').value;
-    var user_id = document.getElementById('id').value;
-
-    $.post('/api/get_guarantor_details_by_loan_id', {'user_id': user_id, 'loan_id': loan_id},
-            function(returnedData){
-            console.log(returnedData);
-                if (returnedData.code == 200){
-                    $('.btnRegister').show();
-                    var guarantor_1_name = returnedData.data['guarantor_1_name']
-                    var guarantor_1_phone = returnedData.data['guarantor_1_phone']
-                    var guarantor_1_address = returnedData.data['guarantor_1_address']
-                    var guarantor_2_name = returnedData.data['guarantor_2_name']
-                    var guarantor_2_phone = returnedData.data['guarantor_2_phone']
-                    var guarantor_2_address = returnedData.data['guarantor_2_address']
-                    $('#guarantor_1_name').val(guarantor_1_name);
-                    $('#guarantor_1_phone').val(guarantor_1_phone);
-                    $('#guarantor_1_address').val(guarantor_1_address);
-                    $('#guarantor_2_name').val(guarantor_2_name);
-                    $('#guarantor_2_phone').val(guarantor_2_phone);
-                    $('#guarantor_2_address').val(guarantor_2_address);
-
-                }
-                else{
-                    $('.btnRegister').hide();
-                }
-
-        }).fail(function(){
-              console.log("error");
-        });
-
-  });
-
-
-
 
   });
 

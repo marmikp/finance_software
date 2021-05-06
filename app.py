@@ -7,6 +7,7 @@ import threading
 import time
 from functools import partial
 
+import numpy as np
 import pandas as pd
 from PyQt5 import QtWebEngineWidgets
 from PyQt5.QtCore import QUrl, Qt
@@ -60,6 +61,9 @@ if os.path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
                 print(e)
                 return "Failure"
 
+        @app.route('/api/hafta/add_collection_by_loan_id', methods=['POST', 'GET'])
+        def add_collection_by_loan_id():
+            return render_template('add_collection_by_loan_id.html')
 
         ######## GENERAL ########
         @app.route('/', methods=['GET', 'POST'])
@@ -111,6 +115,7 @@ if os.path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
             data_query['user_address'] = data['address']
             data_query['user_phone'] = data['phone']
             data_query['user_city'] = data['city']
+            data_query['user_phone_2'] = data['phone_2']
             db_resp = db_utils.add_new_customer(**data_query)
             return db_resp
 
@@ -215,7 +220,7 @@ if os.path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
                     continue
                 else:
                     loan_id_list.append(d['loan_id'])
-            data_rander = {'data': data, 'loan_id_list': loan_id_list}
+            data_rander = {'data': data, 'loan_id_list': loan_id_list, 'date_today': datetime.datetime.now().date()}
             return render_template('templates/new_extend_form.html', data=data_rander)
 
 
@@ -230,8 +235,48 @@ if os.path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
             return render_template('templates/customer_edit_form.html', data=data[0])
 
 
+        @app.route('/api/hafta/customer_edit_account_dialog', methods=['POST', 'GET'])
+        def customer_edit_account_dialog():
+            if request.method == "POST":
+                data = db_utils.get_user_info_by_id(request.form['user_id'], return_type="dict", user_type='account')
+            else:
+                data = db_utils.get_user_info_by_id(request.args['user_id'], return_type="dict", user_type='account')
+
+            print(data)
+            return render_template('templates/customer_edit_form_account.html', data=data[0])
+
         @app.route('/api/hafta/customeredit', methods=['POST', 'GET'])
         def extend_edit_dialog():
+            data = request.form.to_dict()
+            data_query = dict()
+            data_query['id'] = int(data['id'])
+            data_query['user_name'] = data['name']
+            data_query['user_alias'] = data['alias']
+            data_query['user_address'] = data['address']
+            data_query['user_phone'] = int(data['phone'])
+            if data['phone_2'] not in ['', 'None']:
+                data_query['user_phone_2'] = int(data['phone_2'])
+            else:
+                data_query['user_phone_2'] = None
+            data_query['user_city'] = data['city']
+            db_resp = db_utils.add_new_customer(**data_query)
+            if db_resp['code'] == 200:
+                data_query_guarantor = {}
+                data_query_guarantor['guarantor_1_name'] = data['guarantor_1_name']
+                data_query_guarantor['guarantor_1_phone'] = data['guarantor_1_phone']
+                data_query_guarantor['guarantor_1_address'] = data['guarantor_1_address']
+                data_query_guarantor['guarantor_2_name'] = data['guarantor_2_name']
+                data_query_guarantor['guarantor_2_phone'] = data['guarantor_2_phone']
+                data_query_guarantor['guarantor_2_address'] = data['guarantor_2_address']
+                db_resp = db_utils.update_guarantor_details(user_id=data_query['id'], loan_id=int(data['loan_id']),
+                                                            data_query=data_query_guarantor)
+
+
+            return db_resp
+
+
+        @app.route('/api/hafta/customeredit_account', methods=['POST', 'GET'])
+        def customeredit_account():
             data = request.form.to_dict()
             data_query = dict()
             data_query['id'] = int(data['id'])
@@ -269,10 +314,19 @@ if os.path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
         @app.route('/api/hafta/add_collection_dialog', methods=['POST', 'GET'])
         def add_collection_dialog():
             if request.method == "POST":
-                data = src.utils.get_user_details(int(request.form['user_id']))
+                if 'user_id' in request.form.to_dict().keys():
+                    data = src.utils.get_user_details(int(request.form['user_id']))
+                else:
+                    data = src.utils.get_user_data_by_loan_id(int(request.form['loan_id']))
             else:
-                data = src.utils.get_user_details(int(request.args['user_id']))
-            return render_template('templates/user_add_collection.html', data=data)
+                if 'user_id' in request.args.to_dict().keys():
+                    data = src.utils.get_user_details(int(request.args['user_id']))
+                else:
+                    data = src.utils.get_user_data_by_loan_id(int(request.args['loan_id']))
+            data_ret = {}
+            data_ret['data'] = data
+            data_ret['date_today'] = datetime.datetime.now().date()
+            return render_template('templates/user_add_collection.html', data=data_ret)
 
 
         @app.route('/api/hafta/add_collection', methods=['POST', 'GET'])
@@ -438,7 +492,7 @@ if os.path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
                     continue
                 else:
                     loan_id_list.append(d['loan_id'])
-            data_rander = {'data': data, 'loan_id_list': loan_id_list}
+            data_rander = {'data': data, 'loan_id_list': loan_id_list, 'date_today': datetime.datetime.now().date()}
             return render_template('templates/new_extend_form_account.html', data=data_rander)
 
 
@@ -463,7 +517,11 @@ if os.path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
                 data = src.utils.get_user_details(int(request.form['user_id']), user_type="account")
             else:
                 data = src.utils.get_user_details(int(request.args['user_id']), user_type="account")
-            return render_template('templates/user_add_collection_account.html', data=data)
+
+            data_ret = {}
+            data_ret['data'] = data
+            data_ret['date_today'] = datetime.datetime.now().date()
+            return render_template('templates/user_add_collection_account.html', data=data_ret)
 
 
         @app.route('/api/account/add_collection', methods=['POST', 'GET'])
@@ -590,6 +648,9 @@ if os.path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
                 request_data = request.args.to_dict()
             emis = src.utils.get_report_of_pending_installments_by_date(
                 datetime.datetime.strptime(str(request_data['date']), "%Y-%m-%d"))
+            emis.index = np.arange(1, len(emis) + 1)
+            emis.style.set_properties(subset=['User Name'], **{'width': '300px'})
+            # emis.index.rename('id', inplace=True)
             return render_template("templates/report_page_table.html",
                                    data={'table': Markup(emis.to_html()), 'name': 'Pending Installments by Date'})
 
@@ -605,9 +666,11 @@ if os.path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
                                                                                         "%Y-%m-%d"),
                                                              datetime.datetime.strptime(str(request_data['to_date']),
                                                                                         "%Y-%m-%d"))
+            report.index = np.arange(1, len(report) + 1)
+            report.index.name = "id"
 
             return render_template("templates/report_page_table.html",
-                                   data={'table': Markup(report.to_html()), 'name': 'User Entries'})
+                                   data={'table': Markup(report.to_html(index=False)), 'name': 'User Entries'})
 
 
         @app.route('/api/report/day_report', methods=['POST', 'GET'])
@@ -620,7 +683,20 @@ if os.path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
                 datetime.datetime.strptime(str(request_data['date']), "%Y-%m-%d"))
             return render_template("templates/report_page_table.html",
                                    data={'table': Markup(df.to_html()), 'name': 'Day Report'})
+        @app.route('/api/get_guarantor_details_by_loan_id', methods=['POST', 'GET'])
+        def get_guarantor_details_by_loan_id():
+            if request.method == "POST":
+                user_id = request.form.get('user_id')
+                loan_id = request.form.get('loan_id')
+            else:
+                user_id = request.args.get('user_id')
+                loan_id = request.args.get('loan_id')
 
+            data = db_utils.get_guarantor_details_by_loan_id(user_id, loan_id)
+            data_ret = {}
+            data_ret['code'] = 200
+            data_ret['data'] = data
+            return data_ret
 
         @app.route('/api/report/user_pending_installments', methods=['POST', 'GET'])
         def user_pending_installments():

@@ -77,16 +77,42 @@ $(document).ready(function(){
               console.log("error");
         });
   });
+
+
+  $(".add_collection_loan_id").click(function(){
+        var loan_id = document.getElementById('add_collection_text').value;
+          $.post('/api/test', {'url': 'http://127.0.0.1:5000/api/hafta/add_collection_dialog', 'loan_id': loan_id},
+            function(returnedData){
+                 var w = window.open('about:blank');
+                    w.document.open();
+                    w.document.write(returnedData);
+                    w.document.close();
+        }).fail(function(){
+              console.log("error");
+        });
+  });
+
 });
 </script>
 <script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
 <div style="padding: 50px;padding-top:100px; ">
 
      <div class="row">
-        <div class="col-sm-9">
+        <div class="col-sm-3">
 
         </div>
-        <div class="col-md-3">
+         <div class="col-sm-2" align="center">
+             <input type="text" value="" id="add_collection_text" />
+         </div>
+         <div class="col-sm-2">
+
+            <a class="add_collection_loan_id btn btn-primary" title="ADD Collections" data-toggle="tooltip">Add EMI</a>
+        </div>
+         <div class="col-sm-2">
+
+
+        </div>
+        <div class="col-sm-3">
             <a class="new_customer btn btn-primary" title="ADD CUSTOMER" data-toggle="tooltip"><i class="fa fa-user-plus" aria-hidden="true"> Customer</i></a>
 
         </div>
@@ -95,13 +121,13 @@ $(document).ready(function(){
 <table id="example" class="table table-bordered display-table"  style="width:100%; padding-top: 50px;">
         <thead>
             <tr style="background-color:black; color:white;">
-                <th><b>User Id</b></th>
-                <th><b>Name</b></th>
-                <th><b>Phone</b></th>
-                <th><b>User Type</b></th>
-                <th><b>No. of Loan </b></th>
-                <th><b>No. of Account</b></th>
-                <th><b>Actions</b></th>
+                <th style="text-align: center;"><b>Id</b></th>
+                <th style="text-align: center;"><b>Name</b></th>
+                <th style="text-align: center;"><b>Phone</b></th>
+                <th style="text-align: center;"><b>Type</b></th>
+                <th style="text-align: center;"><b>Loans</b></th>
+                <th style="text-align: center;"><b>A/C</b></th>
+                <th style="text-align: center;"><b>Actions</b></th>
             </tr>
         </thead>
         <tbody>
@@ -114,10 +140,10 @@ $(document).ready(function(){
                 <td>{{d.num_loan_hafta}}</td>
                 <td>{{d.num_loan_account}}</td>
                 <td>
-                    <a class="edit add" title="Edit" data-toggle="tooltip"  user_id="{{d.id}}"><i class='far fa-edit'></i></a>
-                    <a class="new add" title="New/Extend" data-toggle="tooltip"  user_id="{{d.id}}"><i class="fa fa-plus"></i></a>
-                    <a class="add_collection" title="Add Collection" data-toggle="tooltip" data="{{d.id}}"><i class="fa fa-plus"></i></a>
-                    <a class="close_loan" title="Close Loan" data-toggle="tooltip" data="{{d.id}}"><i class="fa fa-times"></i></a>
+                    <a class="edit add" title="Edit" data-toggle="tooltip"  user_id="{{d.id}}">Edit</a> |
+                    <a class="new add" title="New/Extend" data-toggle="tooltip"  user_id="{{d.id}}">New/Extend</a> |
+                    <a class="add_collection" title="Add Collection" data-toggle="tooltip" data="{{d.id}}">Add Hafta</a> |
+                    <a class="close_loan" title="Close Loan" data-toggle="tooltip" data="{{d.id}}">Close</a>
 
 
                 </td>
@@ -125,14 +151,14 @@ $(document).ready(function(){
         {% endfor %}
         </tbody>
         <tfoot>
-            <tr>
-                <th>User Id</th>
-                <th>Name</th>
-                <th>Phone</th>
-                <th>User Type</th>
-                <th>No. of Loan </th>
-                <th>No. of Account</th>
-                <th>Actions</th>
+            <tr style="background-color: black; color: white;">
+                <th style="text-align: center;"><b>Id</b></th>
+                <th style="text-align: center;"><b>Name</b></th>
+                <th style="text-align: center;"><b>Phone</b></th>
+                <th style="text-align: center;"><b>Type</b></th>
+                <th style="text-align: center;"><b>Loans</b></th>
+                <th style="text-align: center;"><b>A/C</b></th>
+                <th style="text-align: center;"><b>Actions</b></th>
             </tr>
         </tfoot>
     </table>

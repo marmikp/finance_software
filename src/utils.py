@@ -143,6 +143,7 @@ def get_user_details(user_id, user_type='loan', account_type='hafta'):
             val['user_phone'] = user_data[0].user_phone
             val['user_address'] = user_data[0].user_address
             val['user_city'] = user_data[0].user_city
+            val['date_to_pay'] = val['date_to_pay'].date()
 
         if len(data) == 0:
             val = dict()
@@ -166,8 +167,8 @@ def get_report_of_pending_installments_by_date(date, user_type='loan'):
         table_name = HaftEntry
     else:
         table_name = AccountEntry
-    columns = ['User ID', 'User Alias', 'User Name', 'User Phone', 'User Address', 'Loan ID', 'Pending Emis',
-               'Pending Amount']
+    columns = ['ID', 'Name', 'Date', 'Amount',
+               'Phone', 'Gua Name', 'Gua Phone', 'PE']
     df = pd.DataFrame(columns=columns)
     active_users = table_name.query.filter_by(loan_status=0).all()
     checked_users = []
@@ -182,9 +183,9 @@ def get_report_of_pending_installments_by_date(date, user_type='loan'):
                 user_data_dict[user_data['id']]['loans'] = user_data_pending_installments
                 user_info = convert_table_to_dict_data(Customer.query.filter_by(id=user_data['id']).first())
                 for loan_id, loan_pending_installment_details in user_data_pending_installments.items():
-                    row = pd.Series([user_info['id'], user_info['user_alias'], user_info['user_name'],
-                                     user_info['user_phone'], user_info['user_address'], loan_id,
-                                     loan_pending_installment_details[1], loan_pending_installment_details[0]], columns)
+                    row = pd.Series([loan_id, user_info['user_name'], loan_pending_installment_details[2].date().strftime("%d/%m/%Y"),
+                                     loan_pending_installment_details[0], user_info['user_phone'], user_data['guarantor_1_name'], user_data['guarantor_1_phone'],
+                                     loan_pending_installment_details[3]],  columns)
                     df = df.append(row, ignore_index=True)
 
     return df
@@ -202,3 +203,51 @@ def get_user_entries_between_date(user_id, from_date, to_date, user_type='loan')
     pd.set_option('display.max_columns', None)
     return df
 
+def get_user_data_by_loan_id(loan_id):
+    try:
+        data = []
+        user_id = db_utils.get_user_id_from_loan_id(loan_id)
+    except Exception as e:
+        val = dict()
+        val['today'] = datetime.now().date()
+        val['paid_date'] = "Not Found"
+        user_data = "Not Found"
+        val['loan_type'] = "Not Found"
+        val['user_id'] = "Not Found"
+        val['user_alias'] = "Not Found"
+        val['user_name'] = "Not Found"
+        val['user_phone'] = "Not Found"
+        val['user_address'] = "Not Found"
+        val['user_city'] = "Not Found"
+        val['loan_id'] = "Not Found"
+        data.append(val)
+        return data
+    data = db_utils.get_user_data_by_loan_id(loan_id)
+    for val in data:
+        val['today'] = datetime.now().date()
+        val['paid_date'] = val['paid_date'].date() if val['paid_date'] is not None else None
+        user_data = db_utils.get_user_info_by_id(val['user_id'])
+        val['loan_type'] = db_utils.get_loan_type_by_loan_id(val['user_id'], val['loan_id'])
+        val['user_alias'] = user_data[0].user_alias
+        val['user_name'] = user_data[0].user_name
+        val['user_phone'] = user_data[0].user_phone
+        val['user_address'] = user_data[0].user_address
+        val['user_city'] = user_data[0].user_city
+        val['date_to_pay'] = val['date_to_pay'].date()
+
+    if len(data) == 0:
+        val = dict()
+        val['today'] = datetime.now().date()
+        val['paid_date'] = None
+        user_data = db_utils.get_user_info_by_id(user_id)
+        val['loan_type'] = None
+        val['user_id'] = user_id
+        val['user_alias'] = user_data[0].user_alias
+        val['user_name'] = user_data[0].user_name
+        val['user_phone'] = user_data[0].user_phone
+        val['user_address'] = user_data[0].user_address
+        val['user_city'] = user_data[0].user_city
+        val['loan_id'] = None
+        data.append(val)
+
+    return data
