@@ -61,12 +61,12 @@ def get_max_customer_id(id=None):
         return data
 
 
-def get_loan_type_by_loan_id(user_id, loan_id, user_type='loan'):
+def get_loan_type_by_loan_id(user_id=None, loan_id=None, user_type='loan'):
     if user_type == 'loan':
         entry_table = HaftEntry
     else:
         entry_table = AccountEntry
-    return entry_table.query.filter_by(id=user_id, transaction_id=loan_id).first().loan_type
+    return entry_table.query.filter_by(transaction_id=loan_id).first().loan_type
 
 
 def add_new_customer(user_type="loan", **kwargs):
@@ -215,7 +215,7 @@ def add_installment(installment_num=0, paid_date=datetime.now(), user_type="loan
                 (table.c.loan_id == kwargs['transaction_id']) & (table.c.no_of_installment == user_data_list_next[0]['no_of_installment'])).values(
                 {'emi_amount': user_data_list_next[0]['emi_amount'] - amount_diff}))
 
-
+        loan_type = get_loan_type_by_loan_id(loan_id=kwargs['transaction_id'])
         db.engine.execute(
             table.update().where(
                 (table.c.loan_id == kwargs['transaction_id']) & (table.c.no_of_installment == installment_num)).values(
@@ -249,7 +249,26 @@ def add_installment(installment_num=0, paid_date=datetime.now(), user_type="loan
                 HaftEntry.query.filter_by(transaction_id=kwargs['transaction_id']).update({'loan_status': 1})
             else:
                 AccountEntry.query.filter_by(transaction_id=kwargs['transaction_id']).update({'loan_status': 1})
+
             db.session.commit()
+        if user_type == 'loan':
+            if loan_type == 'flat':
+                if installment_num + 1 != HaftEntry.query.filter_by(transaction_id=kwargs['transaction_id']).first().no_installment:
+                    current_pending_interest = General.query.filter_by(
+                        username=session.get('username')).first().total_interest_pending
+                    next_pending_interest = current_pending_interest - kwargs['paid_amount']
+                    General.query.filter_by(username=session.get('username')).update(
+                        {'total_interest_pending': next_pending_interest, 'total_interest_earned': kwargs['paid_amount']})
+            else:
+                user_loan_details = HaftEntry.query.filter_by(transaction_id=kwargs['transaction_id']).first()
+                each_month_interest = user_loan_details.interest / user_loan_details.no_installment
+                current_pending_interest = General.query.filter_by(
+                    username=session.get('username')).first().total_interest_pending
+                next_pending_interest = current_pending_interest - each_month_interest
+                General.query.filter_by(username=session.get('username')).update(
+                    {'total_interest_pending': next_pending_interest, 'total_interest_earned': each_month_interest})
+            db.session.commit()
+
         return {"code": 200, "status": "installment updated successfully"}
     except Exception as e:
         print(e)

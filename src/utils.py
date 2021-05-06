@@ -7,8 +7,7 @@ from flask import session
 from database import db_utils
 from database.db_utils import get_pending_installment_of_loan_id, convert_table_to_dict_data, \
     get_pending_installments_of_user
-from database.model import db, HaftEntry, CrDrEntry, AccountEntry, Customer
-
+from database.model import db, HaftEntry, CrDrEntry, AccountEntry, Customer, General
 
 calculate_emi = lambda a, b: a / b
 
@@ -45,6 +44,14 @@ def create_entry_new_hafta(user_type="loan", **kwargs):
         query_data['loan_type'] = kwargs['loan_type']
         query_data['last_installment_date'] = query_data['start_date'] + relativedelta(
             months=query_data['no_installment'])
+        if query_data['loan_type'] == 'flat':
+            total_interest = query_data['interest'] * query_data['no_installment']
+        else:
+            total_interest = query_data['interest']
+        current_pending_interest = General.query.filter_by(username=session.get('username')).first().total_interest_pending
+        next_pending_interest = current_pending_interest + total_interest
+        General.query.filter_by(username=session.get('username')).update({'total_interest_pending': next_pending_interest})
+        db.session.commit()
         if user_type == "loan":
             query_data['guarantor_1_name'] = kwargs['guarantor_1_name']
             query_data['guarantor_1_phone'] = int(kwargs['guarantor_1_phone'])
