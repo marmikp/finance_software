@@ -192,3 +192,28 @@ class General(db.Model):
                     "total_base_amount_pending": self.total_base_amount_pending,
                     "total_available_balance": self.total_available_balance,
                     "interest_rate": self.interest_rate})
+
+
+class TransactionHistory(db.Model):
+    __tablename__ = 'transaction_history'
+    __table_args__ = {'extend_existing': True}
+    tx_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    party_id = db.Column(db.Integer, ForeignKey(Customer.id))
+    loan_id = db.Column(db.Integer, nullable=True)
+    account_type = db.Column(db.String(10), nullable=True)
+    amount = db.Column(db.Float, nullable=True)
+    status = db.Column(db.String(5), nullable=True)
+    total_balance = db.Column(db.Float, nullable=True)
+    tx_date = db.Column(db.Date, nullable=False, default=datetime.now().date())
+
+
+    def get_id(self):
+        return self.tx_id
+
+    def __unicode__(self):
+        return self.client_id
+
+    def __repr__(self):
+        return str({"tx_id": self.tx_id,"party_id": self.party_id, "loan_id": self.loan_id,
+                    "account_type": self.account_type, "amount": self.amount, "status": self.status,
+                    "total_balance": self.total_balance, "tx_date": self.tx_date })

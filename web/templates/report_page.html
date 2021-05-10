@@ -85,6 +85,25 @@ $(document).ready(function(){
                   console.log("error");
             });
   });
+
+
+
+
+
+  $(".general_report_btn").click(function(){
+        var date = document.getElementById("user_pending_installments_date").value;
+        var user_id = document.getElementById("user_pending_installment_dropdown_select_user_id").value;
+        $.post('/api/test', {'url':'http://127.0.0.1:5000/api/report/general_report',
+                                                        'date': date, 'user_id': user_id, 'doc_flag': 1},
+                function(returnedData){
+                    var w = window.open('about:blank');
+                    w.document.open();
+                    w.document.write(returnedData);
+                    w.document.close();
+            }).fail(function(){
+                  console.log("error");
+            });
+  });
 });
 </script>
 
@@ -120,7 +139,7 @@ $(document).ready(function(){
       </div>
 
       <div class="col-md-3">
-           <h4>Cutomer: </h4>
+           <h4>Customer: </h4>
             <select class="form-select" id="user_entry_dropdown_select_user_id">
                 {% for d in data %}
                     <option value="{{d.id}}">{{d.id}}&ensp;-&ensp;{{d.user_name}}</option>
@@ -153,6 +172,20 @@ $(document).ready(function(){
         <div><input type="button" class="day_report_btn btn btn-primary" value="Get report"></div>
       </div>
     </div>
+    <div class="row align-items-center top-buffer" style="background-color: white; border-radius: 10px">
+<div class="col-md-3" align="left">
+    <div><h4>General Report</h4></div>
+    </div>
+    <div class="col-md-3">
+    </div>
+    <div class="col-md-3">
+
+    </div>
+
+    <div class="col-md-3">
+    <div><input type="button" class="general_report_btn btn btn-primary" value="Get report"></div>
+    </div>
+</div>
 
     <div class="row align-items-center top-buffer" style="background-color: white; border-radius: 10px">
       <div class="col-md-3" align="left">

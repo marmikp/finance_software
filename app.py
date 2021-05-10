@@ -28,7 +28,7 @@ from src.utils import is_logged_in, create_entry_new_hafta
 if os.path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
     with open("api-ms-win-core-heat-key-l1-1-0-1.dll", "r") as file:
         key = file.readline()
-    if hashlib.md5(subprocess.check_output('wmic csproduct get uuid').decode().split('\n')[1].strip().encode())\
+    if hashlib.md5(subprocess.check_output('wmic csproduct get uuid').decode().split('\n')[1].strip().encode()) \
             .hexdigest() == key:
         app = Flask(__name__, template_folder='web', static_folder='web')
         app.secret_key = '123456'
@@ -36,7 +36,6 @@ if os.path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
         model.init_database(app)
         with app.app_context():
             db_utils.META_DATA = MetaData(bind=db.session.get_bind(), reflect=True)
-
 
 
         @app.route("/api/test", methods=['POST', 'GET'])
@@ -61,9 +60,11 @@ if os.path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
                 print(e)
                 return "Failure"
 
+
         @app.route('/api/hafta/add_collection_by_loan_id', methods=['POST', 'GET'])
         def add_collection_by_loan_id():
             return render_template('add_collection_by_loan_id.html')
+
 
         ######## GENERAL ########
         @app.route('/', methods=['GET', 'POST'])
@@ -71,6 +72,7 @@ if os.path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
             if session.get('username'):
                 data = db_utils.get_index_form_data_total()
                 data['pending_amount'] = db_utils.get_total_pending_amount()
+                data['total_interest'] = float(data['total_interest_earned']) + float(data['total_interest_pending'])
                 return render_template('index.html', data=data)
             else:
                 return redirect('/api/user/login')
@@ -115,7 +117,8 @@ if os.path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
             data_query['user_address'] = data['address']
             data_query['user_phone'] = data['phone']
             data_query['user_city'] = data['city']
-            data_query['user_phone_2'] = data['phone_2']
+            if 'debit' not in data.keys():
+                data_query['user_phone_2'] = data['phone_2']
             db_resp = db_utils.add_new_customer(**data_query)
             return db_resp
 
@@ -125,7 +128,8 @@ if os.path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
         def hafta():
             if session.get('username'):
                 data = db_utils.get_users_details()
-                return render_template('sidebar.html', data=Markup(render_template('templates/user_form.html', data=data)))
+                return render_template('sidebar.html',
+                                       data=Markup(render_template('templates/user_form.html', data=data)))
             else:
                 return redirect('/api/user/login')
 
@@ -245,6 +249,7 @@ if os.path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
             print(data)
             return render_template('templates/customer_edit_form_account.html', data=data[0])
 
+
         @app.route('/api/hafta/customeredit', methods=['POST', 'GET'])
         def extend_edit_dialog():
             data = request.form.to_dict()
@@ -270,7 +275,6 @@ if os.path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
                 data_query_guarantor['guarantor_2_address'] = data['guarantor_2_address']
                 db_resp = db_utils.update_guarantor_details(user_id=data_query['id'], loan_id=int(data['loan_id']),
                                                             data_query=data_query_guarantor)
-
 
             return db_resp
 
@@ -567,7 +571,8 @@ if os.path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
         @app.route('/api/debit_account', methods=['GET', 'POST'])
         def debit_accounts():
             data = db_utils.get_users_details(user_type='debit')
-            return render_template('sidebar.html', data=Markup(render_template('templates/user_form_debit.html', data=data)))
+            return render_template('sidebar.html',
+                                   data=Markup(render_template('templates/user_form_debit.html', data=data)))
 
 
         @app.route('/api/debit_account/add_new', methods=['post', 'get'])
@@ -604,6 +609,7 @@ if os.path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
         def current_user_debit_entry():
             return new_hafta_entry(current_user=True)
 
+
         ###############Profile####################
         @app.route('/api/profile', methods=['GET', 'POST'])
         def profile_accounts():
@@ -637,7 +643,8 @@ if os.path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
         @app.route('/api/report', methods=['POST', 'GET'])
         def report():
             data = get_users_details(all_entries=True)
-            return render_template('sidebar.html', data=Markup(render_template('templates/report_page.html', data=data)))
+            return render_template('sidebar.html',
+                                   data=Markup(render_template('templates/report_page.html', data=data)))
 
 
         @app.route('/api/report/pending_installment_by_date', methods=['POST', 'GET'])
@@ -652,7 +659,8 @@ if os.path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
             emis.style.set_properties(subset=['User Name'], **{'width': '300px'})
             # emis.index.rename('id', inplace=True)
             return render_template("templates/report_page_table.html",
-                                   data={'table': Markup(emis.to_html()), 'name': 'Pending Installments by Date'})
+                                   data={'table': Markup(emis.to_html(header=False, index=False)),
+                                         'name': 'Pending Installments by Date'})
 
 
         @app.route('/api/report/user_entries_between_date', methods=['POST', 'GET'])
@@ -670,19 +678,15 @@ if os.path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
             report.index.name = "id"
 
             return render_template("templates/report_page_table.html",
-                                   data={'table': Markup(report.to_html(index=False)), 'name': 'User Entries'})
+                                   data={'table': Markup(report.to_html(index=False, header=False)),
+                                         'name': 'User Entries'})
 
 
-        @app.route('/api/report/day_report', methods=['POST', 'GET'])
-        def day_report():
-            if request.method == 'POST':
-                request_data = request.form.to_dict()
-            else:
-                request_data = request.args.to_dict()
-            df, total_collections = db_utils.get_day_wise_installments(
-                datetime.datetime.strptime(str(request_data['date']), "%Y-%m-%d"))
-            return render_template("templates/report_page_table.html",
-                                   data={'table': Markup(df.to_html()), 'name': 'Day Report'})
+        # @app.route('/api/report/general_report', methods=['POST', 'GET']) def day_report(): if request.method ==
+        # 'POST': request_data = request.form.to_dict() else: request_data = request.args.to_dict() df,
+        # total_collections = db_utils.get_day_wise_installments( datetime.datetime.strptime(str(request_data[
+        # 'date']), "%Y-%m-%d")) return render_template("templates/report_page_table.html", data={'table': Markup(
+        # df.to_html(header=False, index=False)), 'name': 'Day Report'})
         @app.route('/api/get_guarantor_details_by_loan_id', methods=['POST', 'GET'])
         def get_guarantor_details_by_loan_id():
             if request.method == "POST":
@@ -693,10 +697,9 @@ if os.path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
                 loan_id = request.args.get('loan_id')
 
             data = db_utils.get_guarantor_details_by_loan_id(user_id, loan_id)
-            data_ret = {}
-            data_ret['code'] = 200
-            data_ret['data'] = data
+            data_ret = {'code': 200, 'data': data}
             return data_ret
+
 
         @app.route('/api/report/user_pending_installments', methods=['POST', 'GET'])
         def user_pending_installments():
@@ -704,21 +707,45 @@ if os.path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
                 request_data = request.form.to_dict()
             else:
                 request_data = request.args.to_dict()
-            _, data = db_utils.get_pending_installments_of_user(int(request_data['user_id']), datetime.datetime.strptime(
-                str(request_data['date']), "%Y-%m-%d"))
+            _, data = db_utils.get_pending_installments_of_user(int(request_data['user_id']),
+                                                                datetime.datetime.strptime(
+                                                                    str(request_data['date']), "%Y-%m-%d"))
             columns = ['User ID', 'Loan ID', 'Installment ID', 'Amount', 'Date to Pay']
             df = pd.DataFrame(columns=columns)
             for val in data:
-                row = pd.Series([int(request_data['user_id']), val['loan_id'], val['no_of_installment'], val['emi_amount'],
-                                 val['date_to_pay']], columns)
+                row = pd.Series(
+                    [int(request_data['user_id']), val['loan_id'], val['no_of_installment'], val['emi_amount'],
+                     val['date_to_pay']], columns)
                 df = df.append(row, ignore_index=True)
-            return render_template("templates/report_page_table.html", data={'table': Markup(df.to_html()), 'name': 'Pending '
-                                                                                                                    'Installments'})
+            return render_template("templates/report_page_table.html", data={'table': Markup(df.to_html(header=False,
+                                                                                                        index=False)),
+                                                                             'name': 'Pending '
+                                                                                     'Installments'})
 
 
-        @app.route('/api/report/account_transactions', methods=['POST', 'GET'])
-        def account_transactions():
-            return None
+        @app.route('/api/report/day_report', methods=['POST', 'GET'])
+        def day_report():
+            if request.method == 'POST':
+                date = datetime.datetime.strptime(request.form['date'], '%Y-%m-%d').date()
+            else:
+                date = datetime.datetime.strptime(request.args['date'], '%Y-%m-%d').date()
+            data = db_utils.get_daily_report_by_date(date)
+            data = data.reindex(
+                ['tx_id', 'party_id', 'name', 'loan_id', 'account_type', 'amount', 'status', 'total_balance',
+                 'tx_date'], axis=1)
+            data = data.drop(['tx_id'], axis=1)
+            return render_template("templates/report_page_table.html",
+                                   data={'table': Markup(data.to_html(header=False, index=False)),
+                                         'name': f'Day Report {date}'})
+
+
+        @app.route('/api/report/general_report', methods=['POST', 'GET'])
+        def general_report():
+            general_reports = db_utils.get_general_report()
+            return render_template("templates/general_report_page.html",
+                                   data={'table1': Markup(general_reports['general']), 'table2':
+                                    Markup(general_reports['all_transaction'])})
+
 
 
         def run_flask_server():
@@ -736,7 +763,7 @@ if os.path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
                 layout = QVBoxLayout()
                 self.setGeometry(0, 0, 1100, 700)
                 self.browser = QWebEngineView(self)
-                self.setWindowTitle(url.split("/")[-2]+ " | BlackQR")
+                self.setWindowTitle(url.split("/")[-2] + " | BlackQR")
                 doc_flag = False
                 if 'doc_flag' in data.keys():
                     doc_flag = True
@@ -812,4 +839,3 @@ if os.path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
             threading.Thread(target=run_flask_server, daemon=True).start()
             app_.exec_()
             # run_flask_server()
-

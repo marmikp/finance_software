@@ -7,7 +7,7 @@ from flask import session
 from database import db_utils
 from database.db_utils import get_pending_installment_of_loan_id, convert_table_to_dict_data, \
     get_pending_installments_of_user
-from database.model import db, HaftEntry, CrDrEntry, AccountEntry, Customer, General
+from database.model import db, HaftEntry, CrDrEntry, AccountEntry, Customer, General, TransactionHistory
 
 calculate_emi = lambda a, b: a / b
 
@@ -29,8 +29,13 @@ def create_entry_new_hafta(user_type="loan", **kwargs):
         crdr_query = CrDrEntry(**query_data)
         db.session.add(crdr_query)
         db.session.commit()
-        db_utils.sum_sub_value_in_balance_amount(query_data['base_amount'], 'sub')
+        loan_id = CrDrEntry.query.filter_by(id=crdr_query.id).all()[-1].transaction_id
+        total_balance = db_utils.sum_sub_value_in_balance_amount(query_data['base_amount'], 'sub')
         Customer.query.filter_by(id=int(kwargs['id'])).update({'customer_type_crdr': 1})
+        db.session.commit()
+        tx_hist_query = TransactionHistory(party_id=query_data['id'], loan_id=loan_id, account_type='debit', amount=query_data['base_amount'],
+                           status='dr', total_balance=total_balance)
+        db.session.add(tx_hist_query)
         db.session.commit()
         resp = {'code': 200, 'status': 'entry for debit account created'}
     else:
@@ -71,9 +76,19 @@ def create_entry_new_hafta(user_type="loan", **kwargs):
                 query_data['paid_amount'] = float(kwargs['paid_amount']) if kwargs['paid_amount'] != '' else 1000
                 resp = db_utils.add_installment(user_type=user_type, **query_data)
             if user_type == "loan":
-                db_utils.sum_sub_value_in_balance_amount(query_data['base_amount'], 'sub')
+                total_balance = db_utils.sum_sub_value_in_balance_amount(query_data['base_amount'], 'sub')
+                tx_hist_query = TransactionHistory(party_id=query_data['id'], loan_id=query_data['transaction_id'], account_type='loan',
+                                                   amount=query_data['base_amount'],
+                                                   status='dr', total_balance=total_balance)
+                db.session.add(tx_hist_query)
+                db.session.commit()
             else:
-                db_utils.sum_sub_value_in_balance_amount(query_data['base_amount'], 'sum')
+                total_balance = db_utils.sum_sub_value_in_balance_amount(query_data['base_amount'], 'sum')
+                tx_hist_query = TransactionHistory(party_id=query_data['id'], loan_id=query_data['transaction_id'],
+                                                   account_type='account',
+                                                   amount=query_data['base_amount'],
+                                                   status='cr', total_balance=total_balance)
+                db.session.add(tx_hist_query)
     return resp
 
 

@@ -7,6 +7,7 @@ from dateutil.relativedelta import relativedelta
 from flask import session
 from database.model import *
 import hashlib
+import numpy as np
 
 META_DATA = None
 
@@ -26,6 +27,7 @@ def sum_sub_value_in_balance_amount(amount, operation='sum'):
     else:
         General.query.filter_by(username=session['username']).update({'total_balance': total_amount - amount})
     db.session.commit()
+    return General.query.filter_by(username=session['username']).first().total_balance
 
 
 def signup(**kwargs):
@@ -147,11 +149,6 @@ def extend_hafta(customer_id, amount, no_of_hafta, loan_id, user_type="loan"):
         return {"code": 500, "status": "error occurred in hafta extension"}
 
 
-def fetch_custmer_details(customer_id, c_type="hafta"):
-    # TODO: code to fetch customer details
-    pass
-
-
 def add_new_hafta_entry(user_type="loan", **kwargs):
     if user_type == "loan":
         add_query = HaftEntry(**kwargs)
@@ -182,14 +179,10 @@ def add_hafta_track_entry(**data):
     db.engine.execute(table.insert(), **data)
 
 
-def party_to_party_transaction(**kwargs):
-    # TODO: code to make party to party transaction
-    pass
-
-
 def add_installment(installment_num=0, paid_date=datetime.now(), user_type="loan", **kwargs):
     table = META_DATA.tables[str(kwargs['id'])]
     try:
+        loan_type = get_loan_type_by_loan_id(loan_id=kwargs['transaction_id'])
         user_data_tx_status = db.engine.execute(table.select().where(
             (table.c.loan_id == kwargs['transaction_id']) & (table.c.no_of_installment == installment_num)))
         user_data_list = [{column: value for column, value in rowproxy.items()} for rowproxy in user_data_tx_status]
@@ -204,18 +197,45 @@ def add_installment(installment_num=0, paid_date=datetime.now(), user_type="loan
                     {'total_balance': total_balance + user_data_list[0]['paid_amount']})
             db.session.commit()
             user_d_next = db.engine.execute(table.select().where(
-                (table.c.loan_id == kwargs['transaction_id']) & (table.c.tx_status == 0)).order_by(table.c.no_of_installment))
+                (table.c.loan_id == kwargs['transaction_id']) & (table.c.tx_status == 0)).order_by(
+                table.c.no_of_installment))
             user_data_list_next = [{column: value for column, value in rowproxy.items()} for rowproxy in user_d_next]
             user_d_current = db.engine.execute(table.select().where(
                 (table.c.loan_id == kwargs['transaction_id']) & (table.c.no_of_installment == installment_num)))
-            user_data_list_current = [{column: value for column, value in rowproxy.items()} for rowproxy in user_d_current]
+            user_data_list_current = [{column: value for column, value in rowproxy.items()} for rowproxy in
+                                      user_d_current]
 
             amount_diff = kwargs['emi_amount'] - user_data_list_current[0]['paid_amount']
             db.engine.execute(table.update().where(
-                (table.c.loan_id == kwargs['transaction_id']) & (table.c.no_of_installment == user_data_list_next[0]['no_of_installment'])).values(
+                (table.c.loan_id == kwargs['transaction_id']) & (
+                            table.c.no_of_installment == user_data_list_next[0]['no_of_installment'])).values(
                 {'emi_amount': user_data_list_next[0]['emi_amount'] - amount_diff}))
+            if user_type == 'loan':
+                if loan_type == 'flat':
+                    if installment_num + 1 != HaftEntry.query.filter_by(
+                            transaction_id=kwargs['transaction_id']).first().no_installment:
+                        current_pending_interest = General.query.filter_by(
+                            username=session.get('username')).first().total_interest_pending
+                        current_earned_interest = General.query.filter_by(
+                            username=session.get('username')).first().total_interest_earned
+                        next_pending_interest = current_pending_interest + user_data_list_current[0]['paid_amount']
+                        General.query.filter_by(username=session.get('username')).update(
+                            {'total_interest_pending': next_pending_interest,
+                             'total_interest_earned': current_earned_interest - user_data_list_current[0][
+                                 'paid_amount']})
+                else:
+                    user_loan_details = HaftEntry.query.filter_by(transaction_id=kwargs['transaction_id']).first()
+                    each_month_interest = user_loan_details.interest / user_loan_details.no_installment
+                    current_pending_interest = General.query.filter_by(
+                        username=session.get('username')).first().total_interest_pending
+                    current_earned_interest = General.query.filter_by(
+                        username=session.get('username')).first().total_interest_earned
+                    next_pending_interest = current_pending_interest + each_month_interest
+                    General.query.filter_by(username=session.get('username')).update(
+                        {'total_interest_pending': next_pending_interest,
+                         'total_interest_earned': current_earned_interest - each_month_interest})
+                db.session.commit()
 
-        loan_type = get_loan_type_by_loan_id(loan_id=kwargs['transaction_id'])
         db.engine.execute(
             table.update().where(
                 (table.c.loan_id == kwargs['transaction_id']) & (table.c.no_of_installment == installment_num)).values(
@@ -226,7 +246,8 @@ def add_installment(installment_num=0, paid_date=datetime.now(), user_type="loan
             sum_sub_value_in_balance_amount(kwargs['paid_amount'], 'sub')
         if kwargs['emi_amount'] != kwargs['paid_amount']:
             user_d = db.engine.execute(table.select().where(
-                (table.c.loan_id == kwargs['transaction_id']) & (table.c.tx_status == 0)).order_by(table.c.no_of_installment))
+                (table.c.loan_id == kwargs['transaction_id']) & (table.c.tx_status == 0)).order_by(
+                table.c.no_of_installment))
             user_data_list = [{column: value for column, value in rowproxy.items()} for rowproxy in user_d]
             update_row_installment_no = user_data_list[0]['no_of_installment']
             if len(user_data_list):
@@ -236,10 +257,6 @@ def add_installment(installment_num=0, paid_date=datetime.now(), user_type="loan
                                 table.c.no_of_installment == update_row_installment_no)).values(
                         {'emi_amount': user_data_list[0]['emi_amount'] + (
                                 kwargs['emi_amount'] - kwargs['paid_amount'])}))
-            # if user_type == 'loan':
-            #     sum_sub_value_in_balance_amount(kwargs['paid_amount'], 'sum')
-            # else:
-            #     sum_sub_value_in_balance_amount(kwargs['paid_amount'], 'sub')
 
         user_data_tx_status = db.engine.execute(table.select().where(
             (table.c.loan_id == kwargs['transaction_id']) & (table.c.tx_status == 0)))
@@ -253,20 +270,35 @@ def add_installment(installment_num=0, paid_date=datetime.now(), user_type="loan
             db.session.commit()
         if user_type == 'loan':
             if loan_type == 'flat':
-                if installment_num + 1 != HaftEntry.query.filter_by(transaction_id=kwargs['transaction_id']).first().no_installment:
+                if installment_num + 1 != HaftEntry.query.filter_by(
+                        transaction_id=kwargs['transaction_id']).first().no_installment:
                     current_pending_interest = General.query.filter_by(
                         username=session.get('username')).first().total_interest_pending
+                    current_earned_interest = General.query.filter_by(
+                        username=session.get('username')).first().total_interest_earned
                     next_pending_interest = current_pending_interest - kwargs['paid_amount']
                     General.query.filter_by(username=session.get('username')).update(
-                        {'total_interest_pending': next_pending_interest, 'total_interest_earned': kwargs['paid_amount']})
+                        {'total_interest_pending': next_pending_interest,
+                         'total_interest_earned': current_earned_interest + kwargs['paid_amount']})
             else:
                 user_loan_details = HaftEntry.query.filter_by(transaction_id=kwargs['transaction_id']).first()
                 each_month_interest = user_loan_details.interest / user_loan_details.no_installment
                 current_pending_interest = General.query.filter_by(
                     username=session.get('username')).first().total_interest_pending
+                current_earned_interest = General.query.filter_by(
+                    username=session.get('username')).first().total_interest_earned
                 next_pending_interest = current_pending_interest - each_month_interest
                 General.query.filter_by(username=session.get('username')).update(
-                    {'total_interest_pending': next_pending_interest, 'total_interest_earned': each_month_interest})
+                    {'total_interest_pending': next_pending_interest,
+                     'total_interest_earned': current_earned_interest + min(kwargs['paid_amount'], each_month_interest)})
+
+            db.session.commit()
+            total_balance = General.query.filter_by(username=session.get('username')).first().total_balance
+            tx_hist_query = TransactionHistory(party_id=kwargs['id'], loan_id=kwargs['transaction_id'],
+                                               account_type='loan emi',
+                                               amount=kwargs['paid_amount'],
+                                               status='cr', total_balance=total_balance)
+            db.session.add(tx_hist_query)
             db.session.commit()
 
         return {"code": 200, "status": "installment updated successfully"}
@@ -289,12 +321,17 @@ def get_user_data(id=None, loan_type="hafta", user_type='loan'):
                 user_d = db.engine.execute(
                     user_table.select().where(user_table.c.loan_id == loan).order_by(user_table.c.tx_status.desc()))
                 user_d_list = [{column: value for column, value in rowproxy.items()} for rowproxy in user_d]
+                if user_type != 'loan':
+                    for val in user_d_list:
+                        val['remark'] = entry_table.query.filter_by(id=id, transaction_id=loan).first().remark
                 user_data += user_d_list
             user_data = sorted(user_data, key=itemgetter('tx_status'))
+
             print(user_data)
             return user_data
     else:
         return {"code": 500, "status": "user id is not available"}
+
 
 def get_user_id_from_loan_id(loan_id, loan_type='hafta'):
     if loan_type == "hafta":
@@ -302,6 +339,7 @@ def get_user_id_from_loan_id(loan_id, loan_type='hafta'):
     else:
         entry_table = AccountEntry
     return entry_table.query.filter_by(transaction_id=loan_id).first().id
+
 
 def get_user_data_by_loan_id(loan_id=None, loan_type="hafta", user_type='loan'):
     if id is not None:
@@ -536,9 +574,13 @@ def get_index_form_data_total():
     account_customer = len(list(active_customer))
     active_customer = db.session.query(Customer).filter(Customer.customer_type_crdr == 1)
     debit_accounts = len(list(active_customer))
-    total_balance = "{:.2f}".format(General.query.filter_by(username=session.get('username')).first().total_balance)
+    total_balance_output = General.query.filter_by(username=session.get('username')).first()
+    total_balance = "{:.2f}".format(total_balance_output.total_balance)
+    total_interest_pending = "{:.2f}".format(total_balance_output.total_interest_pending)
+    total_interest_earned = "{:.2f}".format(total_balance_output.total_interest_earned)
     return {'total_customer': total_customer, 'loan_customer': loan_customer, 'account_customer': account_customer,
-            'debit_accounts': debit_accounts, 'total_balance': total_balance}
+            'debit_accounts': debit_accounts, 'total_balance': total_balance, 'total_interest_pending':
+                total_interest_pending, 'total_interest_earned': total_interest_earned}
 
 
 def finance_user_details():
@@ -565,17 +607,19 @@ def get_total_pending_amount():
     for loan in total_active_loans:
         table = META_DATA.tables[str(loan.id)]
         pending_transactions = db.engine.execute(table.select().where(table.c.tx_status == 0))
-        pending_transactions_list = [{column: value for column, value in rowproxy.items()} for rowproxy in pending_transactions]
+        pending_transactions_list = [{column: value for column, value in rowproxy.items()} for rowproxy in
+                                     pending_transactions]
         for transaction in pending_transactions_list:
             total_pending_amount += transaction['emi_amount']
 
-
     return total_pending_amount
+
 
 def get_guarantor_details_by_loan_id(user_id, loan_id):
     data = convert_table_to_dict_data(HaftEntry.query.filter_by(id=user_id, transaction_id=loan_id).first())
 
     return data
+
 
 def update_guarantor_details(user_id, loan_id, data_query):
     try:
@@ -585,3 +629,60 @@ def update_guarantor_details(user_id, loan_id, data_query):
     except Exception as e:
         print(e)
         return {'code': 500, 'status': 'server side error occured in guarantor update'}
+
+
+def get_daily_report_by_date(date):
+    day_transactions = TransactionHistory.query.filter_by(tx_date=date).all()
+    for i, d in enumerate(day_transactions):
+        name = Customer.query.filter_by(id=d.party_id).first().user_name
+        day_transactions[i] = convert_table_to_dict_data(d)
+        day_transactions[i]['name'] = name
+    day_transactions = pd.DataFrame.from_dict(day_transactions)
+    return day_transactions
+
+
+def get_user_pending_amount(user_id, account_type='loan'):
+    entry_table = META_DATA.tables[str(user_id)]
+    pending_entries = db.engine.execute(entry_table.select().where(
+        (entry_table.c.user_id == user_id) & (entry_table.c.tx_status == 0)))
+    pending_entries = [{column: value for column, value in rowproxy.items()} for rowproxy in pending_entries]
+    total_amount = 0
+    for val in pending_entries:
+        total_amount += val['emi_amount']
+    if account_type != 'account':
+        total_amount *= -1
+    return total_amount
+
+
+def get_general_report():
+    general_data = General.query.filter_by(username=session.get('username')).first()
+    all_user_data = {}
+    hafta_entry_users = HaftEntry.query.filter_by(loan_status=0).all()
+    for user_data in hafta_entry_users:
+        all_user_data[Customer.query.filter_by(id=user_data.id).first().user_name] = get_user_pending_amount(user_data.id)
+
+    hafta_entry_users = AccountEntry.query.filter_by(loan_status=0).all()
+    for user_data in hafta_entry_users:
+        all_user_data[Customer.query.filter_by(id=user_data.id).first().user_name] = get_user_pending_amount(
+            user_data.id, account_type='account')
+
+    customer_entries = Customer.query.filter_by(customer_type_crdr=1).all()
+    for entry in customer_entries:
+        customer_data = CrDrEntry.query.filter_by(id=entry.id).all()
+        amount = 0
+        for data in customer_data:
+            amount -= data.base_amount
+        all_user_data[Customer.query.filter_by(id=entry.id).first().user_name] = amount
+
+    df_dict = {'name': list(all_user_data.keys()), 'value': list(all_user_data.values())}
+    df_dict['name'].append('Total')
+    df_dict['value'].append(np.array(df_dict['value']).sum())
+
+    user_data_df = pd.DataFrame.from_dict(df_dict)
+    general_table_dict = {'name': ['Total Available Balance', 'Total Pending Balance', 'Total Earned Interest',
+                                   'Total Pending Interest', 'Total Interest'],
+                          'value': [general_data.total_balance, get_total_pending_amount(),
+                                    general_data.total_interest_earned, general_data.total_interest_pending,
+                                    general_data.total_interest_pending+general_data.total_interest_earned]}
+    return {'general': pd.DataFrame.from_dict(general_table_dict).to_html(index=False, header=False), 'all_transaction':
+        user_data_df.to_html(index=False, header=False)}
