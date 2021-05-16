@@ -84,7 +84,7 @@ $(document).ready(function(){
         <div class="col-md-2"><h4>Phone: {{data.data.0.user_phone}}</h4></div>
         <div class="col-md-2"><h4>Address: {{data.data.0.user_address}}</h4></div>
         <div class="col-md-2"><h4>City: {{data.data.0.user_city}}</h4></div>
-        <div class="col-md-3"><input type="button" class="new_loan btn btn-primary" value="New Loan" user_id="{{data.data[0].user_id}}"></div>
+        <div class="col-md-3"><input type="button" class="new_loan btn btn-primary" value="New Loan" user_id="{{data.user_id}}"></div>
         {% endif %}
     </div> <br> <hr>
     <div class="row">
@@ -100,7 +100,7 @@ $(document).ready(function(){
             </select>
             </div>
 
-            <div class="col-md-3"><input type="button" class="extend_hafta btn btn-primary" value="Extend Hafta" user_id="{{data.data[0].user_id}}"  {{"disable" if data.data[0].loan_type != "flat"}}></div>
+            <div class="col-md-3"><input type="button" class="extend_hafta btn btn-primary" value="Extend Hafta" user_id="{{data.user_id}}"  {{"disable" if data.data[0].loan_type != "flat"}}></div>
         </div>
     </div>
 
@@ -125,7 +125,7 @@ $(document).ready(function(){
                 <td>{{d.loan_id}}</td>
                 <td>{{d.no_of_installment}}</td>
                 <td>{{d.emi_amount}}</td>
-                <td>{{d.date_to_pay.strftime("%d/%m/%Y")}}</td>
+                <td>{{d.date_to_pay.strftime("%d/%m/%Y") if d.date_to_pay != None else ''}}</td>
                 <td><input type="Date" id="paid_date_{{d.loan_id}}_{{d.no_of_installment}}" value="{{'' if d.tx_status in [0, None] else d.paid_date}}" readonly></td>
                 <td>{{d.paid_amount}}</td>
 

@@ -47,6 +47,31 @@ def create_user_table(table_name):
         return {'code': 500, 'status': 'error in table creation'}
 
 
+def create_account_user_table(table_name):
+    TABLE_SPEC = [
+        (('id', db.Integer), {'primary_key': True, 'autoincrement': True}),
+        (('user_id', db.Integer, ForeignKey(Customer.id)), {}),
+        (('tx_id', db.Integer, ForeignKey(AccountEntry.transaction_id)), {}),
+        (('amount', db.Float), {}),
+        (('date', db.DateTime), {}),
+        (('tx_type', db.Integer), {}),
+        (('remark', db.String(500)), {})
+        ]
+    try:
+        columns = []
+        for args, kwargs in TABLE_SPEC:
+            columns.append(db.Column(*args, **kwargs))
+        table = Table(table_name, MetaData(), *columns)
+        table_creation_sql = CreateTable(table)
+        db.session.execute(table_creation_sql)
+        db.session.commit()
+
+        return {'code': 200, 'status': 'table created successfully'}
+    except Exception as e:
+        print(e)
+        return {'code': 500, 'status': 'error in table creation'}
+
+
 class Customer(db.Model):
     __tablename__ = 'customer'
     __table_args__ = {'extend_existing': True}

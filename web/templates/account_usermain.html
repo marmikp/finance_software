@@ -317,15 +317,6 @@ body, html {
                                             <input class="form-control" type="text" id="city" placeholder="city *" name="city" value="{{data.user_city if 'user_city' in data.keys() else ''}}">
                                         </div>
                                         <div class="form-group input-container">
-                                          <i class="fa fa-key icon"></i>
-                                            <select class="input-field" id="loan_type" name="loan_type">
-                                                <option value="flat">Flat</option>
-                                                <option value="hafta">Hafta</option>
-                                            </select>
-                                        </div>
-
-
-                                        <div class="form-group input-container">
                                           <i class="fas fa-pencil-alt icon"></i>
                                             <textarea class="form-control" name="remark" placeholder="Remark" id="remark" rows="1" cols="88"></textarea>
                                         </div>
@@ -337,31 +328,13 @@ body, html {
                                           <i class="fa fa-money icon"></i>
                                             <input class="form-control" type="text" id="base_amount" placeholder="BaseAmount *" name="base_amount" value="">
                                         </div>
-                                        <div class="form-group input-container">
-                                            <i class="fa fa-money icon"></i>
-                                              <input class="form-control" type="text" id="interest" placeholder="Interest *" name="interest" value="">
-                                        </div>
 
-                                        <div class="form-group input-container">
-                                            <i class="fa fa-money icon"></i>
-                                              <input class="form-control" type="text" id="noi" placeholder="No of EMI *" name="noi" value="">
-                                        </div>
 
                                         <div class="form-group input-container">
                                             <i class="fa fa-calendar icon"></i>
                                               <input class="form-control" type="date" id="startdate" placeholder="Date *" name="startdate" value="{{data.today}}">
                                         </div>
 
-                                        <div class="form-group input-container">
-                                            <i class="fa fa-money icon"></i>
-                                              <input class="form-control"  type="text" id="period" placeholder="Period *" name="period" value="monthly">
-                                        </div>
-
-                                        <div class="form-group input-container">
-
-                                           <i class="fa fa-phone icon"></i>
-                                            <input class="input-field" type="text" id="paid_amount" placeholder="paid_amount *" name="paid_amount" value="">
-                                        </div>
 
 
                                         <input type="submit" class="btnRegister"  value="Register"/>
@@ -427,26 +400,16 @@ $(document).ready(function(){
     var address = document.getElementById('address').value;
     var city = document.getElementById('city').value;
     var phone = document.getElementById('phone').value;
-
-    var loan_type = document.getElementById('loan_type').value;
-
     var remark = document.getElementById('remark').value;
     var base_amount = document.getElementById('base_amount').value;
-    var interest = document.getElementById('interest').value;
-
-    var noi = document.getElementById('noi').value;
     var startdate = document.getElementById('startdate').value;
-    var period = document.getElementById('period').value;
-    var paid_amount = document.getElementById('paid_amount').value;
 
 
 
 
 
     $.post('/api/account/new_account_entry', {'id': id, 'name': name, 'alias': alias, 'address': address, 'phone': phone,
-                                        'city': city, 'loan_type': loan_type, 'remark': remark, 'base_amount': base_amount,
-                                        'interest': interest, 'noi': noi, 'startdate': startdate,
-                                        'period': period, 'paid_amount': paid_amount},
+                                        'city': city, 'remark': remark, 'base_amount': base_amount,'startdate': startdate},
             function(returnedData){
             console.log(returnedData);
                 if (returnedData.code == 200){

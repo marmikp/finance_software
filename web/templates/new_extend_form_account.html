@@ -82,29 +82,31 @@ $(document).ready(function(){
         <div class="col-md-2"><h4>Phone: {{data.data.0.user_phone}}</h4></div>
         <div class="col-md-2"><h4>Address: {{data.data.0.user_address}}</h4></div>
         <div class="col-md-2"><h4>City: {{data.data.0.user_city}}</h4></div>
-        <div class="col-md-3"><input type="button" class="new_loan btn btn-primary" value="New Loan" user_id="{{data.data[0].user_id}}"></div>
         {% endif %}
     </div> <br>
     <div class="row">
-
-            <div class="col-md-3">Hafta Amount<input type="text" value="{{data.data[0].emi_amount}}" placeholder="Emi Amount" id="extend_amount"></div>
-            <div class="col-md-2">No Of Months<input type="text" value="0" placeholder="Extend Months" id="extend_month"></div>
-            <div class="col-md-2">
-                Loan Id<br>
-              <select id="extend_loan_id" name=loan_id_extend>
-                {% for d in data.loan_id_list %}
-                  <option value="{{d}}">{{d}}</option>
-                {% endfor %}
-            </select>
-            </div>
-
-            <div class="col-md-2">
-            <h1></h1>
-            </div>
-
-            <div class="col-md-3"><input type="button" class="extend_hafta btn btn-primary" value="Extend Hafta" user_id="{{data.data[0].user_id}}"  {{"disable" if data.data[0].loan_type != "flat"}}></div>
-
+        <div class="col-md-3" style="color: red;">Pending Amount : {{data.data.0.pending_amount}}</div>
     </div>
+<!--    <div class="row">-->
+
+<!--            <div class="col-md-3">Hafta Amount<input type="text" value="{{data.data[0].emi_amount}}" placeholder="Emi Amount" id="extend_amount"></div>-->
+<!--            <div class="col-md-2">No Of Months<input type="text" value="0" placeholder="Extend Months" id="extend_month"></div>-->
+<!--            <div class="col-md-2">-->
+<!--                Loan Id<br>-->
+<!--              <select id="extend_loan_id" name=loan_id_extend>-->
+<!--                {% for d in data.loan_id_list %}-->
+<!--                  <option value="{{d}}">{{d}}</option>-->
+<!--                {% endfor %}-->
+<!--            </select>-->
+<!--            </div>-->
+
+<!--            <div class="col-md-2">-->
+<!--            <h1></h1>-->
+<!--            </div>-->
+
+<!--            <div class="col-md-3"><input type="button" class="extend_hafta btn btn-primary" value="Extend Hafta" user_id="{{data.data[0].user_id}}"  {{"disable" if data.data[0].loan_type != "flat"}}></div>-->
+
+<!--    </div>-->
 
 
 </div>
@@ -112,47 +114,34 @@ $(document).ready(function(){
 <table id="example" class="table table-bordered display-table" style="width:100%; padding-top: 50px;">
         <thead>
             <tr style="background-color:black; color:white;">
-                <th><b>Loan ID</b></th>
-                <th><b>Installment No</b></th>
-                <th><b>EMI Amount</b></th>
-                <th><b>Hafta Date</b></th>
-                <th><b>Paid Date</b></th>
-                <th><b>Paid Amount</b></th>
-                <th><b>Status</b></th>
-                <th><b>Installment Amount (Editable)</b></th>
+                <th><b>ID</b></th>
+                <th><b>Loan No</b></th>
+                <th><b>Amount</b></th>
+                <th><b>Date</b></th>
+                <th><b>Tx Type</b></th>
+                <th><b>Remark</b></th>
             </tr>
         </thead>
         <tbody>
         {% for d in data.data %}
             <tr>
-                <td>{{d.loan_id}}</td>
-                <td>{{d.no_of_installment}}</td>
-                <td>{{d.emi_amount}}</td>
-                <td>{{d.date_to_pay.strftime("%d/%m/%Y")}}</td>
-                <td><input type="Date" id="paid_date_{{d.loan_id}}_{{d.no_of_installment}}" value="{{d.today if d.tx_status in [0, None] else d.paid_date}}" {{"disabled" if d.tx_status == 1}}></td>
-                <td>{{d.paid_amount}}</td>
-                <td style="color:{{'green' if d.tx_status == 1 else 'red' if d.tx_status in [0, None] and d.date_to_pay < data.date_today else 'black'}}">{{"Pending" if d.tx_status in [0, None] else "Paid"}}</td>
-                <td><input type="text" id="paid_amount_{{d.loan_id}}_{{d.no_of_installment}}" value="{{d.emi_amount if d.tx_status in [0, None] else d.paid_amount}}" {{"disabled" if d.tx_status == 1}}></td>
-<!--                <td>-->
-<!--                    <div class="row">-->
-<!--                        <div class="col-md-4">-->
-<!--                            <input type="button" class="extend btn btn-primary" value="Extend" user_id="{{d.user_id}}"-->
-<!--                                   loan_id="{{d.loan_id}}" {{"disabled" if d.tx_status == 1 or d.loan_type != "flat"}}>-->
-<!--                        </div>-->
-<!--                    </div>-->
-<!--                </td>-->
+                <td>{{d.id}}</td>
+                <td>{{d.tx_id}}</td>
+                <td>{{d.amount}}</td>
+                <td>{{d.date.date()}}</td>
+                <td style="color: {{'red' if d.tx_type == 'dr' else 'green'}}">{{d.tx_type}}</td>
+                <td>{{d.remark}}</td>
             </tr>
         {% endfor %}
         </tbody>
         <tfoot>
             <tr>
-                <th>Loan ID</th>
-                <th>Installment No</th>
-                <th>EMI Amount</th>
-                <th>Hafta Date</th>
-                <th>Paid Date</th>
-                <th>Paid Amount</th>
-                <th>Status</th>
+                <th><b>ID</b></th>
+                <th><b>Loan No</b></th>
+                <th><b>Amount</b></th>
+                <th><b>Date</b></th>
+                <th><b>Tx Type</b></th>
+                <th><b>Remark</b></th>
             </tr>
         </tfoot>
     </table>

@@ -33,29 +33,32 @@ def create_entry_new_hafta(user_type="loan", **kwargs):
         total_balance = db_utils.sum_sub_value_in_balance_amount(query_data['base_amount'], 'sub')
         Customer.query.filter_by(id=int(kwargs['id'])).update({'customer_type_crdr': 1})
         db.session.commit()
-        tx_hist_query = TransactionHistory(party_id=query_data['id'], loan_id=loan_id, account_type='debit', amount=query_data['base_amount'],
-                           status='dr', total_balance=total_balance)
+        tx_hist_query = TransactionHistory(party_id=query_data['id'], loan_id=loan_id, account_type='debit',
+                                           amount=query_data['base_amount'],
+                                           status='dr', total_balance=total_balance)
         db.session.add(tx_hist_query)
         db.session.commit()
         resp = {'code': 200, 'status': 'entry for debit account created'}
     else:
         query_data['id'] = int(kwargs['id'])
         query_data['base_amount'] = float(kwargs['base_amount'])
-        query_data['interest'] = float(kwargs['interest'])
+        query_data['interest'] = float(kwargs['interest']) if 'interest' in kwargs.keys() else 0
         query_data['total_amount'] = query_data['base_amount'] + query_data['interest']
-        query_data['no_installment'] = int(kwargs['noi'])
+        query_data['no_installment'] = int(kwargs['noi']) if 'noi' in kwargs.keys() else 0
         query_data['start_date'] = datetime.strptime(str(kwargs['startdate']), "%Y-%m-%d")
-        query_data['installment_period'] = kwargs['period']
-        query_data['loan_type'] = kwargs['loan_type']
+        query_data['installment_period'] = kwargs['period'] if 'period' in kwargs.keys() else 'monthly'
+        query_data['loan_type'] = kwargs['loan_type'] if 'loan_type' in kwargs.keys() else 'flat'
         query_data['last_installment_date'] = query_data['start_date'] + relativedelta(
             months=query_data['no_installment'])
         if query_data['loan_type'] == 'flat':
             total_interest = query_data['interest'] * query_data['no_installment']
         else:
             total_interest = query_data['interest']
-        current_pending_interest = General.query.filter_by(username=session.get('username')).first().total_interest_pending
+        current_pending_interest = General.query.filter_by(
+            username=session.get('username')).first().total_interest_pending
         next_pending_interest = current_pending_interest + total_interest
-        General.query.filter_by(username=session.get('username')).update({'total_interest_pending': next_pending_interest})
+        General.query.filter_by(username=session.get('username')).update(
+            {'total_interest_pending': next_pending_interest})
         db.session.commit()
         if user_type == "loan":
             query_data['guarantor_1_name'] = kwargs['guarantor_1_name']
@@ -70,25 +73,29 @@ def create_entry_new_hafta(user_type="loan", **kwargs):
         if resp['code'] == 200:
             query_data['transaction_id'] = resp['transaction_id']
             # user-table will be created in above method
+
             resp = add_user_track_data(user_type=user_type, **query_data)
-            query_data['emi_amount'] = resp['emi_amount']
-            if resp['code'] == 200 and query_data['loan_type'] == 'flat':
-                query_data['paid_amount'] = float(kwargs['paid_amount']) if kwargs['paid_amount'] != '' else 1000
-                resp = db_utils.add_installment(user_type=user_type, **query_data)
-            if user_type == "loan":
-                total_balance = db_utils.sum_sub_value_in_balance_amount(query_data['base_amount'], 'sub')
-                tx_hist_query = TransactionHistory(party_id=query_data['id'], loan_id=query_data['transaction_id'], account_type='loan',
-                                                   amount=query_data['base_amount'],
-                                                   status='dr', total_balance=total_balance)
-                db.session.add(tx_hist_query)
-                db.session.commit()
-            else:
+            if user_type == 'loan':
+                query_data['emi_amount'] = resp['emi_amount']
+                if resp['code'] == 200 and query_data['loan_type'] == 'flat':
+                    query_data['paid_amount'] = float(kwargs['paid_amount']) if kwargs['paid_amount'] != '' else 1000
+                    resp = db_utils.add_installment(user_type=user_type, **query_data)
+                if user_type == "loan":
+                    total_balance = db_utils.sum_sub_value_in_balance_amount(query_data['base_amount'], 'sub')
+                    tx_hist_query = TransactionHistory(party_id=query_data['id'], loan_id=query_data['transaction_id'],
+                                                       account_type='loan',
+                                                       amount=query_data['base_amount'],
+                                                       status='dr', total_balance=total_balance)
+                    db.session.add(tx_hist_query)
+                    db.session.commit()
+            if user_type == 'account':
                 total_balance = db_utils.sum_sub_value_in_balance_amount(query_data['base_amount'], 'sum')
                 tx_hist_query = TransactionHistory(party_id=query_data['id'], loan_id=query_data['transaction_id'],
                                                    account_type='account',
                                                    amount=query_data['base_amount'],
                                                    status='cr', total_balance=total_balance)
                 db.session.add(tx_hist_query)
+                db.session.commit()
     return resp
 
 
@@ -98,18 +105,22 @@ def add_user_track_data(user_type="loan", **kwargs):
     else:
         emi_amount = kwargs['interest']
     try:
-        for installment in range(0, kwargs['no_installment']):
-            db_utils.add_hafta_track_entry(
-                **{'user_id': kwargs['id'], 'loan_id': kwargs['transaction_id'], 'emi_amount': emi_amount,
-                   'date_to_pay': kwargs['start_date'] + relativedelta(
-                       months=installment if kwargs['loan_type'] == 'flat' else installment + 1),
-                   'no_of_installment': installment, "tx_status": 0})
-        if kwargs['loan_type'] == 'flat':
-            db_utils.add_hafta_track_entry(
-                **{'user_id': kwargs['id'], 'loan_id': kwargs['transaction_id'], 'emi_amount': kwargs['base_amount'],
-                   'date_to_pay': kwargs['start_date'] + relativedelta(
-                       months=installment + 1), 'tx_status': 0,
-                   'no_of_installment': installment + 1})
+        if user_type == 'account':
+            db_utils.add_hafta_track_entry(**{'user_id': kwargs['id'], 'tx_id': kwargs['transaction_id'],
+                                              'amount': kwargs['base_amount'], 'date': kwargs['start_date'], 'tx_type': 'cr'})
+        else:
+            for installment in range(0, kwargs['no_installment']):
+                db_utils.add_hafta_track_entry(
+                    **{'user_id': kwargs['id'], 'loan_id': kwargs['transaction_id'], 'emi_amount': emi_amount,
+                       'date_to_pay': kwargs['start_date'] + relativedelta(
+                           months=installment if kwargs['loan_type'] == 'flat' else installment + 1),
+                       'no_of_installment': installment, "tx_status": 0})
+            if kwargs['loan_type'] == 'flat':
+                db_utils.add_hafta_track_entry(
+                    **{'user_id': kwargs['id'], 'loan_id': kwargs['transaction_id'], 'emi_amount': kwargs['base_amount'],
+                       'date_to_pay': kwargs['start_date'] + relativedelta(
+                           months=installment + 1), 'tx_status': 0,
+                       'no_of_installment': installment + 1})
         return {"code": 200, "status": "pending", "emi_amount": emi_amount}
     except Exception as e:
         print(e)
@@ -138,8 +149,12 @@ def get_loan_entries_by_user_id(user_id, user_type="loan"):
     return data
 
 
-def get_user_details(user_id, user_type='loan', account_type='hafta'):
 
+def get_account_user_details(user_id):
+    data = db_utils.get_user_data(user_id, user_type='account')
+    return data
+
+def get_user_details(user_id, user_type='loan', account_type='hafta'):
     if account_type == 'debit':
         data = CrDrEntry.query.filter_by(id=user_id).order_by(CrDrEntry.paid_date.desc()).all()
         for i, d in enumerate(data):
@@ -157,15 +172,22 @@ def get_user_details(user_id, user_type='loan', account_type='hafta'):
         data = db_utils.get_user_data(user_id, user_type=user_type)
         for val in data:
             val['today'] = datetime.now().date()
-            val['paid_date'] = val['paid_date'].date() if val['paid_date'] is not None else None
-            user_data = db_utils.get_user_info_by_id(val['user_id'])
-            val['loan_type'] = db_utils.get_loan_type_by_loan_id(val['user_id'], val['loan_id'], user_type=user_type)
+            user_data = db_utils.get_user_info_by_id(user_id)
+
+            try:
+                # user_data = db_utils.get_user_info_by_id(val['user_id'])
+                val['loan_type'] = db_utils.get_loan_type_by_loan_id(val['user_id'], val['loan_id'],
+                                                                     user_type=user_type)
+                val['date_to_pay'] = val['date_to_pay'].date()
+                val['paid_date'] = val['paid_date'].date() if val['paid_date'] is not None else None
+            except Exception as e:
+                val['date_to_pay'] = None
+                pass
             val['user_alias'] = user_data[0].user_alias
             val['user_name'] = user_data[0].user_name
             val['user_phone'] = user_data[0].user_phone
             val['user_address'] = user_data[0].user_address
             val['user_city'] = user_data[0].user_city
-            val['date_to_pay'] = val['date_to_pay'].date()
 
         if len(data) == 0:
             val = dict()
@@ -205,9 +227,11 @@ def get_report_of_pending_installments_by_date(date, user_type='loan'):
                 user_data_dict[user_data['id']]['loans'] = user_data_pending_installments
                 user_info = convert_table_to_dict_data(Customer.query.filter_by(id=user_data['id']).first())
                 for loan_id, loan_pending_installment_details in user_data_pending_installments.items():
-                    row = pd.Series([loan_id, user_info['user_name'], loan_pending_installment_details[2].date().strftime("%d/%m/%Y"),
-                                     loan_pending_installment_details[0], user_info['user_phone'], user_data['guarantor_1_name'], user_data['guarantor_1_phone'],
-                                     loan_pending_installment_details[3]],  columns)
+                    row = pd.Series([loan_id, user_info['user_name'],
+                                     loan_pending_installment_details[2].date().strftime("%d/%m/%Y"),
+                                     loan_pending_installment_details[0], user_info['user_phone'],
+                                     user_data['guarantor_1_name'], user_data['guarantor_1_phone'],
+                                     loan_pending_installment_details[3]], columns)
                     df = df.append(row, ignore_index=True)
 
     return df
@@ -224,6 +248,7 @@ def get_user_entries_between_date(user_id, from_date, to_date, user_type='loan')
         df = df.append(row, ignore_index=True)
     pd.set_option('display.max_columns', None)
     return df
+
 
 def get_user_data_by_loan_id(loan_id):
     try:

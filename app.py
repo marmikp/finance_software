@@ -1,5 +1,6 @@
 import datetime
 import hashlib
+import json
 import os
 import subprocess
 import sys
@@ -118,7 +119,7 @@ if os.path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
             data_query['user_phone'] = data['phone']
             data_query['user_city'] = data['city']
             if 'debit' not in data.keys():
-                data_query['user_phone_2'] = data['phone_2']
+                data_query['user_phone_2'] = data['phone_2'] if 'phone_2' in data.keys() else 0
             db_resp = db_utils.add_new_customer(**data_query)
             return db_resp
 
@@ -127,7 +128,7 @@ if os.path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
         @app.route('/api/hafta', methods=['GET', 'POST'])
         def hafta():
             if session.get('username'):
-                data = db_utils.get_users_details()
+                data = db_utils.get_users_details(all_entries=True)
                 return render_template('sidebar.html',
                                        data=Markup(render_template('templates/user_form.html', data=data)))
             else:
@@ -196,13 +197,14 @@ if os.path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
                     resp = add_new_customer()
             entry_added_flag = False
             try:
-                if resp['code'] == 200:
-                    if 'debit' in list(data.keys()):
-                        resp = create_entry_new_hafta(**data, user_type='debit')
-                    else:
-                        resp = create_entry_new_hafta(**data)
+                if data['base_amount'].isnumeric():
                     if resp['code'] == 200:
-                        entry_added_flag = True
+                        if 'debit' in list(data.keys()):
+                            resp = create_entry_new_hafta(**data, user_type='debit')
+                        else:
+                            resp = create_entry_new_hafta(**data)
+                        if resp['code'] == 200:
+                            entry_added_flag = True
             except Exception as e:
                 print(e)
 
@@ -215,16 +217,23 @@ if os.path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
         @app.route('/api/hafta/extend_hafta_dialog', methods=['POST', 'GET'])
         def extend_hafta_dialog():
             if request.method == "POST":
-                data = src.utils.get_user_details(request.form['user_id'])
+                user_id = request.form['user_id']
+                data = src.utils.get_user_details(user_id)
+
             else:
-                data = src.utils.get_user_details(request.args['user_id'])
+                user_id = request.args['user_id']
+                data = src.utils.get_user_details(user_id)
             loan_id_list = []
             for d in data:
-                if d['loan_id'] in loan_id_list:
-                    continue
-                else:
-                    loan_id_list.append(d['loan_id'])
-            data_rander = {'data': data, 'loan_id_list': loan_id_list, 'date_today': datetime.datetime.now().date()}
+                try:
+                    if d['loan_id'] in loan_id_list:
+                        continue
+                    else:
+                        loan_id_list.append(d['loan_id'])
+                except Exception as e:
+                    pass
+            data_rander = {'data': data, 'user_id': int(user_id), 'loan_id_list': loan_id_list,
+                           'date_today': datetime.datetime.now().date()}
             return render_template('templates/new_extend_form.html', data=data_rander)
 
 
@@ -364,6 +373,10 @@ if os.path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
 
 
         ############### ACCOUNT ###############
+
+        account_type = 'new'
+
+
         @app.route('/api/account', methods=['POST', 'GET'])
         def account():
             if session.get('username'):
@@ -433,7 +446,7 @@ if os.path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
                 # TODO : code to close current dialog and open login screen in mainwindow
                 return "logged out"
             max_id = db_utils.get_max_customer_id(id)
-            data = {'max_id': max_id}
+            data = {'max_id': max_id, 'today': datetime.datetime.now().date()}
             return render_template("templates/account_usermain.html", data=data)
 
 
@@ -489,13 +502,13 @@ if os.path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
             else:
                 data = src.utils.get_user_details(request.args['user_id'], user_type='account')
             loan_id_list = []
-            for d in data:
-                if d['loan_id'] is None:
-                    continue
-                if d['loan_id'] in loan_id_list:
-                    continue
-                else:
-                    loan_id_list.append(d['loan_id'])
+            # for d in data:
+            #     if d['loan_id'] is None:
+            #         continue
+            #     if d['loan_id'] in loan_id_list:
+            #         continue
+            #     else:
+            #         loan_id_list.append(d['loan_id'])
             data_rander = {'data': data, 'loan_id_list': loan_id_list, 'date_today': datetime.datetime.now().date()}
             return render_template('templates/new_extend_form_account.html', data=data_rander)
 
@@ -526,6 +539,16 @@ if os.path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
             data_ret['data'] = data
             data_ret['date_today'] = datetime.datetime.now().date()
             return render_template('templates/user_add_collection_account.html', data=data_ret)
+
+
+        @app.route('/api/account/add_collection_new', methods=['POST', 'GET'])
+        def add_collection_new():
+            if request.method == 'POST':
+                data = request.form.to_dict()
+            else:
+                data = request.args.to_dict()
+
+            return db_utils.add_account_entry(data)
 
 
         @app.route('/api/account/add_collection', methods=['POST', 'GET'])
@@ -567,12 +590,39 @@ if os.path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
             return resp
 
 
+        @app.route('/api/account/credit_debit_amount', methods=['POST', 'GET'])
+        def credit_debit_amount():
+            if request.method == 'POST':
+                data = request.form.to_dict()
+            else:
+                data = request.args.to_dict()
+
+            lenar_user_user_id = data['lenar'].split(' - ')[0]
+            denar_user_user_id = data['denar'].split(' - ')[0]
+            lenar_user_user_id = int(lenar_user_user_id) if lenar_user_user_id.isnumeric() else lenar_user_user_id
+            denar_user_user_id = int(denar_user_user_id) if denar_user_user_id.isnumeric() else denar_user_user_id
+            amount = float(data['amount'])
+            remark = data['remark']
+            if lenar_user_user_id != 'CASH' and denar_user_user_id != 'CASH':
+                return {'code': 500, 'status': 'Lenar or Denar should be CASH'}
+            elif lenar_user_user_id == 'CASH' and denar_user_user_id == 'CASH':
+                return {'code': 500, 'status': 'Lenar and Denar both sould not be CASH'}
+            else:
+                try:
+                    return db_utils.add_account_entry_by_lenar_denar(lenar_user_user_id, denar_user_user_id, amount, remark)
+                except Exception as e:
+                    print('credit_debit_amount', e)
+                    return {'code': 500, 'status': 'something occured wrong'}
+
         ######### Debit Accounts ###################################################################################
         @app.route('/api/debit_account', methods=['GET', 'POST'])
         def debit_accounts():
-            data = db_utils.get_users_details(user_type='debit')
+            data = db_utils.get_users_details(all_entries=True)
+            user_list = ['CASH']
+            for d in data:
+                user_list.append(str(d['id'])+" - "+str(d['user_name']))
             return render_template('sidebar.html',
-                                   data=Markup(render_template('templates/user_form_debit.html', data=data)))
+                                   data=Markup(render_template('templates/credit_debit_page.html', data=user_list)))
 
 
         @app.route('/api/debit_account/add_new', methods=['post', 'get'])
@@ -744,8 +794,7 @@ if os.path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
             general_reports = db_utils.get_general_report()
             return render_template("templates/general_report_page.html",
                                    data={'table1': Markup(general_reports['general']), 'table2':
-                                    Markup(general_reports['all_transaction'])})
-
+                                       Markup(general_reports['all_transaction'])})
 
 
         def run_flask_server():
