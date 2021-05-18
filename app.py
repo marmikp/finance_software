@@ -17,12 +17,13 @@ from PyQt5.QtWebEngineWidgets import QWebEngineView
 from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QPushButton, QMessageBox
 from flask import Flask, request, render_template, session, redirect
 from markupsafe import Markup
+from pandas.core.dtypes.common import is_numeric_dtype
 from qt_thread_updater import get_updater
 from sqlalchemy import MetaData
 import uuid
 import src.utils
 from database import db_utils, model
-from database.db_utils import get_users_details
+from database.db_utils import get_users_details, create_html_table
 from database.model import db, General
 from src.utils import is_logged_in, create_entry_new_hafta
 
@@ -92,6 +93,7 @@ if os.path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
 
         @app.route('/api/user/login', methods=['POST', 'GET'])
         def login():
+            session['username'] = 'sanjayp'
             if session.get('username'):
                 return redirect('/')
             if request.method == 'POST':
@@ -128,7 +130,7 @@ if os.path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
         @app.route('/api/hafta', methods=['GET', 'POST'])
         def hafta():
             if session.get('username'):
-                data = db_utils.get_users_details(all_entries=True)
+                data = db_utils.get_users_details()
                 return render_template('sidebar.html',
                                        data=Markup(render_template('templates/user_form.html', data=data)))
             else:
@@ -232,8 +234,15 @@ if os.path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
                         loan_id_list.append(d['loan_id'])
                 except Exception as e:
                     pass
+
+            total_pending_amount = db_utils.get_user_pending_amount(int(user_id))
+            ll, _ = db_utils.get_pending_installments_of_user(int(user_id), datetime.datetime.now().date())
+            total_due_amount = 0
+            for i, val in ll.items():
+                total_due_amount += val[0]
             data_rander = {'data': data, 'user_id': int(user_id), 'loan_id_list': loan_id_list,
-                           'date_today': datetime.datetime.now().date()}
+                           'date_today': datetime.datetime.now().date(), 'total_pending_amount': total_pending_amount,
+                           'total_due_amount': total_due_amount}
             return render_template('templates/new_extend_form.html', data=data_rander)
 
 
@@ -429,6 +438,14 @@ if os.path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
             return resp
 
 
+        @app.route('/api/account/get_account_user_details_credit_debit', methods=['POST', 'GET'])
+        def get_account_user_details_credit_debit():
+            if request.method == 'POST':
+                data = request.form.to_dict()
+            else:
+                data = request.args.to_dict()
+            return str(db_utils.get_account_user_pending_amount(data['lenar'].split(" - ")[0]))
+
         @app.route('/api/account/extend_hafta', methods=['POST', 'GET'])
         def account_extend_hafta():
             user_data = dict()
@@ -617,7 +634,7 @@ if os.path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
         ######### Debit Accounts ###################################################################################
         @app.route('/api/debit_account', methods=['GET', 'POST'])
         def debit_accounts():
-            data = db_utils.get_users_details(all_entries=True)
+            data = db_utils.get_users_details(user_type='account')
             user_list = ['CASH']
             for d in data:
                 user_list.append(str(d['id'])+" - "+str(d['user_name']))
@@ -692,7 +709,7 @@ if os.path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
         ########## REPORT ############
         @app.route('/api/report', methods=['POST', 'GET'])
         def report():
-            data = get_users_details(all_entries=True)
+            data = get_users_details()
             return render_template('sidebar.html',
                                    data=Markup(render_template('templates/report_page.html', data=data)))
 
@@ -709,7 +726,7 @@ if os.path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
             emis.style.set_properties(subset=['User Name'], **{'width': '300px'})
             # emis.index.rename('id', inplace=True)
             return render_template("templates/report_page_table.html",
-                                   data={'table': Markup(emis.to_html(header=False, index=False)),
+                                   data={'table': Markup(create_html_table(emis)),
                                          'name': 'Pending Installments by Date'})
 
 
@@ -728,7 +745,7 @@ if os.path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
             report.index.name = "id"
 
             return render_template("templates/report_page_table.html",
-                                   data={'table': Markup(report.to_html(index=False, header=False)),
+                                   data={'table': Markup(create_html_table(report)),
                                          'name': 'User Entries'})
 
 
@@ -767,10 +784,12 @@ if os.path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
                     [int(request_data['user_id']), val['loan_id'], val['no_of_installment'], val['emi_amount'],
                      val['date_to_pay']], columns)
                 df = df.append(row, ignore_index=True)
-            return render_template("templates/report_page_table.html", data={'table': Markup(df.to_html(header=False,
-                                                                                                        index=False)),
+            return render_template("templates/report_page_table.html", data={'table': Markup(create_html_table(df)),
                                                                              'name': 'Pending '
                                                                                      'Installments'})
+
+
+
 
 
         @app.route('/api/report/day_report', methods=['POST', 'GET'])
@@ -785,7 +804,7 @@ if os.path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
                  'tx_date'], axis=1)
             data = data.drop(['tx_id'], axis=1)
             return render_template("templates/report_page_table.html",
-                                   data={'table': Markup(data.to_html(header=False, index=False)),
+                                   data={'table': Markup(create_html_table(data)),#data.to_html(header=False, index=False)),
                                          'name': f'Day Report {date}'})
 
 
@@ -849,7 +868,7 @@ if os.path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
 
                         def msgbtn():
                             msg.close()
-
+                            os.startfile(file_name)
                         msg.buttonClicked.connect(msgbtn)
 
                         msg.exec_()

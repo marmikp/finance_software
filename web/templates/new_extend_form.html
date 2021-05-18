@@ -103,6 +103,14 @@ $(document).ready(function(){
             <div class="col-md-3"><input type="button" class="extend_hafta btn btn-primary" value="Extend Hafta" user_id="{{data.user_id}}"  {{"disable" if data.data[0].loan_type != "flat"}}></div>
         </div>
     </div>
+    <div class="row">
+        <div class="col-md-5 pending_amount_text">
+            Pending Amount : <b>{{data.total_pending_amount}}</b>
+        </div>
+        <div class="col-md-5 due_amount_text">
+            Due Amount : <b>{{data.total_due_amount}}</b>
+        </div>
+    </div>
 
 
 </div>
@@ -111,6 +119,8 @@ $(document).ready(function(){
         <thead>
             <tr style="background-color:black; color:white;">
                 <th><b>Loan ID</b></th>
+                <th><b>Base</b></th>
+                <th><b>Type</b></th>
                 <th><b>Installment No</b></th>
                 <th><b>EMI Amount</b></th>
                 <th><b>Hafta Date</b></th>
@@ -123,9 +133,11 @@ $(document).ready(function(){
         {% for d in data.data %}
             <tr>
                 <td>{{d.loan_id}}</td>
+                <td>{{d.base_amount}}</td>
+                <td>{{d.loan_type}}</td>
                 <td>{{d.no_of_installment}}</td>
                 <td>{{d.emi_amount}}</td>
-                <td>{{d.date_to_pay.strftime("%d/%m/%Y") if d.date_to_pay != None else ''}}</td>
+                <td>{{'' if 'date_to_pay' not in d.keys() else d.date_to_pay.strftime("%d/%m/%Y") if d.date_to_pay != None else ''}}</td>
                 <td><input type="Date" id="paid_date_{{d.loan_id}}_{{d.no_of_installment}}" value="{{'' if d.tx_status in [0, None] else d.paid_date}}" readonly></td>
                 <td>{{d.paid_amount}}</td>
 

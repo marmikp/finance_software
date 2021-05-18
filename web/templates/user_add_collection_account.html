@@ -103,7 +103,7 @@ $(document).ready(function(){
 
 <div class="container">
     <div class="row"><h2>Add Collections</h2></div>
-    <div class="row">
+    <div class="row bg-secondary">
         <div class="col-md-3"><h4>Name : {{data.data.0.user_name}}</h4></div>
         <div class="col-md-3"><h4>Phone : {{data.data.0.user_phone}}</h4></div>
         <div class="col-md-3"><h4>Address : {{data.data.0.user_address}}</h4></div>
@@ -129,7 +129,7 @@ $(document).ready(function(){
         <div class="col-md-2">Update To:<input type="text" name="update_to" id="update_to" class="update_to"
                                                value="{{data.data.0.pending_amount}}" disabled></div>
 
-        <div class="col-md-2">Update To:<input type="text" name="remark" id="remark" class="remark"
+        <div class="col-md-2">Remark:<input type="text" name="remark" id="remark" class="remark"
                                                placeholder="Remark"></div>
         <div class="col-md-2">
             <input type="button" id="update_amount" class="update_amount btn btn-primary" value="Update"

@@ -8,6 +8,12 @@
   font-weight: 900;
 }
 
+.box{
+    border-radius: 25px;
+  box-sizing: border-box;
+  border: 3px solid transparent;
+  background-clip:padding-box;
+}
 
 </style>
 <script>
@@ -115,39 +121,40 @@ $(document).ready(function(){
                 <td>{{d.num_loan_hafta}}</td>
                 <td>{{d.num_loan_account}}</td>
                 <td>
-                    <a class="edit add" title="Edit" data-toggle="tooltip"  user_id="{{d.id}}">Edit</a> |
-
-                    <a class="new add" title="New/Extend" data-toggle="tooltip"  user_id="{{d.id}}">New/Extend</a> |
-                    <a class="add_collection" title="Add Collection" data-toggle="tooltip" data="{{d.id}}">Add Hafta</a> |
-                    <a class="close_loan" title="Close Loan" data-toggle="tooltip" data="{{d.id}}">Close</a>
+                    <div class="row" style="padding: 10px;">
+                        <div style="text-align: center;" class="col-md-4 box bg-primary"><a style="color: white;" class="edit add" title="Edit" data-toggle="tooltip"  user_id="{{d.id}}">Edit</a></div>
+                        <div style="text-align: center;" class="col-md-4 box bg-primary"><a style="color: white;" class="new add" title="New/Extend" data-toggle="tooltip"  user_id="{{d.id}}">New</a></div>
+                        <div style="text-align: center;" class="col-md-4 box bg-primary"><a style="color: white;" class="add_collection" title="Add Collection" data-toggle="tooltip" data="{{d.id}}">Hafta</a></div>
+                    </div>
 
 
                 </td>
             </tr>
         {% endfor %}
         </tbody>
-        <tfoot>
-            <tr>
-                <th style="text-align: center;"><b>Id</b></th>
-                <th style="text-align: center;"><b>Name</b></th>
-                <th style="text-align: center;"><b>Phone</b></th>
-                <th style="text-align: center;"><b>Type</b></th>
-                <th style="text-align: center;"><b>Loans</b></th>
-                <th style="text-align: center;"><b>A/C</b></th>
-                <th style="text-align: center;"><b>Actions</b></th>
-            </tr>
-        </tfoot>
+
     </table>
 
     </div>
 <script>
-$(document).ready(function() {
-    $('#example').DataTable();
+<!--$(document).ready(function() {-->
+<!--    $('#example').DataTable();-->
 
-   $(".display-table tr").click(function(){
+<!--   $(".display-table tr").click(function(){-->
+<!--   $(this).addClass('selected').siblings().removeClass('selected');-->
+<!--   var value=$(this).find('td:first').html();-->
+
+<!--   });-->
+<!--} );-->
+
+$(document).ready(function() {
+    $('#example').DataTable( {
+        "scrollY": 300,
+        "scrollX": true
+    } );
+    $(".display-table tr").click(function(){
    $(this).addClass('selected').siblings().removeClass('selected');
    var value=$(this).find('td:first').html();
-
    });
 } );
 </script>

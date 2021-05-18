@@ -8,6 +8,13 @@
   font-weight: 900;
 }
 
+.box{
+    border-radius: 25px;
+  box-sizing: border-box;
+  border: 3px solid transparent;
+  background-clip:padding-box;
+}
+
 
 </style>
 <script>
@@ -95,30 +102,26 @@ $(document).ready(function(){
 });
 </script>
 <script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
-<div style="padding: 50px;padding-top:10px; ">
+<div style="padding: 50px;padding-top:100px; ">
 
      <div class="row">
-        <div class="col-sm-3">
+        <div class="col-sm-2">
 
         </div>
-         <div class="col-sm-2" align="center">
-             <input type="text" value="" id="add_collection_text" />
+         <div class="col-sm-3" align="center">
+             <input type="text" value="" placeholder="Enter Loan Id" id="add_collection_text" />
          </div>
          <div class="col-sm-2">
 
             <a class="add_collection_loan_id btn btn-primary" title="ADD Collections" data-toggle="tooltip">Add EMI</a>
         </div>
-         <div class="col-sm-2">
-
-
-        </div>
-        <div class="col-sm-3">
+          <div class="col-sm-3">
             <a class="new_customer btn btn-primary" title="ADD CUSTOMER" data-toggle="tooltip"><i class="fa fa-user-plus" aria-hidden="true"> Customer</i></a>
 
         </div>
     </div>
 
-<table id="example" class="table table-bordered display-table"  style="width:100%; padding-top: 10px;">
+<table id="example" class="table table-bordered display-table"  style="width:100%; padding-top: 50px;">
         <thead>
             <tr style="background-color:black; color:white;">
                 <th style="text-align: center;"><b>Id</b></th>
@@ -140,40 +143,52 @@ $(document).ready(function(){
                 <td>{{d.num_loan_hafta}}</td>
                 <td>{{d.num_loan_account}}</td>
                 <td>
-                    <a class="edit add" title="Edit" data-toggle="tooltip"  user_id="{{d.id}}">Edit</a> |
-                    <a class="new add" title="New/Extend" data-toggle="tooltip"  user_id="{{d.id}}">New/Extend</a> |
-                    <a class="add_collection" title="Add Collection" data-toggle="tooltip" data="{{d.id}}">Add Hafta</a> |
-                    <a class="close_loan" title="Close Loan" data-toggle="tooltip" data="{{d.id}}">Close</a>
-
+                    <div class="row" style="padding: 10px;">
+                        <div style="text-align: center;" class="col-md-2 box bg-primary"><a style="color: white;" class="edit add" title="Edit" data-toggle="tooltip"  user_id="{{d.id}}">Edit</a></div>
+                        <div style="text-align: center;" class="col-md-4 box bg-primary"><a style="color: white;" class="new add" title="New/Extend" data-toggle="tooltip"  user_id="{{d.id}}">New</a></div>
+                        <div style="text-align: center;" class="col-md-4 box bg-primary"><a style="color: white;" class="add_collection" title="Add Collection" data-toggle="tooltip" data="{{d.id}}">Hafta</a></div>
+                        <div style="text-align: center;" class="col-md-2 box bg-danger "><a style="color: white;" class="close_loan" title="Close Loan" data-toggle="tooltip" data="{{d.id}}">Close</a></div>
+                    </div>
 
                 </td>
             </tr>
         {% endfor %}
         </tbody>
-        <tfoot>
-            <tr style="background-color: black; color: white;">
-                <th style="text-align: center;"><b>Id</b></th>
-                <th style="text-align: center;"><b>Name</b></th>
-                <th style="text-align: center;"><b>Phone</b></th>
-                <th style="text-align: center;"><b>Type</b></th>
-                <th style="text-align: center;"><b>Loans</b></th>
-                <th style="text-align: center;"><b>A/C</b></th>
-                <th style="text-align: center;"><b>Actions</b></th>
-            </tr>
-        </tfoot>
+<!--        <tfoot>-->
+<!--            <tr style="background-color: black; color: white;">-->
+<!--                <th style="text-align: center;"><b>Id</b></th>-->
+<!--                <th style="text-align: center;"><b>Name</b></th>-->
+<!--                <th style="text-align: center;"><b>Phone</b></th>-->
+<!--                <th style="text-align: center;"><b>Type</b></th>-->
+<!--                <th style="text-align: center;"><b>Loans</b></th>-->
+<!--                <th style="text-align: center;"><b>A/C</b></th>-->
+<!--                <th style="text-align: center;"><b>Actions</b></th>-->
+<!--            </tr>-->
+<!--        </tfoot>-->
     </table>
 
     </div>
 <script>
-$(document).ready(function() {
-    $('#example').DataTable();
+<!--$(document).ready(function() {-->
+<!--    $('#example').DataTable();-->
 
-   $(".display-table tr").click(function(){
+<!--   $(".display-table tr").click(function(){-->
+<!--   $(this).addClass('selected').siblings().removeClass('selected');-->
+<!--   var value=$(this).find('td:first').html();-->
+
+<!--   });-->
+
+<!--} );-->
+
+$(document).ready(function() {
+    $('#example').DataTable( {
+        "scrollY": 300,
+        "scrollX": true
+    } );
+    $(".display-table tr").click(function(){
    $(this).addClass('selected').siblings().removeClass('selected');
    var value=$(this).find('td:first').html();
-
    });
-
 } );
 
 </script>

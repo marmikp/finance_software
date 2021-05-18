@@ -109,7 +109,7 @@ def add_user_track_data(user_type="loan", **kwargs):
             db_utils.add_hafta_track_entry(**{'user_id': kwargs['id'], 'tx_id': kwargs['transaction_id'],
                                               'amount': kwargs['base_amount'], 'date': kwargs['start_date'], 'tx_type': 'cr'})
         else:
-            for installment in range(0, kwargs['no_installment']):
+            for installment in range(1, kwargs['no_installment']+1):
                 db_utils.add_hafta_track_entry(
                     **{'user_id': kwargs['id'], 'loan_id': kwargs['transaction_id'], 'emi_amount': emi_amount,
                        'date_to_pay': kwargs['start_date'] + relativedelta(
@@ -228,7 +228,7 @@ def get_report_of_pending_installments_by_date(date, user_type='loan'):
                 user_info = convert_table_to_dict_data(Customer.query.filter_by(id=user_data['id']).first())
                 for loan_id, loan_pending_installment_details in user_data_pending_installments.items():
                     row = pd.Series([loan_id, user_info['user_name'],
-                                     loan_pending_installment_details[2].date().strftime("%d/%m/%Y"),
+                                     loan_pending_installment_details[2],
                                      loan_pending_installment_details[0], user_info['user_phone'],
                                      user_data['guarantor_1_name'], user_data['guarantor_1_phone'],
                                      loan_pending_installment_details[3]], columns)
@@ -242,8 +242,8 @@ def get_user_entries_between_date(user_id, from_date, to_date, user_type='loan')
     df = pd.DataFrame(columns=columns)
     user_entries_proxy = db_utils.get_user_entries_between_date(user_id, from_date, to_date)
     for val in user_entries_proxy:
-        row = pd.Series([user_id, val['loan_id'], val['no_of_installment'], val['date_to_pay'],
-                         val['paid_date'].date(), "{:.2f}".format(val['paid_amount'])], columns)
+        row = pd.Series([user_id, val['loan_id'], val['no_of_installment'], val['date_to_pay'].strftime("%d/%m/%Y"),
+                         val['paid_date'].date().strftime("%d/%m/%Y"), "{:.2f}".format(val['paid_amount'])], columns)
 
         df = df.append(row, ignore_index=True)
     pd.set_option('display.max_columns', None)

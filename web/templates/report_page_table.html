@@ -10,6 +10,7 @@ background-color: white;
   font-family: arial, sans-serif;
   border-collapse: collapse;
   width: 100%;
+  text-align: right;
 }
 
 td, th {
@@ -39,12 +40,14 @@ td, th {
 
 
 <!--<button class="export-pdf k-button" onclick="getPDF('.pdf-page')" >Export</button>-->
-<div class="pdf-page size-a4">
+<div class="pdf-page size-a4" style="padding-left: 20px;">
     <br>
     <br>
     <br>
     <h2>{{data.name}}</h2>
+    <table>
     {{data.table}}
+    </table>
 </div>
 
 </body>
