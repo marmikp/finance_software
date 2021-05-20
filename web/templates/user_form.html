@@ -5,7 +5,9 @@
     background-color: white;
 }
 .display-table {
-  font-weight: 900;
+  font-weight: 500;
+  font-size: 17px;
+  font-family: "Verdana";
 }
 
 .box{
@@ -102,21 +104,22 @@ $(document).ready(function(){
 });
 </script>
 <script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
-<div style="padding: 50px;padding-top:100px; ">
+<div style="padding: 50px;padding-top:100px; background-color: #FFFFFF;">
 
-     <div class="row">
+     <div class="row inline">
         <div class="col-sm-2">
 
         </div>
-         <div class="col-sm-3" align="center">
-             <input type="text" value="" placeholder="Enter Loan Id" id="add_collection_text" />
+         <div class="col-sm-5" align="center">
+             <label for="add_collection_text" style="font-size: 20px;" class="col-sm-6 control-label">Add Collection : </label>
+             <div class="col-sm-6" style="padding-top: 10px;"> <input type="text" value="" placeholder="Enter Loan Id" id="add_collection_text" /></div>
          </div>
          <div class="col-sm-2">
 
-            <a class="add_collection_loan_id btn btn-primary" title="ADD Collections" data-toggle="tooltip">Add EMI</a>
+            <a class="add_collection_loan_id btn" style="background-color: #008fe4;" title="ADD Collections" data-toggle="tooltip">Add Hafta</a>
         </div>
           <div class="col-sm-3">
-            <a class="new_customer btn btn-primary" title="ADD CUSTOMER" data-toggle="tooltip"><i class="fa fa-user-plus" aria-hidden="true"> Customer</i></a>
+            <a class="new_customer btn" style="background-color: #008fe4;" title="ADD CUSTOMER" data-toggle="tooltip"><i class="fa fa-user-plus" aria-hidden="true">New Loan</i></a>
 
         </div>
     </div>
@@ -124,13 +127,13 @@ $(document).ready(function(){
 <table id="example" class="table table-bordered display-table"  style="width:100%; padding-top: 50px;">
         <thead>
             <tr style="background-color:black; color:white;">
-                <th style="text-align: center;"><b>Id</b></th>
-                <th style="text-align: center;"><b>Name</b></th>
-                <th style="text-align: center;"><b>Phone</b></th>
-                <th style="text-align: center;"><b>Type</b></th>
-                <th style="text-align: center;"><b>Loans</b></th>
-                <th style="text-align: center;"><b>A/C</b></th>
-                <th style="text-align: center;"><b>Actions</b></th>
+                <th style="text-align: center;">Id</th>
+                <th style="text-align: center;">Name</th>
+                <th style="text-align: center;">Phone</th>
+                <th style="text-align: center;">Type</th>
+                <th style="text-align: center;">Loans</th>
+                <th style="text-align: center;">A/C</th>
+                <th style="text-align: center;">Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -145,9 +148,9 @@ $(document).ready(function(){
                 <td>
                     <div class="row" style="padding: 10px;">
                         <div style="text-align: center;" class="col-md-2 box bg-primary"><a style="color: white;" class="edit add" title="Edit" data-toggle="tooltip"  user_id="{{d.id}}">Edit</a></div>
-                        <div style="text-align: center;" class="col-md-4 box bg-primary"><a style="color: white;" class="new add" title="New/Extend" data-toggle="tooltip"  user_id="{{d.id}}">New</a></div>
-                        <div style="text-align: center;" class="col-md-4 box bg-primary"><a style="color: white;" class="add_collection" title="Add Collection" data-toggle="tooltip" data="{{d.id}}">Hafta</a></div>
-                        <div style="text-align: center;" class="col-md-2 box bg-danger "><a style="color: white;" class="close_loan" title="Close Loan" data-toggle="tooltip" data="{{d.id}}">Close</a></div>
+                        <div style="text-align: center;" class="col-md-3 box bg-primary"><a style="color: white;" class="new add" title="New/Extend" data-toggle="tooltip"  user_id="{{d.id}}">New</a></div>
+                        <div style="text-align: center;" class="col-md-3 box bg-primary"><a style="color: white;" class="add_collection" title="Add Collection" data-toggle="tooltip" data="{{d.id}}">Hafta</a></div>
+                        <div style="text-align: center; background-color: red;" class="col-md-3 box " ><a style="color: white;" class="close_loan" title="Close Loan" data-toggle="tooltip" data="{{d.id}}">Close</a></div>
                     </div>
 
                 </td>

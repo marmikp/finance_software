@@ -31,7 +31,9 @@
             background-color: white;
         }
         .display-table {
-          font-weight: 900;
+            font-weight: 500;
+              font-size: 17px;
+              font-family: "Verdana";
         }
 
 
@@ -84,7 +86,7 @@ $(document).ready(function(){
         <div class="col-md-2"><h4>Phone: {{data.data.0.user_phone}}</h4></div>
         <div class="col-md-2"><h4>Address: {{data.data.0.user_address}}</h4></div>
         <div class="col-md-2"><h4>City: {{data.data.0.user_city}}</h4></div>
-        <div class="col-md-3"><input type="button" class="new_loan btn btn-primary" value="New Loan" user_id="{{data.user_id}}"></div>
+        <div class="col-md-3"><input type="button" class="new_loan btn"  style="background-color: #008fe4;" value="Add Loan" user_id="{{data.user_id}}"></div>
         {% endif %}
     </div> <br> <hr>
     <div class="row">
@@ -100,14 +102,14 @@ $(document).ready(function(){
             </select>
             </div>
 
-            <div class="col-md-3"><input type="button" class="extend_hafta btn btn-primary" value="Extend Hafta" user_id="{{data.user_id}}"  {{"disable" if data.data[0].loan_type != "flat"}}></div>
+            <div class="col-md-3"><input type="button" class="extend_hafta btn"  style="background-color: #008fe4;" value="Extend Hafta" user_id="{{data.user_id}}"  {{"disable" if data.data[0].loan_type != "flat"}}></div>
         </div>
     </div>
     <div class="row">
-        <div class="col-md-5 pending_amount_text">
+        <div class="col-md-5 pending_amount_text" style="color: #16abe3; font-size: 20px;">
             Pending Amount : <b>{{data.total_pending_amount}}</b>
         </div>
-        <div class="col-md-5 due_amount_text">
+        <div class="col-md-5 due_amount_text" style="color: red; font-size: 20px;">
             Due Amount : <b>{{data.total_due_amount}}</b>
         </div>
     </div>
@@ -118,15 +120,15 @@ $(document).ready(function(){
 <table id="example" class="table table-bordered display-table" style="width:100%; padding-top: 50px;">
         <thead>
             <tr style="background-color:black; color:white;">
-                <th><b>Loan ID</b></th>
-                <th><b>Base</b></th>
-                <th><b>Type</b></th>
-                <th><b>Installment No</b></th>
-                <th><b>EMI Amount</b></th>
-                <th><b>Hafta Date</b></th>
-                <th><b>Paid Date</b></th>
-                <th><b>Paid Amount</b></th>
-                <th><b>Status</b></th>
+                <th>Loan ID</th>
+                <th>Base</th>
+                <th>Type</th>
+                <th>Installment No</th>
+                <th>EMI Amount</th>
+                <th>Hafta Date</th>
+                <th>Paid Date</th>
+                <th>Paid Amount</th>
+                <th>Status</th>
             </tr>
         </thead>
         <tbody>
@@ -153,17 +155,7 @@ $(document).ready(function(){
             </tr>
         {% endfor %}
         </tbody>
-        <tfoot>
-            <tr>
-                <th>Loan ID</th>
-                <th>Installment No</th>
-                <th>EMI Amount</th>
-                <th>Hafta Date</th>
-                <th>Paid Date</th>
-                <th>Paid Amount</th>
-                <th>Status</th>
-            </tr>
-        </tfoot>
+
     </table>
 
     </div>

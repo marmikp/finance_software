@@ -31,7 +31,9 @@
             background-color: white;
         }
         .display-table {
-          font-weight: 900;
+            font-weight: 500;
+  font-size: 17px;
+  font-family: "Verdana";
         }
 
 
@@ -81,10 +83,10 @@ $(document).ready(function(){
     </div>
 
     <div class="row">
-        <div class="col-md-5 pending_amount_text">
+        <div class="col-md-5 pending_amount_text" style="color: #16abe3; font-size: 20px;">
             Pending Amount : <b>{{data.total_pending_amount}}</b>
         </div>
-        <div class="col-md-5 due_amount_text">
+        <div class="col-md-5 due_amount_text" style="color: red; font-size: 20px;">
             Due Amount : <b>{{data.total_due_amount}}</b>
         </div>
     </div>
@@ -96,15 +98,15 @@ $(document).ready(function(){
 <table id="example" class="table table-bordered display-table" style="width:100%; padding-top: 50px;">
         <thead>
             <tr style="background-color:black; color:white;">
-                <th><b>Loan ID</b></th>
-                <th><b>Installment No</b></th>
-                <th><b>EMI Amount</b></th>
-                <th><b>Hafta Date</b></th>
-                <th><b>Paid Date</b></th>
-                <th><b>Paid Amount</b></th>
-                <th><b>Status</b></th>
-                <th><b>Installment Amount (Editable)</b></th>
-                <th><b>Action</b></th>
+                <th>Loan ID</th>
+                <th>Installment No</th>
+                <th>EMI Amount</th>
+                <th>Hafta Date</th>
+                <th>Paid Date</th>
+                <th>Paid Amount</th>
+                <th>Status</th>
+                <th>Installment Amount</th>
+                <th>Action</th>
             </tr>
         </thead>
         <tbody>
@@ -130,18 +132,7 @@ $(document).ready(function(){
             </tr>
         {% endfor %}
         </tbody>
-        <tfoot>
-            <tr>
-                <th>Loan ID</th>
-                <th>Installment No</th>
-                <th>EMI Amount</th>
-                <th>Hafta Date</th>
-                <th>Paid Date</th>
-                <th>Paid Amount</th>
-                <th>Status</th>
-                <th>Action</th>
-            </tr>
-        </tfoot>
+
     </table>
 
     </div>

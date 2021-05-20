@@ -295,26 +295,26 @@ body, html {
                                     <div class="col-md-6">
                                         <div class="form-group input-container">
                                           <i class="fa fa-user icon"></i>
-                                            <input type="text" class="form-control" name="name" id="name" placeholder="Username *" value="{{data.user_name if 'user_name' in data.keys() else ''}}" />
+                                            <input type="text" class="form-control" name="name" id="name" placeholder="Name" value="{{data.user_name if 'user_name' in data.keys() else ''}}" />
 
                                         </div>
                                         <div class="form-group input-container">
                                           <i class="fa fa-user icon"></i>
-                                            <input type="text" class="form-control" id="alias" placeholder="alias *" value="{{data.user_alias if 'user_alias' in data.keys() else ''}}" name="alias" />
+                                            <input type="text" class="form-control" id="alias" placeholder="Short Name" value="{{data.user_alias if 'user_alias' in data.keys() else ''}}" name="alias" />
                                         </div>
                                         <div class="form-group input-container">
                                            <i class="fas fa-pencil-alt icon"></i>
 
-                                            <textarea class="form-control" name="address" id="address" placeholder="Address *" id="exampleFormControlTextarea4" rows="1" cols="88" >{{data.user_address if 'user_address' in data.keys() else ''}}</textarea>
+                                            <textarea class="form-control" name="address" id="address" placeholder="Address" id="exampleFormControlTextarea4" rows="1" cols="88" >{{data.user_address if 'user_address' in data.keys() else ''}}</textarea>
                                         </div>
                                         <div class="form-group input-container">
 
                                             <i class="fa fa-phone icon"></i>
-                                            <input class="form-control" type="text" id="phone" placeholder="phone *" name="phone" value="{{data.user_phone if 'user_phone' in data.keys() else ''}}">
+                                            <input class="form-control" type="text" id="phone" placeholder="Phone" name="phone" value="{{data.user_phone if 'user_phone' in data.keys() else ''}}">
                                         </div>
                                         <div class="form-group input-container">
                                             <i class="fas fa-city icon"></i>
-                                            <input class="form-control" type="text" id="city" placeholder="city *" name="city" value="{{data.user_city if 'user_city' in data.keys() else ''}}">
+                                            <input class="form-control" type="text" id="city" placeholder="City" name="city" value="{{data.user_city if 'user_city' in data.keys() else ''}}">
                                         </div>
                                         <div class="form-group input-container">
                                           <i class="fas fa-pencil-alt icon"></i>
@@ -326,18 +326,18 @@ body, html {
                                     <div class="col-md-6">
                                         <div class="form-group input-container">
                                           <i class="fa fa-money icon"></i>
-                                            <input class="form-control" type="text" id="base_amount" placeholder="BaseAmount *" name="base_amount" value="">
+                                            <input class="form-control" type="text" id="base_amount" placeholder="Deposit Amount" name="base_amount" value="">
                                         </div>
 
 
                                         <div class="form-group input-container">
                                             <i class="fa fa-calendar icon"></i>
-                                              <input class="form-control" type="date" id="startdate" placeholder="Date *" name="startdate" value="{{data.today}}">
+                                              <input class="form-control" type="date" id="startdate" placeholder="Date" name="startdate" value="{{data.today}}">
                                         </div>
 
 
 
-                                        <input type="submit" class="btnRegister"  value="Register"/>
+                                        <input type="submit" class="btnRegister"  value="Add A/C"/>
                                     </div>
                                 </div>
 <!--                                </form>-->

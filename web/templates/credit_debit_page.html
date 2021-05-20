@@ -76,6 +76,7 @@ input[type=submit] {
 
 
 
+
 </style>
 
 
@@ -91,10 +92,12 @@ input[type=submit] {
 
 
 
+
 </style>
 <script>
 $(document).ready(function(){
     $(".update").click(function(){
+    if (confirm("Do you want to continue?")){
         var lenar = document.getElementById('lenar').value;
         var remark = document.getElementById('remark').value;
         var denar = document.getElementById('denar').value;
@@ -110,6 +113,7 @@ $(document).ready(function(){
         }).fail(function(){
               console.log("error");
         });
+      }
   });
 
   $('#lenar').change(function() {
@@ -164,6 +168,7 @@ $(document).ready(function(){
 
 });
 
+
 </script>
 <script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
 <div style="padding: 50px;padding-top:100px; ">
@@ -173,30 +178,43 @@ $(document).ready(function(){
     </div>
 
     <div class="row">
-        <div class="col-sm-6 automplete-2">
-            LENAR : <input id="lenar" type="text" name="lenar" placeholder="Customer" value="CASH">
+        <div class="col-sm-6 automplete-2 form-inline control-group">
+            <label for="lenar" style="font-size: 20px;" class="col-sm-3 control-label">Lenar: </label>
+            <div class="col-sm-9 form-control">
+                <input id="lenar" type="text"  name="lenar"
+                                                      placeholder="Customer" value="CASH">
+            </div>
         </div>
 
 
-        <div class="col-sm-6 autocomplete">
-            DENAR : <input id="denar" type="text" name="denar" placeholder="Customer">
+        <div class="col-sm-6 autocomplete form-inline control-group">
+            <label for="denar" style="font-size: 20px;" class="col-sm-3 control-label">Denar: </label>
+            <div class="col-sm-9 form-control">
+                <input id="denar" type="text" name="denar" placeholder="Customer">
+            </div>
         </div>
     </div>
     <br>
     <div class="row">
-        <div class="col-sm-6 autocomplete">
-            Amount : <input id="amount" type="text" name="amount" placeholder="Amount">
+        <div class="col-sm-6 autocomplete form-inline control-group">
+            <label for="amount" style="font-size: 20px;" class="col-sm-3 control-label">Amount</label>
+            <div class="col-sm-9 form-control">
+                <input id="amount" type="text" name="amount" placeholder="Amount">
+            </div>
         </div>
 
 
-        <div class="col-sm-6 autocomplete">
-            Remark : <input id="remark" type="text" name="remark" placeholder="Remark">
+        <div class="col-sm-6 autocomplete form-inline control-group">
+            <label for="remark" style="font-size: 20px;" class="col-sm-3 control-label">Remark: </label>
+            <div class="col-sm-9 form-control">
+                <input id="remark" type="text" name="remark" placeholder="Remark">
+            </div>
         </div>
     </div>
     <br>
 
     <div class="row">
-        <input type="button" class="update btn btn-primary" value="Update">
+        <input type="button" class="update btn" style="background-color: #008fe4;" value="Update">
     </div>
     <br>
     <br>
@@ -220,7 +238,7 @@ $(document).ready(function(){
 
     </div>
 </div>
-    <script>
+<script>
 $(document).ready(function() {
     $('#example').DataTable();
 
@@ -233,10 +251,11 @@ $(document).ready(function() {
 } );
 
 
-    </script>
+
+</script>
 
 
-    <script>
+<script>
 function autocomplete(inp, arr) {
   /*the autocomplete function takes two arguments,
   the text field element and an array of possible autocompleted values:*/
@@ -343,15 +362,16 @@ autocomplete(document.getElementById("denar"), countries);
 
 
 
+
 </script>
 
 
-      <link href = "https://code.jquery.com/ui/1.10.4/themes/ui-lightness/jquery-ui.css"
-         rel = "stylesheet">
-      <script src = "https://code.jquery.com/jquery-1.10.2.js"></script>
-      <script src = "https://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
-      <!-- Javascript -->
-      <script>
+<link href="https://code.jquery.com/ui/1.10.4/themes/ui-lightness/jquery-ui.css"
+      rel="stylesheet">
+<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+<script src="https://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+<!-- Javascript -->
+<script>
          $(function() {
             var availableTutorials = [
                "ActionScript",
@@ -364,4 +384,5 @@ autocomplete(document.getElementById("denar"), countries);
                autoFocus:true
             });
          });
-      </script>
+
+</script>

@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import *
+from sqlalchemy import ForeignKey, MetaData, Table
 from sqlalchemy.sql.ddl import CreateTable
 
 import config

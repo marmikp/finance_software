@@ -32,7 +32,9 @@
             background-color: white;
         }
         .display-table {
-          font-weight: 900;
+            font-weight: 500;
+  font-size: 17px;
+  font-family: "Verdana";
         }
 
 
@@ -132,7 +134,7 @@ $(document).ready(function(){
         <div class="col-md-2">Remark:<input type="text" name="remark" id="remark" class="remark"
                                                placeholder="Remark"></div>
         <div class="col-md-2">
-            <input type="button" id="update_amount" class="update_amount btn btn-primary" value="Update"
+            <input type="button" id="update_amount" class="update_amount btn"  style="background-color: #008fe4;" value="Update"
                    user_id="{{data.data.0.user_id}}">
         </div>
     </div>
@@ -144,12 +146,12 @@ $(document).ready(function(){
     <table id="example" class="table table-bordered display-table" style="width:100%; padding-top: 50px;">
         <thead>
         <tr style="background-color:black; color:white;">
-            <th><b>ID</b></th>
-            <th><b>Loan No</b></th>
-            <th><b>Amount</b></th>
-            <th><b>Date</b></th>
-            <th><b>Tx Type</b></th>
-            <th><b>Remark</b></th>
+            <th>ID</th>
+            <th>Loan No</th>
+            <th>Amount</th>
+            <th>Date</th>
+            <th>Tx Type</th>
+            <th>Remark</th>
         </tr>
         </thead>
         <tbody>
@@ -164,16 +166,7 @@ $(document).ready(function(){
         </tr>
         {% endfor %}
         </tbody>
-        <tfoot>
-        <tr>
-            <th><b>ID</b></th>
-            <th><b>Loan No</b></th>
-            <th><b>Amount</b></th>
-            <th><b>Date</b></th>
-            <th><b>Tx Type</b></th>
-            <th><b>Remark</b></th>
-        </tr>
-        </tfoot>
+
     </table>
 
 </div>

@@ -1,18 +1,19 @@
 <html>
 <head>
-    <meta charset="utf-8" />
-    <link rel="apple-touch-icon" sizes="76x76" href="{{ url_for('static', filename='assets/img/apple-icon.png')}}" />
-    <link rel="icon" type="image/png" href="{{ url_for('static', filename='assets/img/favicon.png')}}" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta charset="utf-8"/>
+    <link rel="apple-touch-icon" sizes="76x76" href="{{ url_for('static', filename='assets/img/apple-icon.png')}}"/>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='assets/img/favicon.png')}}"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
     <title>BlackQR</title>
-    <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
-    <meta name="viewport" content="width=device-width" />
+    <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport'/>
+    <meta name="viewport" content="width=device-width"/>
 
-    <link href="{{ url_for('static', filename='assets/css/demo.css') }}" rel="stylesheet" />
-    <link href="{{ url_for('static', filename='assets/css/bootstrap.min.css')}}" rel="stylesheet" />
-    <link href="{{ url_for('static', filename='assets/css/material-dashboard.css')}}" rel="stylesheet" />
-<!--    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='asserts/css/bootstrap.min.css') }}">-->
-    <link rel="stylesheet" href="{{ url_for('static', filename='fontawesome/web-fonts-with-css/css/fontawesome-all.css')}}" >
+    <link href="{{ url_for('static', filename='assets/css/demo.css') }}" rel="stylesheet"/>
+    <link href="{{ url_for('static', filename='assets/css/bootstrap.min.css')}}" rel="stylesheet"/>
+    <link href="{{ url_for('static', filename='assets/css/material-dashboard.css')}}" rel="stylesheet"/>
+    <!--    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='asserts/css/bootstrap.min.css') }}">-->
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='fontawesome/web-fonts-with-css/css/fontawesome-all.css')}}">
 
     <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
     <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
@@ -20,9 +21,9 @@
 
 
     <script src="{{ url_for('static', filename='assets/js/angular179.js')}}"></script>
-    <link href="{{ url_for('static', filename='assets/css/jquery-ui.css')}}" rel="stylesheet" />
-    <link href="{{ url_for('static', filename='assets/css/style.css')}}" rel="stylesheet" />
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+    <link href="{{ url_for('static', filename='assets/css/jquery-ui.css')}}" rel="stylesheet"/>
+    <link href="{{ url_for('static', filename='assets/css/style.css')}}" rel="stylesheet"/>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
 
     <style>
 
@@ -31,8 +32,11 @@
             background-color: white;
         }
         .display-table {
-          font-weight: 900;
+            font-weight: 500;
+  font-size: 17px;
+  font-family: "Verdana";
         }
+
 
 
     </style>
@@ -73,80 +77,85 @@ $(document).ready(function(){
     }
   });
 });
+
 </script>
 <div class="container">
-    <div class="row"><h2>Extend Hafta or Add new Loan</h2></div>
+    <div class="row"><h2>Party Account Entries</h2></div>
     <div class="row">
         {% if data.data|length > 0 %}
-        <div class="col-md-3"><h4>Name: {{data.data.0.user_name if 'user_name' in data.data.0.keys()}}</h4></div>
+        <div class="col-md-3"><h4>PName: {{data.data.0.user_name if 'user_name' in data.data.0.keys()}}</h4></div>
         <div class="col-md-2"><h4>Phone: {{data.data.0.user_phone}}</h4></div>
         <div class="col-md-2"><h4>Address: {{data.data.0.user_address}}</h4></div>
         <div class="col-md-2"><h4>City: {{data.data.0.user_city}}</h4></div>
         {% endif %}
-    </div> <br>
+    </div>
+    <br>
     <div class="row">
         <div class="col-md-3" style="color: red;">Pending Amount : {{data.data.0.pending_amount}}</div>
     </div>
-<!--    <div class="row">-->
+    <!--    <div class="row">-->
 
-<!--            <div class="col-md-3">Hafta Amount<input type="text" value="{{data.data[0].emi_amount}}" placeholder="Emi Amount" id="extend_amount"></div>-->
-<!--            <div class="col-md-2">No Of Months<input type="text" value="0" placeholder="Extend Months" id="extend_month"></div>-->
-<!--            <div class="col-md-2">-->
-<!--                Loan Id<br>-->
-<!--              <select id="extend_loan_id" name=loan_id_extend>-->
-<!--                {% for d in data.loan_id_list %}-->
-<!--                  <option value="{{d}}">{{d}}</option>-->
-<!--                {% endfor %}-->
-<!--            </select>-->
-<!--            </div>-->
+    <!--            <div class="col-md-3">Hafta Amount<input type="text" value="{{data.data[0].emi_amount}}" placeholder="Emi Amount" id="extend_amount"></div>-->
+    <!--            <div class="col-md-2">No Of Months<input type="text" value="0" placeholder="Extend Months" id="extend_month"></div>-->
+    <!--            <div class="col-md-2">-->
+    <!--                Loan Id<br>-->
+    <!--              <select id="extend_loan_id" name=loan_id_extend>-->
+    <!--                {% for d in data.loan_id_list %}-->
+    <!--                  <option value="{{d}}">{{d}}</option>-->
+    <!--                {% endfor %}-->
+    <!--            </select>-->
+    <!--            </div>-->
 
-<!--            <div class="col-md-2">-->
-<!--            <h1></h1>-->
-<!--            </div>-->
+    <!--            <div class="col-md-2">-->
+    <!--            <h1></h1>-->
+    <!--            </div>-->
 
-<!--            <div class="col-md-3"><input type="button" class="extend_hafta btn btn-primary" value="Extend Hafta" user_id="{{data.data[0].user_id}}"  {{"disable" if data.data[0].loan_type != "flat"}}></div>-->
+    <!--            <div class="col-md-3"><input type="button" class="extend_hafta btn btn-primary" value="Extend Hafta" user_id="{{data.data[0].user_id}}"  {{"disable" if data.data[0].loan_type != "flat"}}></div>-->
 
-<!--    </div>-->
+    <!--    </div>-->
 
 
 </div>
 <div style="padding: 50px;">
-<table id="example" class="table table-bordered display-table" style="width:100%; padding-top: 50px;">
+    <table id="example" class="table table-bordered display-table" style="width:100%; padding-top: 50px;">
         <thead>
-            <tr style="background-color:black; color:white;">
-                <th><b>ID</b></th>
-                <th><b>Loan No</b></th>
-                <th><b>Amount</b></th>
-                <th><b>Date</b></th>
-                <th><b>Tx Type</b></th>
-                <th><b>Remark</b></th>
-            </tr>
+        <tr style="background-color:black; color:white;">
+            <th>ID</th>
+            <th>Loan No</th>
+            <th>Credit Amt</th>
+            <th>Debit Amt</th>
+            <th>Date</th>
+            <th>Tx Type</th>
+            <th>Remark</th>
+        </tr>
         </thead>
         <tbody>
         {% for d in data.data %}
-            <tr>
-                <td>{{d.id}}</td>
-                <td>{{d.tx_id}}</td>
-                <td>{{d.amount}}</td>
-                <td>{{d.date.date()}}</td>
-                <td style="color: {{'red' if d.tx_type == 'dr' else 'green'}}">{{d.tx_type}}</td>
-                <td>{{d.remark}}</td>
-            </tr>
+        <tr>
+            <td>{{d.id}}</td>
+            <td>{{d.tx_id}}</td>
+            <td>{{d.amount if d.tx_type == 'cr' else ''}}</td>
+            <td>{{d.amount if d.tx_type == 'dr' else ''}}</td>
+            <td>{{d.date.date()}}</td>
+            <td style="color: {{'red' if d.tx_type == 'dr' else 'green'}}">{{d.tx_type}}</td>
+            <td>{{d.remark}}</td>
+        </tr>
         {% endfor %}
         </tbody>
         <tfoot>
             <tr>
-                <th><b>ID</b></th>
-                <th><b>Loan No</b></th>
-                <th><b>Amount</b></th>
-                <th><b>Date</b></th>
-                <th><b>Tx Type</b></th>
-                <th><b>Remark</b></th>
+                <th><b></b></th>
+                <th><b>Total</b></th>
+                <th style="color: green">{{data.credit_amt}}</th>
+                <th style="color: red">{{data.debit_amt}}</th>
+                <th></th>
+                <th></th>
+                <th></th>
             </tr>
         </tfoot>
     </table>
 
-    </div>
+</div>
 <script>
 $(document).ready(function() {
     $('#example').DataTable();
@@ -159,6 +168,7 @@ $(document).ready(function() {
 
 
 } );
+
 </script>
 <script>
     function getDate(){
@@ -166,10 +176,11 @@ $(document).ready(function() {
 
 document.getElementById("date").value = today.getFullYear() + '-' + ('0' + (today.getMonth() + 1)).slice(-2) + '-' + ('0' + today.getDate()).slice(-2);
 }
+
 </script>
-<link href="{{ url_for('static', filename='assets/css/jquery-ui.css')}}" rel="stylesheet" />
-<link href="{{ url_for('static', filename='assets/css/style.css')}}" rel="stylesheet" />
-<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+<link href="{{ url_for('static', filename='assets/css/jquery-ui.css')}}" rel="stylesheet"/>
+<link href="{{ url_for('static', filename='assets/css/style.css')}}" rel="stylesheet"/>
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
 <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
 <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.24/js/dataTables.bootstrap.min.js"></script>

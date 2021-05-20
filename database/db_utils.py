@@ -1,20 +1,19 @@
 import datetime
 import time
-from operator import itemgetter
+from hashlib import md5
 
 import pandas as pd
 from dateutil.relativedelta import relativedelta
 from flask import session
-from pandas.core.dtypes.common import is_numeric_dtype
+from sqlalchemy import or_, and_
 
 from database.model import *
-import hashlib
 import numpy as np
 
 META_DATA = None
 
 
-def create_html_table(x):
+def create_html_table(x, length = 0):
     row_data = ''
     dtype_list = []
     for col in x.columns.values.tolist():
@@ -24,6 +23,9 @@ def create_html_table(x):
             dtype_list.append('text')
 
     for i in range(x.shape[0]):
+        if length != 0:
+            if i == x.shape[0]-1:
+                continue
         row_data += '\n<tr> '
         for j in range(x.shape[1]):
 
@@ -33,6 +35,14 @@ def create_html_table(x):
             else:  # second column
                 row_data += '\n <td class = "number_column" style="text-align:right">' + str(x.iloc[i, j]) + '</td>'
 
+        row_data += '\n </tr>'
+    if length != 0:
+        for i in range(length-x.shape[0]+1):
+            row_data += '\n<tr> <td></td><td></td>\n</tr>'
+        row_data += '\n<tr> '
+        row_data += '\n <td class = "number_column" style="text-align:right">' + str(x.iloc[x.shape[0]-1, 0]) + '</td>'
+
+        row_data += '\n <td class = "number_column" style="text-align:right">' + str(x.iloc[x.shape[0]-1, 1]) + '</td>'
         row_data += '\n </tr>'
     return row_data
 
@@ -65,7 +75,7 @@ def signup(**kwargs):
 
 def login(username, password):
     # data = db.session.query.filter_by(username=username, password=password).all()
-    password = hashlib.md5(password.encode()).hexdigest()
+    password = md5(password.encode()).hexdigest()
     data = db.session.query(General).filter(
         and_(General.username == username, General.password == password))
     data_len = len(list(data))
@@ -376,7 +386,7 @@ def get_user_data(id=None, loan_type="hafta", user_type='loan'):
                             else:
                                 pending_amount -= val['amount']
                             entry_data = entry_table.query.filter_by(id=id, transaction_id=loan).first()
-                            val['remark'] = entry_data.remark
+                            # val['remark'] = entry_data.remark
                             val['base_amount'] = entry_data.base_amount
                         user_d_list[0]['pending_amount'] = pending_amount
                     else:
@@ -559,6 +569,19 @@ def close_loan(user_id, loan_id, amount, user_type="loan"):
     installment_data = db.engine.execute(table.select(table.c.no_of_installment).where(
         (table.c.loan_id == loan_id) * (table.c.tx_status == 0)).order_by(table.c.no_of_installment.asc()))
     user_data_list = [{column: value for column, value in rowproxy.items()} for rowproxy in installment_data]
+    pending_amount = 0
+    if get_loan_type_by_loan_id(loan_id=loan_id) == "flat":
+        for val in user_data_list:
+            pending_amount += val['emi_amount']
+        pending_amount -= entry_table.query.filter_by(id=user_id, transaction_id=loan_id).first().base_amount
+    else:
+        loan_entry = entry_table.query.filter_by(id=user_id, transaction_id=loan_id).first()
+        one_month_interest = loan_entry.interest / loan_entry.no_installment
+        pending_amount = one_month_interest * len(user_data_list)
+    total_pending_interst = General.query.filter_by(username=session.get('username')).first().total_interest_pending
+    General.query.filter_by(username=session.get('username')).update({'total_interest_pending': total_pending_interst -
+                                                                                       pending_amount})
+    db.session.commit()
     latest_installment_no = user_data_list[0]['no_of_installment']
     db.engine.execute(
         table.update().where(
@@ -613,6 +636,18 @@ def get_pending_installments_of_user(user_id, date):
         loan_id_dict[val['loan_id']][2] = val['date_to_pay'].strftime("%d/%m/%Y")
         loan_id_dict[val['loan_id']][3] = len(emis_dict_count)
     return loan_id_dict, emis_dict
+
+def get_account_user_entries(user_id, date=datetime.now().date()):
+    entry_table = META_DATA.tables[str(user_id)]
+    user_entries = db.engine.execute(entry_table.select().where(
+        (entry_table.c.date <= date)))
+    user_entries = [{column: value for column, value in rowproxy.items()} for rowproxy in user_entries]
+    df = pd.DataFrame(columns=['tx_id', 'amount', 'date', 'tx_type', 'remark'])
+    for val in user_entries:
+        row = pd.Series([val['tx_id'], val['amount'], val['date'], val['tx_type'],
+                         val['remark']], ['tx_id', 'amount', 'date', 'tx_type', 'remark'])
+        df = df.append(row, ignore_index=True)
+    return create_html_table(df)
 
 
 def get_user_entries_between_date(user_id, from_date, to_date):
@@ -767,12 +802,13 @@ def get_general_report():
     df_dict['value'].append(general_data.total_interest_pending*(-1))
     df_dict['name'].append('Total')
     df_dict['value'].append(np.array(df_dict['value']).sum())
+    df_dict['name'].append('Total CASH')
+    df_dict['value'].append(general_data.total_balance)
 
     user_data_df = pd.DataFrame.from_dict(df_dict)
     user_data_df.style.set_properties(**{'text-align': 'right'})
-    general_table_dict = {'name': ['Total Available Balance', 'Total Earned Interest'] + list(account_user_data.keys()),
-                          'value': [general_data.total_balance,
-                                    general_data.total_interest_earned] + list(
+    general_table_dict = {'name': ['Total Earned Interest'] + list(account_user_data.keys()),
+                          'value': [general_data.total_interest_earned] + list(
                               account_user_data.values())}
     vv = general_data.total_balance + (general_data.total_interest_earned * (-1))
     for val in account_user_data.values():
@@ -781,7 +817,7 @@ def get_general_report():
     general_table_dict['value'].append(vv)
     general_df = pd.DataFrame.from_dict(general_table_dict)
     general_df.style.set_properties(**{'text-align': 'right'})
-    return {'general': create_html_table(general_df), 'all_transaction':
+    return {'general': create_html_table(general_df, user_data_df.shape[0]), 'all_transaction':
         create_html_table(user_data_df)}
 
 

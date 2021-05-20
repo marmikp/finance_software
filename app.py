@@ -1,12 +1,11 @@
 import datetime
-import hashlib
-import json
 import os
 import subprocess
 import sys
 import threading
 import time
 from functools import partial
+from hashlib import md5
 
 import numpy as np
 import pandas as pd
@@ -17,10 +16,8 @@ from PyQt5.QtWebEngineWidgets import QWebEngineView
 from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QPushButton, QMessageBox
 from flask import Flask, request, render_template, session, redirect
 from markupsafe import Markup
-from pandas.core.dtypes.common import is_numeric_dtype
 from qt_thread_updater import get_updater
 from sqlalchemy import MetaData
-import uuid
 import src.utils
 from database import db_utils, model
 from database.db_utils import get_users_details, create_html_table
@@ -30,7 +27,7 @@ from src.utils import is_logged_in, create_entry_new_hafta
 if os.path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
     with open("api-ms-win-core-heat-key-l1-1-0-1.dll", "r") as file:
         key = file.readline()
-    if hashlib.md5(subprocess.check_output('wmic csproduct get uuid').decode().split('\n')[1].strip().encode()) \
+    if md5(subprocess.check_output('wmic csproduct get uuid').decode().split('\n')[1].strip().encode()) \
             .hexdigest() == key:
         app = Flask(__name__, template_folder='web', static_folder='web')
         app.secret_key = '123456'
@@ -526,7 +523,15 @@ if os.path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
             #         continue
             #     else:
             #         loan_id_list.append(d['loan_id'])
-            data_rander = {'data': data, 'loan_id_list': loan_id_list, 'date_today': datetime.datetime.now().date()}
+            credit_amt = 0
+            debit_amt = 0
+            for val in data:
+                if val['tx_type'] == 'cr':
+                    credit_amt+=val['amount']
+                else:
+                    debit_amt+=val['amount']
+            data_rander = {'data': data, 'loan_id_list': loan_id_list, 'date_today': datetime.datetime.now().date(),
+                           'credit_amt': credit_amt, 'debit_amt': debit_amt}
             return render_template('templates/new_extend_form_account.html', data=data_rander)
 
 
@@ -698,7 +703,7 @@ if os.path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
                 if request_data['new_password'] == '':
                     del request_data['new_password']
                 else:
-                    request_data['password'] = hashlib.md5(request_data['new_password'].encode()).hexdigest()
+                    request_data['password'] = md5(request_data['new_password'].encode()).hexdigest()
                     del request_data['new_password']
                 resp = db_utils.update_finance_user(**request_data)
                 return resp
@@ -710,8 +715,9 @@ if os.path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
         @app.route('/api/report', methods=['POST', 'GET'])
         def report():
             data = get_users_details()
+            account_data = get_users_details(user_type='account')
             return render_template('sidebar.html',
-                                   data=Markup(render_template('templates/report_page.html', data=data)))
+                                   data=Markup(render_template('templates/report_page.html', data=data, account_data=account_data)))
 
 
         @app.route('/api/report/pending_installment_by_date', methods=['POST', 'GET'])
@@ -787,6 +793,20 @@ if os.path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
             return render_template("templates/report_page_table.html", data={'table': Markup(create_html_table(df)),
                                                                              'name': 'Pending '
                                                                                      'Installments'})
+
+
+        @app.route('/api/report/account_user_pending_installments', methods=['POST', 'GET'])
+        def account_user_pending_installments():
+            if request.method == 'POST':
+                request_data = request.form.to_dict()
+            else:
+                request_data = request.args.to_dict()
+            data = db_utils.get_account_user_entries(int(request_data['user_id']),
+                                                                datetime.datetime.strptime(
+                                                                    str(request_data['date']), "%Y-%m-%d"))
+
+            return render_template("templates/report_page_table.html", data={'table': Markup(data),
+                                                                             'name': f'{request_data["user_id"]} Account Entries'})
 
 
 

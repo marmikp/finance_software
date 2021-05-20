@@ -1,6 +1,7 @@
 <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"
+      integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <!------ Include the above in your HEAD tag ---------->
@@ -256,209 +257,236 @@ body, html {
   opacity: 1;
 }
 
+
 </style>
 <div class="container register">
-                <div class="row">
-                    <div class="col-md-3 register-left">
-                        <img src="https://image.ibb.co/n7oTvU/logo_white.png" alt=""/>
-                        <h3>Welcome</h3>
-                        <p></p>
+    <div class="row">
+        <div class="col-md-3 register-left">
+            <img src="https://image.ibb.co/n7oTvU/logo_white.png" alt=""/>
+            <h3>Welcome</h3>
+            <p></p>
 
+        </div>
+        <div class="col-md-9 register-right">
+
+            <div class="tab-content" id="myTabContent">
+                <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                    <h3 class="register-heading">Add Customer</h3>
+
+                    <div class='b'></div>
+                    <div class='bb'></div>
+
+                    <div class='message'>
+                        <div class='check'>
+                            &#10004;
+                        </div>
+                        <p>
+                            Success
+                        </p>
+                        <p>
+                            Customer ADD Successfully!
+                        </p>
+                        <button id='ok'>
+                            OK
+                        </button>
                     </div>
-                    <div class="col-md-9 register-right">
 
-                        <div class="tab-content" id="myTabContent">
-                            <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
-                                <h3 class="register-heading">Add Customer</h3>
+                    <!--                                <form action="/api/hafta/new_hafta_entry" method=POST>-->
+                    <input type="hidden" class="form-control" name="id" value="{{data.max_id}}" id="id"/>
+                    <div class="row register-form">
+                        <div class="col-md-6">
+                            <div class="form-group input-container">
+                                <i class="fa fa-user icon"></i>
+                                <input type="text" class="form-control" id="name" name="name" placeholder="Name"
+                                       value="{{data.user_name if 'user_name' in data.keys() else ''}}"/>
 
-                                <div class='b'></div>
-                                <div class='bb'></div>
-
-                                <div class='message'>
-                                  <div class='check'>
-                                    &#10004;
-                                  </div>
-                                  <p>
-                                    Success
-                                  </p>
-                                  <p>
-                                    Customer ADD Successfully!
-                                  </p>
-                                  <button id='ok'>
-                                    OK
-                                  </button>
-                                </div>
-
-<!--                                <form action="/api/hafta/new_hafta_entry" method=POST>-->
-                                    <input type="hidden" class="form-control" name="id" value="{{data.max_id}}" id="id"/>
-                                <div class="row register-form">
-                                    <div class="col-md-6">
-                                        <div class="form-group input-container">
-                                          <i class="fa fa-user icon"></i>
-                                            <input type="text" class="form-control" id="name" name="name" placeholder="Username *" value="{{data.user_name if 'user_name' in data.keys() else ''}}" />
-
-                                        </div>
-                                        <div class="form-group input-container">
-                                          <i class="fa fa-user icon"></i>
-                                            <input type="text" class="form-control" id="alias" placeholder="alias *" value="{{data.user_alias if 'user_alias' in data.keys() else ''}}" name="alias" />
-                                        </div>
-                                        <div class="form-group input-container">
-                                           <i class="fas fa-pencil-alt icon"></i>
-
-                                            <textarea class="form-control" name="address" id="address" placeholder="Address *" id="exampleFormControlTextarea4" rows="1" cols="88" >{{data.user_address if 'user_address' in data.keys() else ''}}</textarea>
-                                        </div>
-                                        <div class="form-group input-container">
-
-                                            <i class="fa fa-phone icon"></i>
-                                            <input class="form-control" type="text" id="phone" placeholder="phone *" name="phone" value="{{data.user_phone if 'user_phone' in data.keys() else ''}}">
-                                        </div>
-                                        <div class="form-group input-container">
-
-                                            <i class="fa fa-phone icon"></i>
-                                            <input class="form-control" type="text" id="phone_2" placeholder="phone 2 *" name="phone_2" value="{{data.user_phone_2 if 'user_phone_2' in data.keys() else ''}}">
-                                        </div>
-                                        <div class="form-group input-container">
-                                            <i class="fas fa-city icon"></i>
-                                            <input class="form-control" type="text" id="city" placeholder="city *" name="city" value="{{data.user_city if 'user_city' in data.keys() else ''}}">
-                                        </div>
-                                        <div class="form-group input-container">
-                                          <i class="fa fa-key icon"></i>
-                                            <select class="input-field" id="loan_type" name="loan_type">
-                                                <option value="flat">Flat</option>
-                                                <option value="hafta">Hafta</option>
-                                            </select>
-                                        </div>
-
-                                        <div class="form-group input-container">
-                                          <i class="fa fa-user icon"></i>
-                                            <input type="text" class="form-control" id="guarantor_1_name" name="guarantor_1_name" placeholder="guarantor_1_name *" value="" />
-
-                                        </div>
-
-                                        <div class="form-group input-container">
-
-                                           <i class="fa fa-phone icon"></i>
-                                            <input class="form-control" type="text" id="guarantor_1_phone" placeholder="guarantor_1_phone *" name="guarantor_1_phone" value="">
-                                        </div>
-
-                                        <div class="form-group input-container">
-                                          <i class="fas fa-pencil-alt icon"></i>
-                                            <textarea class="form-control" id="guarantor_1_address" name="guarantor_1_address" placeholder="guarantor_1_address *" id="exampleFormControlTextarea4" rows="1" cols="88"></textarea>
-                                        </div>
-
-
-
-
-
-                                        <div class="form-group input-container">
-                                          <i class="fas fa-pencil-alt icon"></i>
-                                            <textarea class="form-control" name="remark" id="remark" placeholder="Remark" id="exampleFormControlTextarea4" rows="1" cols="88"></textarea>
-                                        </div>
-
-
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group input-container">
-                                          <i class="fa fa-money icon"></i>
-                                            <input class="form-control base_amount" type="text" id="base_amount" placeholder="BaseAmount *" name="base_amount" value="" onkeyup="validate()">
-                                            <input class="form-control total_amount" type="hidden" id="total_amount" placeholder="BaseAmount *" name="base_amount" value="{{data.total_amount}}">
-                                        </div>
-                                        <div class="form-group input-container">
-                                            <i class="fa fa-money icon"></i>
-                                              <input class="form-control" type="text" id="interest" placeholder="Interest *" name="interest" value="">
-                                        </div>
-
-                                        <div class="form-group input-container">
-                                            <i class="fa fa-money icon"></i>
-                                              <input class="form-control" type="text" id="noi" placeholder="No of EMI *" name="noi" value="">
-                                        </div>
-
-                                        <div class="form-group input-container">
-                                            <i class="fa fa-calendar icon"></i>
-                                              <input class="form-control" type="date" id="startdate" placeholder="Date *" name="startdate" value="{{data.today}}">
-                                        </div>
-
-                                        <div class="form-group input-container">
-                                            <i class="fa fa-money icon"></i>
-                                              <input class="form-control"  type="text" id="period" placeholder="Period *" name="period" value="monthly">
-                                        </div>
-
-                                        <div class="form-group input-container">
-
-                                           <i class="fa fa-phone icon"></i>
-                                            <input class="input-field" type="text" id="paid_amount" placeholder="paid_amount *" name="paid_amount" value="">
-                                        </div>
-
-                                        <div class="form-group input-container">
-                                          <i class="fa fa-user icon"></i>
-                                            <input type="text" class="form-control" id="guarantor_2_name" name="guarantor_2_name" placeholder="guarantor_2_name " value="" />
-
-                                        </div>
-
-                                        <div class="form-group input-container">
-                                          <i class="fas fa-pencil-alt icon"></i>
-                                            <textarea class="form-control" name="guarantor_2_address" id="guarantor_2_address" placeholder="guarantor_2_address" id="exampleFormControlTextarea4" rows="1" cols="88"></textarea>
-                                        </div>
-
-                                        <div class="form-group input-container">
-
-                                           <i class="fa fa-phone icon"></i>
-                                            <input class="form-control" type="text" id="guarantor_2_phone" placeholder="guarantor_2_phone" name="guarantor_2_phone" value="">
-                                        </div>
-
-                                        <input type="submit" class="btnRegister"  value="ADD"/>
-                                    </div>
-                                </div>
-<!--                                </form>-->
                             </div>
-                            <div class="tab-pane fade show" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-                                <h3  class="register-heading">Apply as a Hirer</h3>
-                                <div class="row register-form">
-                                    <div class="col-md-6">
-                                        <div class="form-group input-container">
-
-                                          <i class="fa fa-money icon"></i>
-                                            <input class="input-field" type="text" placeholder="BaseAmount" name="base_amount">
-                                        </div>
-                                        <div class="form-group">
-                                            <input type="text" class="form-control" placeholder="Last Name *" value="" />
-                                        </div>
-                                        <div class="form-group">
-                                            <input type="email" class="form-control" placeholder="Email *" value="" />
-                                        </div>
-                                        <div class="form-group">
-                                            <input type="text" maxlength="10" minlength="10" class="form-control" placeholder="Phone *" value="" />
-                                        </div>
-
-
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <input type="password" class="form-control" placeholder="Password *" value="" />
-                                        </div>
-                                        <div class="form-group">
-                                            <input type="password" class="form-control" placeholder="Confirm Password *" value="" />
-                                        </div>
-                                        <div class="form-group">
-                                            <select class="form-control">
-                                                <option class="hidden"  selected disabled>Please select your Sequrity Question</option>
-                                                <option>What is your Birthdate?</option>
-                                                <option>What is Your old Phone Number</option>
-                                                <option>What is your Pet Name?</option>
-                                            </select>
-                                        </div>
-                                        <div class="form-group">
-                                            <input type="text" class="form-control" placeholder="`Answer *" value="" />
-                                        </div>
-                                        <input type="submit" class="btnRegister"  value="Register"/>
-                                    </div>
-                                </div>
+                            <div class="form-group input-container">
+                                <i class="fa fa-user icon"></i>
+                                <input type="text" class="form-control" id="alias" placeholder="Short Name"
+                                       value="{{data.user_alias if 'user_alias' in data.keys() else ''}}" name="alias"/>
                             </div>
+                            <div class="form-group input-container">
+                                <i class="fas fa-pencil-alt icon"></i>
+
+                                <textarea class="form-control" name="address" id="address" placeholder="Address"
+                                          id="exampleFormControlTextarea4" rows="1" cols="88">{{data.user_address if 'user_address' in data.keys() else ''}}</textarea>
+                            </div>
+                            <div class="form-group input-container">
+
+                                <i class="fa fa-phone icon"></i>
+                                <input class="form-control" type="text" id="phone" placeholder="Phone-1" name="phone"
+                                       value="{{data.user_phone if 'user_phone' in data.keys() else ''}}">
+                            </div>
+                            <div class="form-group input-container">
+
+                                <i class="fa fa-phone icon"></i>
+                                <input class="form-control" type="text" id="phone_2" placeholder="Phone-2"
+                                       name="phone_2"
+                                       value="{{data.user_phone_2 if 'user_phone_2' in data.keys() else ''}}">
+                            </div>
+                            <div class="form-group input-container">
+                                <i class="fas fa-city icon"></i>
+                                <input class="form-control" type="text" id="city" placeholder="city" name="city"
+                                       value="{{data.user_city if 'user_city' in data.keys() else ''}}">
+                            </div>
+
+
+                            <div class="form-group input-container">
+                                <i class="fa fa-user icon"></i>
+                                <input type="text" class="form-control" id="guarantor_1_name" name="guarantor_1_name"
+                                       placeholder="Guarantor 1 Name" value=""/>
+
+                            </div>
+
+                            <div class="form-group input-container">
+
+                                <i class="fa fa-phone icon"></i>
+                                <input class="form-control" type="text" id="guarantor_1_phone"
+                                       placeholder="Guarantor 1 Phone *" name="guarantor_1_phone" value="">
+                            </div>
+
+                            <div class="form-group input-container">
+                                <i class="fas fa-pencil-alt icon"></i>
+                                <textarea class="form-control" id="guarantor_1_address" name="guarantor_1_address"
+                                          placeholder="Guarantor 1 Address" id="exampleFormControlTextarea4" rows="1"
+                                          cols="88"></textarea>
+                            </div>
+
+
+                            <div class="form-group input-container">
+                                <i class="fas fa-pencil-alt icon"></i>
+                                <textarea class="form-control" name="remark" id="remark" placeholder="Remark"
+                                          id="exampleFormControlTextarea4" rows="1" cols="88"></textarea>
+                            </div>
+
+
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group input-container">
+                                <i class="fa fa-key icon"></i>
+                                <select class="input-field" id="loan_type" name="loan_type"
+                                        onchange="hide_show_paid_amount()">
+                                    <option value="flat">Flat Loan</option>
+                                    <option value="hafta">Hafta Loan</option>
+                                </select>
+                            </div>
+                            <div class="form-group input-container">
+                                <i class="fa fa-money icon"></i>
+                                <input class="form-control base_amount" type="text" id="base_amount"
+                                       placeholder="Loan Amount" name="base_amount" value="" onkeyup="validate()">
+                                <input class="form-control total_amount" type="hidden" id="total_amount"
+                                       placeholder="BaseAmount *" name="base_amount" value="{{data.total_amount}}">
+                            </div>
+
+
+                            <div class="form-group input-container">
+                                <i class="fa fa-money icon"></i>
+                                <input class="form-control" type="text" id="noi" placeholder="Loan EMI" name="noi"
+                                       value="">
+                            </div>
+
+                            <div class="form-group input-container">
+                                <i class="fa fa-money icon"></i>
+                                <input class="form-control" type="text" id="interest" placeholder="Loan Int."
+                                       name="interest" value="">
+                            </div>
+
+                            <div class="form-group input-container">
+                                <i class="fa fa-calendar icon"></i>
+                                <input class="form-control" type="date" id="startdate" placeholder="Date *"
+                                       name="startdate" value="{{data.today}}">
+                            </div>
+
+                            <div class="form-group input-container">
+                                <i class="fa fa-money icon"></i>
+                                <input class="form-control" type="text" id="period" placeholder="Period" name="period"
+                                       value="monthly" disabled>
+                            </div>
+
+                            <div class="form-group input-container paid_amount_class">
+
+                                <i class="fa fa-phone icon" id="fa_paid_amount"></i>
+                                <input class="input-field" type="text" id="paid_amount" placeholder="Flat 1st EMI"
+                                       name="paid_amount" value="">
+                            </div>
+
+                            <div class="form-group input-container">
+                                <i class="fa fa-user icon"></i>
+                                <input type="text" class="form-control" id="guarantor_2_name" name="guarantor_2_name"
+                                       placeholder="Guarantor 2 Name" value=""/>
+
+                            </div>
+
+                            <div class="form-group input-container">
+                                <i class="fas fa-pencil-alt icon"></i>
+                                <textarea class="form-control" name="guarantor_2_address" id="guarantor_2_address"
+                                          placeholder="Guarantor 2 Address" id="exampleFormControlTextarea4" rows="1"
+                                          cols="88"></textarea>
+                            </div>
+
+                            <div class="form-group input-container">
+
+                                <i class="fa fa-phone icon"></i>
+                                <input class="form-control" type="text" id="guarantor_2_phone"
+                                       placeholder="Guarantor 2 Phone" name="guarantor_2_phone" value="">
+                            </div>
+
+                            <input type="submit" class="btnRegister" value="ADD"/>
+                        </div>
+                    </div>
+                    <!--                                </form>-->
+                </div>
+                <div class="tab-pane fade show" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                    <h3 class="register-heading">Apply as a Hirer</h3>
+                    <div class="row register-form">
+                        <div class="col-md-6">
+                            <div class="form-group input-container">
+
+                                <i class="fa fa-money icon"></i>
+                                <input class="input-field" type="text" placeholder="BaseAmount" name="base_amount">
+                            </div>
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="Last Name *" value=""/>
+                            </div>
+                            <div class="form-group">
+                                <input type="email" class="form-control" placeholder="Email *" value=""/>
+                            </div>
+                            <div class="form-group">
+                                <input type="text" maxlength="10" minlength="10" class="form-control"
+                                       placeholder="Phone *" value=""/>
+                            </div>
+
+
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <input type="password" class="form-control" placeholder="Password *" value=""/>
+                            </div>
+                            <div class="form-group">
+                                <input type="password" class="form-control" placeholder="Confirm Password *" value=""/>
+                            </div>
+                            <div class="form-group">
+                                <select class="form-control">
+                                    <option class="hidden" selected disabled>Please select your Sequrity Question
+                                    </option>
+                                    <option>What is your Birthdate?</option>
+                                    <option>What is Your old Phone Number</option>
+                                    <option>What is your Pet Name?</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="`Answer *" value=""/>
+                            </div>
+                            <input type="submit" class="btnRegister" value="Register"/>
                         </div>
                     </div>
                 </div>
-
             </div>
+        </div>
+    </div>
+
+</div>
 
 <script>
 $(document).ready(function(){
@@ -532,6 +560,7 @@ $(document).ready(function(){
   });
 
 
+
 </script>
 <script>
 function validate() {
@@ -540,4 +569,19 @@ function validate() {
     alert("Amount should be less");
   }
 }
+
+function hide_show_paid_amount() {
+  var x = document.getElementById("loan_type").value;
+  if(x == 'flat'){
+  $('.paid_amount_class').show()
+    $('#fa_paid_amount').show()
+    $("#paid_amount").show();
+  }
+  else{
+  $('.paid_amount_class').hide()
+    $('fa_paid_amount').hide()
+    $("#paid_amount").hide();
+  }
+}
+
 </script>

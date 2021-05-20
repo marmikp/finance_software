@@ -26,10 +26,15 @@
     <link href="{{ url_for('static', filename='assets/css/style.css')}}" rel="stylesheet" />
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
 <!--    <link href="https://cdn.datatables.net/1.10.24/css/dataTables.bootstrap.min.css" />-->
+    <style>
+        .div {
+            background-color: #FFFFFF;
+        }
+    </style>
 
 
 </head>
-<body  ng-app="myApp" ng-controller="customersCtrl">
+<body  ng-app="myApp" ng-controller="customersCtrl" style="background-color: #FFFFFF;">
     <div class="wrapper">
         <div class="sidebar" data-color="purple" data-image="{{ url_for('static', filename='assets/img/sidebar-1.jpg')}}">
     <div class="logo">

@@ -5,7 +5,9 @@
     background-color: white;
 }
 .display-table {
-  font-weight: 900;
+  font-weight: 500;
+              font-size: 17px;
+              font-family: "Verdana";
 }
 
 .box{
@@ -95,7 +97,7 @@ $(document).ready(function(){
 
         </div>
         <div class="col-md-3">
-            <a class="new_customer btn btn-primary" title="ADD CUSTOMER" data-toggle="tooltip"><i class="fa fa-user-plus" aria-hidden="true"> Customer</i></a>
+            <a class="new_customer btn" style="background-color: #008fe4;" title="ADD CUSTOMER" data-toggle="tooltip"><i class="fa fa-user-plus" aria-hidden="true"> New Account</i></a>
         </div>
     </div>
 
@@ -122,9 +124,9 @@ $(document).ready(function(){
                 <td>{{d.num_loan_account}}</td>
                 <td>
                     <div class="row" style="padding: 10px;">
-                        <div style="text-align: center;" class="col-md-4 box bg-primary"><a style="color: white;" class="edit add" title="Edit" data-toggle="tooltip"  user_id="{{d.id}}">Edit</a></div>
-                        <div style="text-align: center;" class="col-md-4 box bg-primary"><a style="color: white;" class="new add" title="New/Extend" data-toggle="tooltip"  user_id="{{d.id}}">New</a></div>
-                        <div style="text-align: center;" class="col-md-4 box bg-primary"><a style="color: white;" class="add_collection" title="Add Collection" data-toggle="tooltip" data="{{d.id}}">Hafta</a></div>
+                        <div style="text-align: center;" class="col-md-6 box bg-primary"><a style="color: white;" class="edit add" title="Edit" data-toggle="tooltip"  user_id="{{d.id}}">Edit Detail</a></div>
+                        <div style="text-align: center;" class="col-md-6 box bg-primary"><a style="color: white;" class="new add" title="New/Extend" data-toggle="tooltip"  user_id="{{d.id}}">View A/C</a></div>
+<!--                        <div style="text-align: center;" class="col-md-4 box bg-primary"><a style="color: white;" class="add_collection" title="Add Collection" data-toggle="tooltip" data="{{d.id}}">Hafta</a></div>-->
                     </div>
 
 
