@@ -15,9 +15,9 @@
     <link rel="stylesheet"
           href="{{ url_for('static', filename='fontawesome/web-fonts-with-css/css/fontawesome-all.css')}}">
 
-    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
-    <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.10.24/js/dataTables.bootstrap.min.js"></script>
+    <script src="{{ url_for('static', filename='assets/js/jquery-3.5.1.js')}}"></script>
+    <script src="{{ url_for('static', filename='assets/js/jquery.dataTables.min.js')}}"></script>
+    <script src="{{ url_for('static', filename='assets/js/dataTables.bootstrap.min.js')}}"></script>
 
 
     <script src="{{ url_for('static', filename='assets/js/angular179.js')}}"></script>
@@ -136,7 +136,7 @@ $(document).ready(function(){
             <td>{{d.tx_id}}</td>
             <td>{{d.amount if d.tx_type == 'cr' else ''}}</td>
             <td>{{d.amount if d.tx_type == 'dr' else ''}}</td>
-            <td>{{d.date.date()}}</td>
+            <td>{{d.date.date().strftime("%d/%m/%Y")}}</td>
             <td style="color: {{'red' if d.tx_type == 'dr' else 'green'}}">{{d.tx_type}}</td>
             <td>{{d.remark}}</td>
         </tr>
@@ -181,8 +181,8 @@ document.getElementById("date").value = today.getFullYear() + '-' + ('0' + (toda
 <link href="{{ url_for('static', filename='assets/css/jquery-ui.css')}}" rel="stylesheet"/>
 <link href="{{ url_for('static', filename='assets/css/style.css')}}" rel="stylesheet"/>
 <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
-<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
-<script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.10.24/js/dataTables.bootstrap.min.js"></script>
+<script src="{{ url_for('static', filename='assets/js/jquery-3.5.1.js')}}"></script>
+<script src="{{ url_for('static', filename='assets/js/jquery.dataTables.min.js')}}"></script>
+<script src="{{ url_for('static', filename='assets/js/dataTables.bootstrap.min.js')}}"></script>
 
 </html>

@@ -14,15 +14,15 @@
 <!--    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='asserts/css/bootstrap.min.css') }}">-->
     <link rel="stylesheet" href="{{ url_for('static', filename='fontawesome/web-fonts-with-css/css/fontawesome-all.css')}}" >
 
-    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
-    <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.10.24/js/dataTables.bootstrap.min.js"></script>
+    <script src="{{ url_for('static', filename='assets/js/jquery-3.5.1.js')}}"></script>
+    <script src="{{ url_for('static', filename='assets/js/jquery.dataTables.min.js')}}"></script>
+    <script src="{{ url_for('static', filename='assets/js/dataTables.bootstrap.min.js')}}"></script>
 
 
     <script src="{{ url_for('static', filename='assets/js/angular179.js')}}"></script>
     <link href="{{ url_for('static', filename='assets/css/jquery-ui.css')}}" rel="stylesheet" />
     <link href="{{ url_for('static', filename='assets/css/style.css')}}" rel="stylesheet" />
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+    <link href="{{ url_for('static', filename='assets/css/bootstrap.min.css')}}" />
 
     <style>
 
@@ -86,7 +86,6 @@ $(document).ready(function(){
         <div class="col-md-2"><h4>Phone: {{data.data.0.user_phone}}</h4></div>
         <div class="col-md-2"><h4>Address: {{data.data.0.user_address}}</h4></div>
         <div class="col-md-2"><h4>City: {{data.data.0.user_city}}</h4></div>
-        <div class="col-md-3"><input type="button" class="new_loan btn"  style="background-color: #008fe4;" value="Add Loan" user_id="{{data.user_id}}"></div>
         {% endif %}
     </div> <br> <hr>
     <div class="row">
@@ -107,7 +106,7 @@ $(document).ready(function(){
     </div>
     <div class="row">
         <div class="col-md-5 pending_amount_text" style="color: #16abe3; font-size: 20px;">
-            Pending Amount : <b>{{data.total_pending_amount}}</b>
+            General Amount : <b>{{data.total_pending_amount}}</b>
         </div>
         <div class="col-md-5 due_amount_text" style="color: red; font-size: 20px;">
             Due Amount : <b>{{data.total_due_amount}}</b>
@@ -182,9 +181,9 @@ document.getElementById("date").value = today.getFullYear() + '-' + ('0' + (toda
 </script>
 <link href="{{ url_for('static', filename='assets/css/jquery-ui.css')}}" rel="stylesheet" />
 <link href="{{ url_for('static', filename='assets/css/style.css')}}" rel="stylesheet" />
-<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
-<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
-<script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.10.24/js/dataTables.bootstrap.min.js"></script>
+<link href="{{ url_for('static', filename='assets/css/bootstrap.min.css')}}" />
+<script src="{{ url_for('static', filename='assets/js/jquery-3.5.1.js')}}"></script>
+<script src="{{ url_for('static', filename='assets/js/jquery.dataTables.min.js')}}"></script>
+<script src="{{ url_for('static', filename='assets/js/dataTables.bootstrap.min.js')}}"></script>
 
 </html>

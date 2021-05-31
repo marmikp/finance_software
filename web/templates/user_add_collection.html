@@ -14,15 +14,15 @@
 <!--    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='asserts/css/bootstrap.min.css') }}">-->
     <link rel="stylesheet" href="{{ url_for('static', filename='fontawesome/web-fonts-with-css/css/fontawesome-all.css')}}" >
 
-    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
-    <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.10.24/js/dataTables.bootstrap.min.js"></script>
+    <script src="{{ url_for('static', filename='assets/js/jquery-3.5.1.js')}}"></script>
+    <script src="{{ url_for('static', filename='assets/js/jquery.dataTables.min.js')}}"></script>
+    <script src="{{ url_for('static', filename='assets/js/dataTables.bootstrap.min.js')}}"></script>
 
 
     <script src="{{ url_for('static', filename='assets/js/angular179.js')}}"></script>
     <link href="{{ url_for('static', filename='assets/css/jquery-ui.css')}}" rel="stylesheet" />
     <link href="{{ url_for('static', filename='assets/css/style.css')}}" rel="stylesheet" />
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+    <link href="{{ url_for('static', filename='assets/css/bootstrap.min.css')}}" />
 
     <style>
 
@@ -46,7 +46,8 @@ $(document).ready(function(){
     if (confirm("Press OK to add collection")){
         var paid_date = document.getElementById("paid_date_".concat($(this).attr('loan_id'), "_", $(this).attr('noi'))).value;
         var paid_amount = document.getElementById("paid_amount_".concat($(this).attr('loan_id'), "_", $(this).attr('noi'))).value;
-        $.post('/api/hafta/add_collection', {'user_id': $(this).attr('user_id'), 'loan_id': $(this).attr('loan_id'), 'no_of_installment': $(this).attr('noi'),
+        $.post('/api/hafta/add_collection', {'user_id': $(this).attr('user_id'), 'loan_id': $(this).attr('loan_id'),
+        'no_of_installment': $(this).attr('noi'),
          'paid_date': paid_date, 'paid_amount': paid_amount, 'base_amount':$(this).attr('emi_amount')},
 
                 function(returnedData){
@@ -84,7 +85,7 @@ $(document).ready(function(){
 
     <div class="row">
         <div class="col-md-5 pending_amount_text" style="color: #16abe3; font-size: 20px;">
-            Pending Amount : <b>{{data.total_pending_amount}}</b>
+            General Amount : <b>{{data.total_pending_amount}}</b>
         </div>
         <div class="col-md-5 due_amount_text" style="color: red; font-size: 20px;">
             Due Amount : <b>{{data.total_due_amount}}</b>
@@ -99,13 +100,13 @@ $(document).ready(function(){
         <thead>
             <tr style="background-color:black; color:white;">
                 <th>Loan ID</th>
-                <th>Installment No</th>
+                <th>EMI No</th>
                 <th>EMI Amount</th>
                 <th>Hafta Date</th>
                 <th>Paid Date</th>
-                <th>Paid Amount</th>
+                <th>Paid Amt</th>
                 <th>Status</th>
-                <th>Installment Amount</th>
+                <th>EMI Amt</th>
                 <th>Action</th>
             </tr>
         </thead>
@@ -159,9 +160,9 @@ document.getElementById("date").value = today.getFullYear() + '-' + ('0' + (toda
 </script>
 <link href="{{ url_for('static', filename='assets/css/jquery-ui.css')}}" rel="stylesheet" />
 <link href="{{ url_for('static', filename='assets/css/style.css')}}" rel="stylesheet" />
-<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
-<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
-<script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.10.24/js/dataTables.bootstrap.min.js"></script>
+<link href="{{ url_for('static', filename='assets/css/bootstrap.min.css')}}" />
+<script src="{{ url_for('static', filename='assets/js/jquery-3.5.1.js')}}"></script>
+<script src="{{ url_for('static', filename='assets/js/jquery.dataTables.min.js')}}"></script>
+<script src="{{ url_for('static', filename='assets/js/dataTables.bootstrap.min.js')}}"></script>
 
 </html>

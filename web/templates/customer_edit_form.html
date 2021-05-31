@@ -1,10 +1,21 @@
-<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
-<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="{{ url_for('static', filename='assets/js/jquery.min.js')}}"></script>
+<!--<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">-->
+<link href="{{ url_for('static', filename='assets/css/bootstrap.min.css') }}" rel="stylesheet" id="bootstrap-css"/>
+<link href="{{ url_for('static', filename='assets/css/font-awesome2.min.css') }}" rel="stylesheet" />
+<link href="{{ url_for('static', filename='assets/css/all.css') }}" rel="stylesheet" />
+<!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">-->
+<!--<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"-->
+<!--      integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">-->
+<script src="{{ url_for('static', filename='assets/js/bootstrap.min.js')}}"></script>
+<!--<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>-->
+<!--<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>-->
+<script src="{{ url_for('static', filename='assets/js/jquery.min.js')}}"></script>
 <!------ Include the above in your HEAD tag ---------->
 <style>
+
+.tab-pane {
+    opacity: 1;
+}
   .register{
     background: -webkit-linear-gradient(left, #3931af, #00c6ff);
     margin-top: 3%;

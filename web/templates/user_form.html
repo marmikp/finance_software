@@ -103,7 +103,8 @@ $(document).ready(function(){
 
 });
 </script>
-<script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
+<!--<script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>-->
+<script src="{{ url_for('static', filename='assets/js/a076d05399.js')}}"></script>
 <div style="padding: 50px;padding-top:100px; background-color: #FFFFFF;">
 
      <div class="row inline">
@@ -111,12 +112,8 @@ $(document).ready(function(){
 
         </div>
          <div class="col-sm-5" align="center">
-             <label for="add_collection_text" style="font-size: 20px;" class="col-sm-6 control-label">Add Collection : </label>
-             <div class="col-sm-6" style="padding-top: 10px;"> <input type="text" value="" placeholder="Enter Loan Id" id="add_collection_text" /></div>
-         </div>
+             </div>
          <div class="col-sm-2">
-
-            <a class="add_collection_loan_id btn" style="background-color: #008fe4;" title="ADD Collections" data-toggle="tooltip">Add Hafta</a>
         </div>
           <div class="col-sm-3">
             <a class="new_customer btn" style="background-color: #008fe4;" title="ADD CUSTOMER" data-toggle="tooltip"><i class="fa fa-user-plus" aria-hidden="true">New Loan</i></a>
@@ -130,27 +127,22 @@ $(document).ready(function(){
                 <th style="text-align: center;">Id</th>
                 <th style="text-align: center;">Name</th>
                 <th style="text-align: center;">Phone</th>
-                <th style="text-align: center;">Type</th>
                 <th style="text-align: center;">Loans</th>
-                <th style="text-align: center;">A/C</th>
                 <th style="text-align: center;">Actions</th>
             </tr>
         </thead>
         <tbody>
         {% for d in data %}
             <tr>
-                <td>{{d.id}}</td>
+                <td>{{d.loans}}</td>
                 <td>{{d.user_name}}</td>
                 <td>{{d.user_phone}}</td>
-                <td>{{d.customer_type}}</td>
                 <td>{{d.num_loan_hafta}}</td>
-                <td>{{d.num_loan_account}}</td>
                 <td>
                     <div class="row" style="padding: 10px;">
-                        <div style="text-align: center;" class="col-md-2 box bg-primary"><a style="color: white;" class="edit add" title="Edit" data-toggle="tooltip"  user_id="{{d.id}}">Edit</a></div>
-                        <div style="text-align: center;" class="col-md-3 box bg-primary"><a style="color: white;" class="new add" title="New/Extend" data-toggle="tooltip"  user_id="{{d.id}}">New</a></div>
-                        <div style="text-align: center;" class="col-md-3 box bg-primary"><a style="color: white;" class="add_collection" title="Add Collection" data-toggle="tooltip" data="{{d.id}}">Hafta</a></div>
-                        <div style="text-align: center; background-color: red;" class="col-md-3 box " ><a style="color: white;" class="close_loan" title="Close Loan" data-toggle="tooltip" data="{{d.id}}">Close</a></div>
+                        <div style="text-align: center;" class="col-md-3 box bg-primary"><a style="color: white;" class="edit add" title="Edit" data-toggle="tooltip"  user_id="{{d.id}}">Edit</a></div>
+                        <div style="text-align: center;" class="col-md-5 box bg-primary"><a style="color: white;" class="new add" title="Add Hafta" data-toggle="tooltip"  user_id="{{d.id}}">Add Hafta</a></div>
+                        <div style="text-align: center; background-color: red;" class="col-md-4 box " ><a style="color: white;" class="close_loan" title="Close Loan" data-toggle="tooltip" data="{{d.id}}">Close</a></div>
                     </div>
 
                 </td>

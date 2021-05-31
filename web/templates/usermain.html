@@ -1,9 +1,15 @@
-<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"
-      integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
-<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="{{ url_for('static', filename='assets/js/jquery.min.js')}}"></script>
+<!--<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">-->
+<link href="{{ url_for('static', filename='assets/css/bootstrap.min.css') }}" rel="stylesheet" id="bootstrap-css"/>
+<link href="{{ url_for('static', filename='assets/css/font-awesome2.min.css') }}" rel="stylesheet" />
+<link href="{{ url_for('static', filename='assets/css/all.css') }}" rel="stylesheet" />
+<!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">-->
+<!--<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"-->
+<!--      integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">-->
+<script src="{{ url_for('static', filename='assets/js/bootstrap.min.js')}}"></script>
+<!--<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>-->
+<!--<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>-->
+<script src="{{ url_for('static', filename='assets/js/jquery.min.js')}}"></script>
 <!------ Include the above in your HEAD tag ---------->
 <style>
   .register{
@@ -256,7 +262,9 @@ body, html {
   top: 150px;
   opacity: 1;
 }
-
+.tab-pane {
+    opacity: 1;
+}
 
 </style>
 <div class="container register">
@@ -437,51 +445,7 @@ body, html {
                     </div>
                     <!--                                </form>-->
                 </div>
-                <div class="tab-pane fade show" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-                    <h3 class="register-heading">Apply as a Hirer</h3>
-                    <div class="row register-form">
-                        <div class="col-md-6">
-                            <div class="form-group input-container">
 
-                                <i class="fa fa-money icon"></i>
-                                <input class="input-field" type="text" placeholder="BaseAmount" name="base_amount">
-                            </div>
-                            <div class="form-group">
-                                <input type="text" class="form-control" placeholder="Last Name *" value=""/>
-                            </div>
-                            <div class="form-group">
-                                <input type="email" class="form-control" placeholder="Email *" value=""/>
-                            </div>
-                            <div class="form-group">
-                                <input type="text" maxlength="10" minlength="10" class="form-control"
-                                       placeholder="Phone *" value=""/>
-                            </div>
-
-
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <input type="password" class="form-control" placeholder="Password *" value=""/>
-                            </div>
-                            <div class="form-group">
-                                <input type="password" class="form-control" placeholder="Confirm Password *" value=""/>
-                            </div>
-                            <div class="form-group">
-                                <select class="form-control">
-                                    <option class="hidden" selected disabled>Please select your Sequrity Question
-                                    </option>
-                                    <option>What is your Birthdate?</option>
-                                    <option>What is Your old Phone Number</option>
-                                    <option>What is your Pet Name?</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <input type="text" class="form-control" placeholder="`Answer *" value=""/>
-                            </div>
-                            <input type="submit" class="btnRegister" value="Register"/>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     </div>

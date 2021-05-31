@@ -30,7 +30,8 @@ def create_user_table(table_name):
         (('party_to_party_transaction', db.Integer), {'default': 0}),
         (('party_to_party_transaction_amount', db.Float), {'default': 0}),
         (('party_to_party_transaction_with', db.Integer), {'default': 0}),
-        (('total_transaction_amount_pending', db.Float), {'default': 0})
+        (('total_transaction_amount_pending', db.Float), {'default': 0}),
+        (('tx_hist_id', db.Integer), {})
     ]
     try:
         columns = []

@@ -6,7 +6,7 @@ from flask import session
 
 from database import db_utils
 from database.db_utils import get_pending_installment_of_loan_id, convert_table_to_dict_data, \
-    get_pending_installments_of_user
+    get_pending_installments_of_user, get_user_pending_amount, get_user_due_amount
 from database.model import db, HaftEntry, CrDrEntry, AccountEntry, Customer, General, TransactionHistory
 
 calculate_emi = lambda a, b: a / b
@@ -107,19 +107,21 @@ def add_user_track_data(user_type="loan", **kwargs):
     try:
         if user_type == 'account':
             db_utils.add_hafta_track_entry(**{'user_id': kwargs['id'], 'tx_id': kwargs['transaction_id'],
-                                              'amount': kwargs['base_amount'], 'date': kwargs['start_date'], 'tx_type': 'cr'})
+                                              'amount': kwargs['base_amount'], 'date': kwargs['start_date'],
+                                              'tx_type': 'cr'})
         else:
-            for installment in range(1, kwargs['no_installment']+1):
+            for installment in range(1, kwargs['no_installment'] + 1):
                 db_utils.add_hafta_track_entry(
                     **{'user_id': kwargs['id'], 'loan_id': kwargs['transaction_id'], 'emi_amount': emi_amount,
                        'date_to_pay': kwargs['start_date'] + relativedelta(
-                           months=installment if kwargs['loan_type'] == 'flat' else installment + 1),
+                           months=installment - 1 if kwargs['loan_type'] == 'flat' else installment),
                        'no_of_installment': installment, "tx_status": 0})
             if kwargs['loan_type'] == 'flat':
                 db_utils.add_hafta_track_entry(
-                    **{'user_id': kwargs['id'], 'loan_id': kwargs['transaction_id'], 'emi_amount': kwargs['base_amount'],
+                    **{'user_id': kwargs['id'], 'loan_id': kwargs['transaction_id'],
+                       'emi_amount': kwargs['base_amount'],
                        'date_to_pay': kwargs['start_date'] + relativedelta(
-                           months=installment + 1), 'tx_status': 0,
+                           months=installment), 'tx_status': 0,
                        'no_of_installment': installment + 1})
         return {"code": 200, "status": "pending", "emi_amount": emi_amount}
     except Exception as e:
@@ -146,15 +148,21 @@ def get_loan_entries_by_user_id(user_id, user_type="loan"):
         val['user_phone'] = user_data[0].user_phone
         val['user_address'] = user_data[0].user_address
         val['user_city'] = user_data[0].user_city
+    if len(data) == 0:
+        user_data = db_utils.get_user_info_by_id(user_id)
+        val = {'user_alias': user_data[0].user_alias, 'user_name': user_data[0].user_name,
+               'user_phone': user_data[0].user_phone, 'user_address': user_data[0].user_address,
+               'user_city': user_data[0].user_city}
+        data.append(val)
     return data
-
 
 
 def get_account_user_details(user_id):
     data = db_utils.get_user_data(user_id, user_type='account')
     return data
 
-def get_user_details(user_id, user_type='loan', account_type='hafta'):
+
+def get_user_details(user_id, user_type='loan', account_type='hafta', loan_status='active'):
     if account_type == 'debit':
         data = CrDrEntry.query.filter_by(id=user_id).order_by(CrDrEntry.paid_date.desc()).all()
         for i, d in enumerate(data):
@@ -169,7 +177,7 @@ def get_user_details(user_id, user_type='loan', account_type='hafta'):
             data[i] = d
         return data
     else:
-        data = db_utils.get_user_data(user_id, user_type=user_type)
+        data = db_utils.get_user_data(user_id, user_type=user_type, loan_status=loan_status)
         for val in data:
             val['today'] = datetime.now().date()
             user_data = db_utils.get_user_info_by_id(user_id)

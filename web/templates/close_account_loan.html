@@ -14,15 +14,15 @@
 <!--    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='asserts/css/bootstrap.min.css') }}">-->
     <link rel="stylesheet" href="{{ url_for('static', filename='fontawesome/web-fonts-with-css/css/fontawesome-all.css')}}" >
 
-    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
-    <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.10.24/js/dataTables.bootstrap.min.js"></script>
+    <script src="{{ url_for('static', filename='assets/js/jquery-3.5.1.js')}}"></script>
+    <script src="{{ url_for('static', filename='assets/js/jquery.dataTables.min.js')}}"></script>
+    <script src="{{ url_for('static', filename='assets/js/dataTables.bootstrap.min.js')}}"></script>
 
 
     <script src="{{ url_for('static', filename='assets/js/angular179.js')}}"></script>
     <link href="{{ url_for('static', filename='assets/css/jquery-ui.css')}}" rel="stylesheet" />
     <link href="{{ url_for('static', filename='assets/css/style.css')}}" rel="stylesheet" />
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+    <link href="{{ url_for('static', filename='assets/css/bootstrap.min.css')}}" />
     <style>
 
 .selected {
@@ -134,9 +134,9 @@ document.getElementById("date").value = today.getFullYear() + '-' + ('0' + (toda
 </script>
 <link href="{{ url_for('static', filename='assets/css/jquery-ui.css')}}" rel="stylesheet" />
 <link href="{{ url_for('static', filename='assets/css/style.css')}}" rel="stylesheet" />
-<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
-<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
-<script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.10.24/js/dataTables.bootstrap.min.js"></script>
+<link href="{{ url_for('static', filename='assets/css/bootstrap.min.css')}}" />
+<script src="{{ url_for('static', filename='assets/js/jquery-3.5.1.js')}}"></script>
+<script src="{{ url_for('static', filename='assets/js/jquery.dataTables.min.js')}}"></script>
+<script src="{{ url_for('static', filename='assets/js/dataTables.bootstrap.min.js')}}"></script>
 
 </html>

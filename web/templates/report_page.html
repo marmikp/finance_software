@@ -15,9 +15,9 @@
     <link rel="stylesheet"
           href="{{ url_for('static', filename='fontawesome/web-fonts-with-css/css/fontawesome-all.css')}}">
 
-    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
-    <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.10.24/js/dataTables.bootstrap.min.js"></script>
+    <script src="{{ url_for('static', filename='assets/js/jquery-3.5.1.js')}}"></script>
+    <script src="{{ url_for('static', filename='assets/js/jquery.dataTables.min.js')}}"></script>
+    <script src="{{ url_for('static', filename='assets/js/dataTables.bootstrap.min.js')}}"></script>
 
 
     <script src="{{ url_for('static', filename='assets/js/angular179.js')}}"></script>
@@ -55,12 +55,9 @@ $(document).ready(function(){
 
   });
   $(".user_entry_btn").click(function(){
-        var from_date = document.getElementById("user_entry_from_date").value;
-        var to_date = document.getElementById("user_entry_to_date").value;
         var user_id = document.getElementById("user_entry_dropdown_select_user_id").value;
         $.post('/api/test', {'url': 'http://127.0.0.1:5000/api/report/user_entries_between_date',
-                                                         'user_id': user_id, 'from_date': from_date,
-                                                         'to_date': to_date, 'doc_flag': 1},
+                                                         'user_id': user_id, 'doc_flag': 1},
                 function(returnedData){
                     var w = window.open('about:blank');
                     w.document.open();
@@ -101,9 +98,11 @@ $(document).ready(function(){
 
 $(".account_user_pending_installments_btn").click(function(){
         var date = document.getElementById("account_user_pending_installments_date").value;
+        var from_date = document.getElementById("account_user_pending_installments_date_from").value;
         var user_id = document.getElementById("account_user_pending_installment_dropdown_select_user_id").value;
-        $.post('/api/test', {'url':'http://127.0.0.1:5000/api/report/account_user_pending_installments',
-                                                        'date': date, 'user_id': user_id, 'doc_flag': 1},
+        $.post('/api/test', {'url': 'http://127.0.0.1:5000/api/report/account_user_pending_installments',
+                                                        'date': date, 'user_id': user_id, 'doc_flag': 1,
+                                                        'from_date': from_date},
                 function(returnedData){
                     var w = window.open('about:blank');
                     w.document.open();
@@ -146,7 +145,7 @@ $(".account_user_pending_installments_btn").click(function(){
     <div style="overflow-y: scroll; height:500px;">
         <div class="row align-items-center" style="background-color: white; border-radius: 10px;">
             <div class="col-md-6" align="left">
-                <div><h4>Pending Installment by date</h4></div>
+                <div><h4>Due Report</h4></div>
             </div>
 
             <div class="col-md-3">
@@ -173,12 +172,8 @@ $(".account_user_pending_installments_btn").click(function(){
                     {% endfor %}
                 </select>
             </div>
-            <div class="col-md-3">
-                <h4>From: </h4>
-                <input type="date" id="user_entry_from_date">
-                <h4>To: </h4>
-                <input type="date" id="user_entry_to_date">
-            </div>
+            <div class="col-md-3"></div>
+
             <div class="col-md-3">
                 <div><input type="button" class="user_entry_btn btn"  style="background-color: #008fe4;" value="Get report"></div>
             </div>
@@ -240,7 +235,7 @@ $(".account_user_pending_installments_btn").click(function(){
 
         <div class="row align-items-center top-buffer" style="background-color: white; border-radius: 10px">
             <div class="col-md-3" align="left">
-                <div><h4>Account User Entries</h4></div>
+                <div><h4>Sarafi Account Report</h4></div>
             </div>
             <div class="col-md-3">
 
@@ -248,11 +243,13 @@ $(".account_user_pending_installments_btn").click(function(){
 
                 <select class="form-select" id="account_user_pending_installment_dropdown_select_user_id">
                     {% for d in account_data %}
-                    <option value="{{d.id}}">{{d.id}}&ensp;-&ensp;{{d.user_name}}</option>
+                    <option value="{{d.id}}">{{d.loan_id}}&ensp;-&ensp;{{d.user_name}}</option>
                     {% endfor %}
                 </select>
             </div>
             <div class="col-md-3">
+                <h4>From: </h4>
+                <input type="date" id="account_user_pending_installments_date_from">
                 <h4>To: </h4>
                 <input type="date" id="account_user_pending_installments_date">
             </div>
@@ -279,8 +276,8 @@ document.getElementById("date").value = today.getFullYear() + '-' + ('0' + (toda
 <link href="{{ url_for('static', filename='assets/css/jquery-ui.css')}}" rel="stylesheet"/>
 <link href="{{ url_for('static', filename='assets/css/style.css')}}" rel="stylesheet"/>
 <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
-<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
-<script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.10.24/js/dataTables.bootstrap.min.js"></script>
+<script src="{{ url_for('static', filename='assets/js/jquery-3.5.1.js')}}"></script>
+<script src="{{ url_for('static', filename='assets/js/jquery.dataTables.min.js')}}"></script>
+<script src="{{ url_for('static', filename='assets/js/dataTables.bootstrap.min.js')}}"></script>
 
 </html>

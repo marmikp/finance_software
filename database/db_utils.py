@@ -1,51 +1,113 @@
 import datetime
-import time
+import math
 from hashlib import md5
+from time import sleep
 
 import pandas as pd
 from dateutil.relativedelta import relativedelta
 from flask import session
 from sqlalchemy import or_, and_
-
 from database.model import *
-import numpy as np
 
 META_DATA = None
 
 
-def create_html_table(x, length = 0):
+def create_html_table(x, length=0, show_col_name=False):
     row_data = ''
     dtype_list = []
     for col in x.columns.values.tolist():
-        if pd.to_numeric(x[col], errors='coerce').notnull().all():
+        if pd.to_numeric(x[col], errors='coerce').notnull().all() or 'amount' in col:
             dtype_list.append('numeric')
         else:
             dtype_list.append('text')
-
+    if show_col_name:
+        row_data += '<tr>'
+        for col in x.columns.values.tolist():
+            row_data += f'<th>{col}</th>'
+        row_data += '</tr>'
+    row_data += '<tr>'
     for i in range(x.shape[0]):
         if length != 0:
-            if i == x.shape[0]-1:
+            if i == x.shape[0] - 1:
                 continue
-        row_data += '\n<tr> '
+        if i != 0:
+            row_data += '\n<tr> '
         for j in range(x.shape[1]):
-
+            if pd.isnull(x.iloc[i, j]):
+                val = ''
+            else:
+                val = x.iloc[i, j]
             if dtype_list[j] == 'text':  # The first column
-                row_data += '\n <td class = "text_column">' + str(x.iloc[i, j]) + '</td>'
+
+                row_data += '\n <td class = "text_column">' + str(val) + '</td>'
 
             else:  # second column
-                row_data += '\n <td class = "number_column" style="text-align:right">' + str(x.iloc[i, j]) + '</td>'
+                row_data += '\n <td class = "number_column" style="text-align:right;">' + str(val) + '</td>'
 
         row_data += '\n </tr>'
     if length != 0:
-        for i in range(length-x.shape[0]+1):
-            row_data += '\n<tr> <td></td><td></td>\n</tr>'
+        for i in range(length - x.shape[0]):
+            row_data += '\n<tr> <td></td><td></td><td></td>\n</tr>'
         row_data += '\n<tr> '
-        row_data += '\n <td class = "number_column" style="text-align:right">' + str(x.iloc[x.shape[0]-1, 0]) + '</td>'
+        row_data += '\n <td class = "number_column" style="text-align:right">' + str(
+            x.iloc[x.shape[0] - 1, 0]) + '</td>'
 
-        row_data += '\n <td class = "number_column" style="text-align:right">' + str(x.iloc[x.shape[0]-1, 1]) + '</td>'
+        row_data += '\n <td class = "number_column" style="text-align:right">' + str(
+            x.iloc[x.shape[0] - 1, 1]) + '</td>'
+        row_data += '\n <td class = "number_column" style="text-align:right">' + str(
+            x.iloc[x.shape[0] - 1, 2]) + '</td>'
         row_data += '\n </tr>'
     return row_data
 
+
+def create_general_html_table(x, length=0, show_col_name=False):
+    row_data = ''
+    dtype_list = []
+    for col in x.columns.values.tolist():
+        if pd.to_numeric(x[col], errors='coerce').notnull().all() or 'amount' in col:
+            dtype_list.append('numeric')
+        else:
+            dtype_list.append('text')
+    if show_col_name:
+        row_data += '<tr>'
+        for col in x.columns.values.tolist():
+            row_data += f'<th>{col}</th>'
+        row_data += '</tr>'
+    row_data += '<tr>'
+    for i in range(x.shape[0]):
+        if length != 0:
+            if i == x.shape[0] - 1:
+                continue
+        if i != 0:
+            row_data += '\n<tr> '
+        for j in range(x.shape[1]):
+            if pd.isnull(x.iloc[i, j]):
+                val = ''
+            else:
+                val = x.iloc[i, j]
+            if dtype_list[j] == 'text':  # The first column
+                if x.columns.values.tolist()[j] == 'id':
+                    row_data += '\n <td class = "text_column col-md-2">' + str(val) + '</td>'
+                else:
+                    row_data += '\n <td class = "text_column col-md-8">' + str(val) + '</td>'
+
+            else:  # second column
+                row_data += '\n <td class = "number_column col-md-2" style="text-align:right;">' + str(val) + '</td>'
+
+        row_data += '\n </tr>'
+    if length != 0:
+        for i in range(length - x.shape[0]):
+            row_data += '\n<tr> <td></td><td></td><td></td>\n</tr>'
+        row_data += '\n<tr> '
+        row_data += '\n <td class = "number_column" style="text-align:right">' + str(
+            x.iloc[x.shape[0] - 1, 0]) + '</td>'
+
+        row_data += '\n <td class = "number_column" style="text-align:right">' + str(
+            x.iloc[x.shape[0] - 1, 1]) + '</td>'
+        row_data += '\n <td class = "number_column" style="text-align:right">' + str(
+            x.iloc[x.shape[0] - 1, 2]) + '</td>'
+        row_data += '\n </tr>'
+    return row_data
 
 
 def convert_table_to_dict_data(data):
@@ -166,7 +228,7 @@ def extend_hafta(customer_id, amount, no_of_hafta, loan_id, user_type="loan"):
                 {"no_of_installment": no_installments + no_of_hafta, "date_to_pay": user_data_list[0]['date_to_pay'] +
                                                                                     relativedelta(months=no_of_hafta)}))
         # add entry of each installment
-        for i in range(1, no_of_hafta+1):
+        for i in range(1, no_of_hafta + 1):
             add_hafta_track_entry(
                 **{'user_id': customer_id, 'loan_id': loan_id, 'emi_amount': amount,
                    'date_to_pay': user_data_list[0]['date_to_pay'] + relativedelta(
@@ -196,21 +258,38 @@ def get_max_transaction_id():
         tx_id2 = ll[-1].transaction_id
     else:
         tx_id2 = 0
-    return max(tx_id1,tx_id2)
+    return max(tx_id1, tx_id2)
+
+
+def get_max_transaction_id_m(user_type):
+    if user_type == 'loan':
+        ll = HaftEntry.query.order_by('transaction_id').all()
+        if len(ll) > 0:
+            tx_id1 = ll[-1].transaction_id
+        else:
+            tx_id1 = 0
+    else:
+        ll = AccountEntry.query.order_by('transaction_id').all()
+        if len(ll) > 0:
+            tx_id1 = ll[-1].transaction_id
+        else:
+            tx_id1 = 0
+    return tx_id1
 
 
 def add_new_hafta_entry(user_type="loan", **kwargs):
-    kwargs['transaction_id'] = get_max_transaction_id() + 1
     if user_type == "loan":
+        kwargs['transaction_id'] = get_max_transaction_id_m(user_type) + 1
         add_query = HaftEntry(**kwargs)
     else:
+        kwargs['transaction_id'] = get_max_transaction_id_m(user_type) + 1
         add_query = AccountEntry(**kwargs)
 
     try:
         db.session.add(add_query)
         db.session.commit()
 
-        time.sleep(1)
+        sleep(1)
         if user_type == "loan":
             Customer.query.filter_by(id=add_query.id).update({"customer_type_loan": 1})
             create_user_table(kwargs['id'])
@@ -258,6 +337,15 @@ def add_installment(installment_num=1, paid_date=datetime.now(), user_type="loan
             user_data_list_current = [{column: value for column, value in rowproxy.items()} for rowproxy in
                                       user_d_current]
 
+            print(user_data_list[0]['tx_hist_id'])
+            try:
+                TransactionHistory.query.filter(
+                    TransactionHistory.tx_id == user_data_list_current[0]['tx_hist_id']).delete()
+                # User.query.filter(User.id == 123).delete()
+                db.session.commit()
+            except Exception as e:
+                pass
+
             amount_diff = kwargs['emi_amount'] - user_data_list_current[0]['paid_amount']
             db.engine.execute(table.update().where(
                 (table.c.loan_id == kwargs['transaction_id']) & (
@@ -302,6 +390,9 @@ def add_installment(installment_num=1, paid_date=datetime.now(), user_type="loan
                 (table.c.loan_id == kwargs['transaction_id']) & (table.c.tx_status == 0)).order_by(
                 table.c.no_of_installment))
             user_data_list = [{column: value for column, value in rowproxy.items()} for rowproxy in user_d]
+            # stmt = TransactionHistory.delete().where(TransactionHistory.c.tx_id == user_data_list[0]['tx_hist_id'])
+            # stmt.execute()
+
             update_row_installment_no = user_data_list[0]['no_of_installment']
             if len(user_data_list):
                 db.engine.execute(
@@ -354,6 +445,13 @@ def add_installment(installment_num=1, paid_date=datetime.now(), user_type="loan
                                                status='cr', total_balance=total_balance)
             db.session.add(tx_hist_query)
             db.session.commit()
+            tx_id = TransactionHistory.query.order_by(TransactionHistory.tx_id.desc()).first().tx_id
+            db.engine.execute(
+                table.update().where(
+                    (table.c.loan_id == kwargs['transaction_id']) & (
+                            table.c.no_of_installment == installment_num)).values(
+                    {'tx_hist_id': tx_id}))
+            db.session.commit()
 
         return {"code": 200, "status": "installment updated successfully"}
     except Exception as e:
@@ -361,7 +459,7 @@ def add_installment(installment_num=1, paid_date=datetime.now(), user_type="loan
         return {"code": 500, "status": "error in installment update"}
 
 
-def get_user_data(id=None, loan_type="hafta", user_type='loan'):
+def get_user_data(id=None, loan_type="hafta", user_type='loan', loan_status='active'):
     if id is not None:
         try:
             user_table = META_DATA.tables[str(id)]
@@ -371,8 +469,15 @@ def get_user_data(id=None, loan_type="hafta", user_type='loan'):
                 entry_table = AccountEntry
             if loan_type == "hafta":
                 user_data = []
-                user_active_loans = [val.transaction_id for val in
-                                     entry_table.query.filter_by(id=id, loan_status=0).all()]
+                if loan_status == 'both':
+                    user_active_loans = [val.transaction_id for val in
+                                         entry_table.query.filter_by(id=id).all()]
+                elif loan_status == 'active':
+                    user_active_loans = [val.transaction_id for val in
+                                         entry_table.query.filter_by(id=id, loan_status=0).all()]
+                else:
+                    user_active_loans = [val.transaction_id for val in
+                                         entry_table.query.filter_by(id=id, loan_status=1).all()]
                 for loan in user_active_loans:
 
                     if user_type == 'account':
@@ -474,7 +579,7 @@ def get_pending_installment_of_loan_id(user_id, loan_id):
     return user_d_list
 
 
-def get_users_details(loan_type="both", user_type="loan", all_entries=False):
+def get_users_details(loan_status="active", user_type="loan", all_entries=False):
     if user_type == 'loan':
         if all_entries:
             customer_data = Customer.query.all()
@@ -499,15 +604,24 @@ def get_users_details(loan_type="both", user_type="loan", all_entries=False):
             if all_entries:
                 data['num_loan_account'] = len(AccountEntry.query.filter_by(id=data['id']).all())
             else:
-                data['num_loan_account'] = len(AccountEntry.query.filter_by(id=data['id'], loan_status=0).all())
+                data_fetch = AccountEntry.query.filter_by(id=data['id'], loan_status=0).all()
+                data['num_loan_account'] = len(data_fetch)
+                data['loan_id'] = data_fetch[0].transaction_id
             data['customer_type'] = "account"
             pass
         if data['customer_type_loan']:
-            if all_entries:
+            if all_entries or loan_status == 'both':
                 loan_data = HaftEntry.query.filter_by(id=data['id']).all()
+                data['num_loan_hafta'] = len(HaftEntry.query.filter_by(id=data['id'], loan_status=0).all())
             else:
                 loan_data = HaftEntry.query.filter_by(id=data['id'], loan_status=0).all()
-            data['num_loan_hafta'] = len(loan_data)
+                data['num_loan_hafta'] = len(loan_data)
+            data['loans'] = ''
+            for loan in loan_data:
+                data['loans'] += str(loan.transaction_id) + ", "
+            data['loans'] = data['loans'][:-2]
+            data_fetch = HaftEntry.query.filter_by(id=data['id']).all()
+            data['loan_id'] = data_fetch[0].transaction_id
             data['customer_type'] = "loan"
         if data['customer_type_account'] and data['customer_type_loan']:
             data['customer_type'] = "both"
@@ -580,7 +694,7 @@ def close_loan(user_id, loan_id, amount, user_type="loan"):
         pending_amount = one_month_interest * len(user_data_list)
     total_pending_interst = General.query.filter_by(username=session.get('username')).first().total_interest_pending
     General.query.filter_by(username=session.get('username')).update({'total_interest_pending': total_pending_interst -
-                                                                                       pending_amount})
+                                                                                                pending_amount})
     db.session.commit()
     latest_installment_no = user_data_list[0]['no_of_installment']
     db.engine.execute(
@@ -588,7 +702,11 @@ def close_loan(user_id, loan_id, amount, user_type="loan"):
             (table.c.loan_id == loan_id) & (
                     table.c.no_of_installment == latest_installment_no)).values(
             {'paid_amount': amount, 'paid_date': datetime.now().date(), 'tx_status': 1}))
-    for d in user_data_list:
+    db.session.commit()
+
+    for i, d in enumerate(user_data_list):
+        if i == 0:
+            continue
         db.engine.execute(
             table.update().where(
                 (table.c.loan_id == loan_id) & (
@@ -615,7 +733,6 @@ def close_loan(user_id, loan_id, amount, user_type="loan"):
     #     return {"code": 500, "status": "some error occured during closing the loan"}
 
 
-
 def get_pending_installments_of_user(user_id, date):
     META_DATA.reflect()
     user_table = META_DATA.tables[str(user_id)]
@@ -633,21 +750,60 @@ def get_pending_installments_of_user(user_id, date):
             loan_id_dict[val['loan_id']] = [0, 0, 0, 0]
         loan_id_dict[val['loan_id']][0] += val['emi_amount']
         loan_id_dict[val['loan_id']][1] += 1
-        loan_id_dict[val['loan_id']][2] = val['date_to_pay'].strftime("%d/%m/%Y")
+        loan_id_dict[val['loan_id']][2] = val['date_to_pay'].date().strftime("%d/%m/%Y")
+        val['date_to_pay'] = loan_id_dict[val['loan_id']][2]
         loan_id_dict[val['loan_id']][3] = len(emis_dict_count)
     return loan_id_dict, emis_dict
 
-def get_account_user_entries(user_id, date=datetime.now().date()):
+
+def get_account_user_entries(user_id, from_date=datetime.now().date() - relativedelta(months=1),
+                             date=datetime.now().date()):
     entry_table = META_DATA.tables[str(user_id)]
     user_entries = db.engine.execute(entry_table.select().where(
-        (entry_table.c.date <= date)))
+        (entry_table.c.date <= date) & (entry_table.c.date >= from_date)))
     user_entries = [{column: value for column, value in rowproxy.items()} for rowproxy in user_entries]
-    df = pd.DataFrame(columns=['tx_id', 'amount', 'date', 'tx_type', 'remark'])
+    # get opening balance
+    user_entries_opening = db.engine.execute(entry_table.select().where((entry_table.c.date < from_date)))
+    user_entries_opening = [{column: value for column, value in rowproxy.items()} for rowproxy in user_entries_opening]
+    if len(user_entries_opening) > 0:
+        credit_amt = 0
+        debit_amt = 0
+        for entry in user_entries_opening:
+            if entry['tx_type'] == 'cr':
+                credit_amt += entry['amount']
+            else:
+                debit_amt += entry['amount']
+        if debit_amt == credit_amt:
+            opening_balance_row = pd.Series([-1, 0, 0, from_date.strftime("%d/%m/%Y"), '', 'Opening Balance'],
+                                            ['tx_id', 'credit', 'debit', 'date', 'tx_type', 'remark'])
+        elif debit_amt > credit_amt:
+            opening_balance_row = pd.Series(
+                [-1, '', debit_amt - credit_amt, from_date.strftime("%d/%m/%Y"), '', 'Opening Balance'],
+                ['tx_id', 'credit', 'debit', 'date', 'tx_type', 'remark'])
+        else:
+            opening_balance_row = pd.Series(
+                [-1, credit_amt - debit_amt, '', from_date.strftime("%d/%m/%Y"), '', 'Opening Balance'],
+                ['tx_id', 'credit', 'debit', 'date', 'tx_type', 'remark'])
+    else:
+        opening_balance_row = pd.Series([-1, 0, 0, from_date.strftime("%d/%m/%Y"), '', 'Opening Balance'],
+                                        ['tx_id', 'credit', 'debit', 'date', 'tx_type', 'remark'])
+    for i, val in enumerate(user_entries):
+        val['date'] = val['date'].date().strftime("%d/%m/%Y")
+        user_entries[i] = val
+        if val['tx_type'] == 'cr':
+            val['credit'] = val['amount']
+            val['debit'] = None
+        else:
+            val['debit'] = val['amount']
+            val['credit'] = None
+
+    df = pd.DataFrame(columns=['tx_id', 'credit', 'debit', 'date', 'tx_type', 'remark'])
+    df = df.append(opening_balance_row, ignore_index=True)
     for val in user_entries:
-        row = pd.Series([val['tx_id'], val['amount'], val['date'], val['tx_type'],
-                         val['remark']], ['tx_id', 'amount', 'date', 'tx_type', 'remark'])
+        row = pd.Series([val['tx_id'], val['credit'], val['debit'], val['date'], val['tx_type'],
+                         val['remark']], ['tx_id', 'credit', 'debit', 'date', 'tx_type', 'remark'])
         df = df.append(row, ignore_index=True)
-    return create_html_table(df)
+    return create_html_table(df, show_col_name=True)
 
 
 def get_user_entries_between_date(user_id, from_date, to_date):
@@ -749,14 +905,53 @@ def update_guarantor_details(user_id, loan_id, data_query):
 
 
 def get_daily_report_by_date(date):
-    day_transactions = TransactionHistory.query.filter_by(tx_date=date).all()
-    for i, d in enumerate(day_transactions):
-        name = Customer.query.filter_by(id=d.party_id).first().user_name
-        day_transactions[i] = convert_table_to_dict_data(d)
-        day_transactions[i]['tx_date'] = day_transactions[i]['tx_date'].strftime("%d/%m/%Y")
-        day_transactions[i]['name'] = name
-    day_transactions = pd.DataFrame.from_dict(day_transactions)
-    return day_transactions
+    day_transactions_credit = TransactionHistory.query.filter_by(tx_date=date, status='cr').all()
+    credit_amount = 0
+    day_transactions_debit = TransactionHistory.query.filter_by(tx_date=date, status='dr').all()
+    debit_amount = 0
+    for i, d in enumerate(day_transactions_credit):
+        cust_data = Customer.query.filter_by(id=d.party_id).first()
+        name = cust_data.user_name
+
+        day_transactions_credit[i] = convert_table_to_dict_data(d)
+        if cust_data.customer_type_account == 1:
+            day_transactions_credit[i]['loan_id'] = cust_data.user_alias
+        day_transactions_credit[i]['name'] = name
+        credit_amount += d.amount
+    day_transactions_credit = pd.DataFrame.from_dict(day_transactions_credit)
+    # if len(day_transactions_credit) > 0:
+    #     day_transactions_credit['loan_id'] = day_transactions_credit['loan_id'].astype(int)
+
+    for i, d in enumerate(day_transactions_debit):
+        cust_data = Customer.query.filter_by(id=d.party_id).first()
+        name = cust_data.user_name
+        day_transactions_debit[i] = convert_table_to_dict_data(d)
+        day_transactions_debit[i]['name'] = name
+        if cust_data.customer_type_account == 1:
+            day_transactions_debit[i]['loan_id'] = cust_data.user_alias
+        debit_amount += d.amount
+    day_transactions_debit = pd.DataFrame.from_dict(day_transactions_debit)
+    day_transactions_debit = day_transactions_debit.append(pd.Series(['Cash', credit_amount - debit_amount], ['name',
+                                                                                                              'amount']),
+                                                           ignore_index=True)
+    if day_transactions_credit.shape[0] > day_transactions_debit.shape[0]:
+        for i in range(day_transactions_credit.shape[0] - day_transactions_debit.shape[0] + 2):
+            day_transactions_debit = day_transactions_debit.append(pd.Series(), ignore_index=True)
+        for i in range(2):
+            day_transactions_credit = day_transactions_credit.append(pd.Series(), ignore_index=True)
+    else:
+        for i in range(day_transactions_debit.shape[0] - day_transactions_credit.shape[0] + 2):
+            day_transactions_credit = day_transactions_credit.append(pd.Series(), ignore_index=True)
+        for i in range(2):
+            day_transactions_debit = day_transactions_debit.append(pd.Series(), ignore_index=True)
+    day_transactions_debit = day_transactions_debit.append(
+        pd.Series(['Total', day_transactions_debit['amount'].sum()], ['name', 'amount']),
+        ignore_index=True)
+    day_transactions_credit = day_transactions_credit.append(pd.Series(['Total', credit_amount], ['name', 'amount']),
+                                                             ignore_index=True)
+
+    return {'credit_transactions': day_transactions_credit, 'debit_transactions': day_transactions_debit,
+            'credit_amount': credit_amount, 'debit_amount': debit_amount}
 
 
 def get_user_pending_amount(user_id, account_type='loan'):
@@ -772,21 +967,60 @@ def get_user_pending_amount(user_id, account_type='loan'):
     return total_amount
 
 
+def get_user_due_amount(user_id, account_type='loan'):
+    entry_table = META_DATA.tables[str(user_id)]
+    pending_entries = db.engine.execute(entry_table.select().where(
+        (entry_table.c.user_id == user_id) & (entry_table.c.tx_status == 0) & (entry_table.c.date_to_pay <
+                                                                               datetime.now().date())))
+    pending_entries = [{column: value for column, value in rowproxy.items()} for rowproxy in pending_entries]
+    total_amount = 0
+    for val in pending_entries:
+        total_amount += val['emi_amount']
+    if account_type != 'account':
+        total_amount *= -1
+    return total_amount
+
+
 def get_general_report():
     general_data = General.query.filter_by(username=session.get('username')).first()
-    all_user_data = {}
+    all_user_data = pd.DataFrame(columns=['id', 'name', 'amount'])
+    columns = ['id', 'name', 'amount']
     hafta_entry_users = HaftEntry.query.filter_by(loan_status=0).all()
     for user_data in hafta_entry_users:
-        all_user_data[str(user_data.id) + " - " +Customer.query.filter_by(id=user_data.id).first().user_name] = get_user_pending_amount(
-            user_data.id)*(-1)
+        # all_user_data[str(user_data.transaction_id) + " - " + Customer.query.filter_by(
+        #     id=user_data.id).first().user_name] = get_user_pending_amount(
+        #     user_data.id) * (-1)
+        row = pd.Series([str(user_data.transaction_id), Customer.query.filter_by(
+            id=user_data.id).first().user_name, get_user_pending_amount(user_data.id) * (-1)], ['id', 'name', 'amount'])
+        all_user_data = all_user_data.append(row, ignore_index=True)
 
     hafta_entry_users = AccountEntry.query.filter_by(loan_status=0).all()
-    account_user_data = {}
+    account_user_data = pd.DataFrame(columns=['id', 'name', 'amount'])
     for user_data in hafta_entry_users:
         value = get_account_user_pending_amount(user_data.id)
         if value == 0:
             continue
-        account_user_data[str(user_data.id)+" - "+Customer.query.filter_by(id=user_data.id).first().user_name] = value*(-1)
+        if value < 0:
+            try:
+                alias = Customer.query.filter_by(id=user_data.id).first().user_alias
+            except Exception as e:
+                alias = ''
+            # account_user_data[
+            #     str(alias) + " - " + Customer.query.filter_by(id=user_data.id).first().user_name] = value * (-1)
+            row = pd.Series([alias, Customer.query.filter_by(id=user_data.id).first().user_name, value * (-1)],
+                            ['id', 'name', 'amount'])
+            account_user_data = account_user_data.append(row, ignore_index=True)
+        else:
+            try:
+                alias = Customer.query.filter_by(id=user_data.id).first().user_alias
+            except Exception as e:
+                alias = ''
+            # all_user_data[
+            #     str(alias) + " - " + Customer.query.filter_by(
+            #         id=user_data.id).first().user_name] = value
+            row = pd.Series([alias, Customer.query.filter_by(id=user_data.id).first().user_name, value],
+                            ['id', 'name', 'amount'])
+            all_user_data = all_user_data.append(row, ignore_index=True)
 
     customer_entries = Customer.query.filter_by(customer_type_crdr=1).all()
     for entry in customer_entries:
@@ -794,35 +1028,42 @@ def get_general_report():
         amount = 0
         for data in customer_data:
             amount += data.base_amount
-        all_user_data[str(entry.id)+" - "+Customer.query.filter_by(id=entry.id).first().user_name] = amount
+        all_user_data = all_user_data[
+            str(entry.id) + " - " + Customer.query.filter_by(id=entry.id).first().user_name] = amount
 
+    # df_dict = {'name': list(all_user_data.keys()), 'value': list(all_user_data.values())}
+    # df_dict['name'].append('CASH')
+    # df_dict['name'].append('Total')
+    # df_dict['value'].append(general_data.total_balance)
+    # df_dict['value'].append(np.array(df_dict['value']).sum())
 
-    df_dict = {'name': list(all_user_data.keys()), 'value': list(all_user_data.values())}
-    df_dict['name'].append('Total Pending Interest')
-    df_dict['value'].append(general_data.total_interest_pending*(-1))
-    df_dict['name'].append('Total')
-    df_dict['value'].append(np.array(df_dict['value']).sum())
-    df_dict['name'].append('Total CASH')
-    df_dict['value'].append(general_data.total_balance)
+    all_user_data = all_user_data.append(pd.Series(['', 'CASH', general_data.total_balance], columns),
+                                         ignore_index=True)
+    all_user_data = all_user_data.append(pd.Series(['', 'Total', all_user_data['amount'].sum()], columns),
+                                         ignore_index=True)
 
-    user_data_df = pd.DataFrame.from_dict(df_dict)
-    user_data_df.style.set_properties(**{'text-align': 'right'})
-    general_table_dict = {'name': ['Total Earned Interest'] + list(account_user_data.keys()),
-                          'value': [general_data.total_interest_earned] + list(
-                              account_user_data.values())}
-    vv = general_data.total_balance + (general_data.total_interest_earned * (-1))
-    for val in account_user_data.values():
-        vv += val
-    general_table_dict['name'].append('Total')
-    general_table_dict['value'].append(vv)
-    general_df = pd.DataFrame.from_dict(general_table_dict)
-    general_df.style.set_properties(**{'text-align': 'right'})
-    return {'general': create_html_table(general_df, user_data_df.shape[0]), 'all_transaction':
-        create_html_table(user_data_df)}
+    # user_data_df = pd.DataFrame.from_dict(df_dict) user_data_df.style.set_properties(**{'text-align': 'right'})
+    # general_table_dict = {'name': ['Interest'] + list(account_user_data.keys()), 'value': [math.ceil(
+    # general_data.total_interest_earned + general_data.total_interest_pending)] + list( account_user_data.values())}
+    account_user_data = account_user_data.append(
+        pd.Series(['', 'Interest', math.ceil(general_data.total_interest_earned +
+                                             general_data.total_interest_pending)], columns),
+        ignore_index=True)
+    account_user_data = account_user_data.append(pd.Series(['', 'Total', account_user_data['amount'].sum()], columns),
+                                                 ignore_index=True)
+    # vv = 0
+    # for val in general_table_dict['value']:
+    #     vv += val
+    # general_table_dict['name'].append('Total')
+    # general_table_dict['value'].append(vv)
+    # general_df = pd.DataFrame.from_dict(general_table_dict)
+    # general_df.style.set_properties(**{'text-align': 'right'})
+    return {'general': create_general_html_table(account_user_data, all_user_data.shape[0]), 'all_transaction':
+        create_general_html_table(all_user_data)}
 
 
 def get_account_user_pending_amount(user_id):
-    if user_id == 'CASH':
+    if user_id in ['CASH', 'C', 'CA', 'CAS']:
         return get_amount_value_from_general(session.get('username'))
     user_id = int(user_id)
     try:
@@ -832,9 +1073,9 @@ def get_account_user_pending_amount(user_id):
         pending_amount = 0
         for data in amount_data:
             if data['tx_type'] == 'cr':
-                pending_amount += data['amount']
-            else:
                 pending_amount -= data['amount']
+            else:
+                pending_amount += data['amount']
         return pending_amount
     except Exception as e:
         return 0
@@ -847,7 +1088,8 @@ def add_account_entry(data):
             tx_id = AccountEntry.query.filter_by(id=int(data['user_id'])).first().transaction_id
             status = 'cr'
             db.engine.execute(user_table.insert(), **{'user_id': data['user_id'], 'tx_id': tx_id, 'amount':
-                data['amount_new'], 'date': datetime.now().date(), 'tx_type': 'cr', 'remark': data['remark']})
+                data['amount_new'], 'date': datetime.strptime(data['date'], '%Y-%m-%d'), 'tx_type': 'cr',
+                                                      'remark': data['remark']})
             sum_sub_value_in_balance_amount(float(data['amount_new']), 'sum')
         else:
             if get_amount_value_from_general(session.get('username')) < float(data['amount_new']):
@@ -855,7 +1097,8 @@ def add_account_entry(data):
             tx_id = AccountEntry.query.filter_by(id=int(data['user_id'])).first().transaction_id
             status = 'dr'
             db.engine.execute(user_table.insert(), **{'user_id': data['user_id'], 'tx_id': tx_id, 'amount':
-                data['amount_new'], 'date': datetime.now().date(), 'tx_type': 'dr', 'remark': data['remark']})
+                data['amount_new'], 'date': datetime.strptime(data['date'], '%Y-%m-%d'), 'tx_type': 'dr',
+                                                      'remark': data['remark']})
             sum_sub_value_in_balance_amount(float(data['amount_new']), 'sub')
 
         query = TransactionHistory(party_id=data['user_id'], loan_id=tx_id, account_type='account',
@@ -868,6 +1111,7 @@ def add_account_entry(data):
     except Exception as e:
         print(e)
         return {'code': 500, 'status': 'server side error occured add_account_entry'}
+
 
 def customer_type_by_user_id(user_id):
     cst_details = Customer.query.filter_by(id=user_id).first()
@@ -882,7 +1126,8 @@ def customer_type_by_user_id(user_id):
     else:
         return 'nothing'
 
-def add_account_entry_by_lenar_denar(lenar_user_user_id, denar_user_user_id, amount, remark):
+
+def add_account_entry_by_lenar_denar(lenar_user_user_id, denar_user_user_id, amount, remark, date):
     if customer_type_by_user_id(lenar_user_user_id) in ['account', 'both']:
         transaction_type = 'debit'
     elif customer_type_by_user_id(denar_user_user_id) in ['account', 'both']:
@@ -895,6 +1140,28 @@ def add_account_entry_by_lenar_denar(lenar_user_user_id, denar_user_user_id, amo
     else:
         user_id = denar_user_user_id
 
-    return add_account_entry(data={'amount_new': amount, 'user_id': user_id, 'amount_type': transaction_type, 'remark': remark})
+    return add_account_entry(
+        data={'amount_new': amount, 'user_id': user_id, 'amount_type': transaction_type, 'remark': remark,
+              'date': date})
 
 
+def get_user_entries_report(user_id):
+    user_table = META_DATA.tables[str(user_id)]
+    columns = ['Loan ID', 'No of Installment', 'EMI Amount', 'EMI Date', 'Paid Date', 'Paid Amount', 'Status']
+    user_data = db.engine.execute(user_table.select())
+    user_data_list = [{column: value for column, value in rowproxy.items()} for rowproxy in user_data]
+    df = pd.DataFrame(columns=columns)
+    for val in user_data_list:
+        if val['tx_status']:
+            date = val['paid_date'].date().strftime("%d/%m/%Y")
+            paid_amount = "{:.2f}".format(val['paid_amount'])
+        else:
+            date = ''
+            paid_amount = ''
+
+        row = pd.Series(
+            [val['loan_id'], val['no_of_installment'], val['emi_amount'], val['date_to_pay'].strftime("%d/%m/%Y"),
+             date, paid_amount, 'Paid' if val['tx_status'] else 'Pending'], columns)
+
+        df = df.append(row, ignore_index=True)
+    return df
