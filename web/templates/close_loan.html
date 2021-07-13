@@ -99,12 +99,12 @@ $(document).ready(function(){
                 <td>{{d.no_of_pending_installments}}</td>
                 <td>{{"Pending" if d.loan_status in [0, None] else "Done"}}</td>
                 <td><input type="text" id="paid_amount_{{d.transaction_id}}" value="{{d.pending_total_amount}}"></td>
-                <td>{{d.guarantor_1_name}}</td>
-                <td>{{d.guarantor_1_phone}}</td>
-                <td>{{d.guarantor_1_address}}</td>
-                <td>{{d.guarantor_2_name}}</td>
-                <td>{{d.guarantor_2_phone}}</td>
-                <td>{{d.guarantor_2_address}}</td>
+                <td>{{d.guarantor_1_name if d.guarantor_1_name != none else ''}}</td>
+                <td>{{d.guarantor_1_phone if d.guarantor_1_phone != none else ''}}</td>
+                <td>{{d.guarantor_1_address if d.guarantor_1_address != none else ''}}</td>
+                <td>{{d.guarantor_2_name if d.guarantor_2_name != none else ''}}</td>
+                <td>{{d.guarantor_2_phone if d.guarantor_2_phone != none else ''}}</td>
+                <td>{{d.guarantor_2_address if d.guarantor_2_address != none else ''}}</td>
                 <td>
                     <a class="close_loan add" title="Close" data-toggle="tooltip"  user_id="{{d.id}}" loan_id="{{d.transaction_id}}"><i class="fa fa-times"></i></a>
 

@@ -161,6 +161,12 @@ def get_max_customer_id(id=None):
         return data
 
 
+def get_max_loan_id():
+    max_query_id = db.session.query(db.func.max(HaftEntry.transaction_id))
+    max_id = db.session.execute(max_query_id).first()[0]
+    return max_id+1
+
+
 def get_loan_type_by_loan_id(user_id=None, loan_id=None, user_type='loan'):
     if user_type == 'loan':
         entry_table = HaftEntry
@@ -1039,7 +1045,7 @@ def get_general_report():
 
     all_user_data = all_user_data.append(pd.Series(['', 'CASH', general_data.total_balance], columns),
                                          ignore_index=True)
-    all_user_data = all_user_data.append(pd.Series(['', 'Total', all_user_data['amount'].sum()], columns),
+    all_user_data = all_user_data.append(pd.Series(['', 'Grand Total', all_user_data['amount'].sum()], columns),
                                          ignore_index=True)
 
     # user_data_df = pd.DataFrame.from_dict(df_dict) user_data_df.style.set_properties(**{'text-align': 'right'})
@@ -1049,7 +1055,7 @@ def get_general_report():
         pd.Series(['', 'Interest', math.ceil(general_data.total_interest_earned +
                                              general_data.total_interest_pending)], columns),
         ignore_index=True)
-    account_user_data = account_user_data.append(pd.Series(['', 'Total', account_user_data['amount'].sum()], columns),
+    account_user_data = account_user_data.append(pd.Series(['', 'Grand Total', account_user_data['amount'].sum()], columns),
                                                  ignore_index=True)
     # vv = 0
     # for val in general_table_dict['value']:

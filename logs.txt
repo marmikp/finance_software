@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "C:\Users\Raja\Desktop\marmik\finance_software\_account.py", line 806, in pending_installment_by_date
+    emis = emis.sort_values(by='date')
+  File "C:\Users\Raja\miniconda3\envs\finance_software\lib\site-packages\pandas\core\frame.py", line 5455, in sort_values
+    k = self._get_label_or_level_values(by, axis=axis)
+  File "C:\Users\Raja\miniconda3\envs\finance_software\lib\site-packages\pandas\core\generic.py", line 1684, in _get_label_or_level_values
+    raise KeyError(key)
+KeyError: 'date'

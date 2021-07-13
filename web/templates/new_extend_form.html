@@ -82,12 +82,20 @@ $(document).ready(function(){
 
     <div class="row">
         {% if data.data|length > 0 %}
-        <div class="col-md-3"><h4>Name: {{data.data.0.user_name if 'user_name' in data.data.0.keys()}}</h4></div>
-        <div class="col-md-2"><h4>Phone: {{data.data.0.user_phone}}</h4></div>
-        <div class="col-md-2"><h4>Address: {{data.data.0.user_address}}</h4></div>
+        <div class="col-md-4"><h4>Name: {{data.data.0.user_name if 'user_name' in data.data.0.keys()}}</h4></div>
+        <div class="col-md-3"><h4>Phone: {{data.data.0.user_phone}}</h4></div>
+        <div class="col-md-3"><h4>Address: {{data.data.0.user_address}}</h4></div>
         <div class="col-md-2"><h4>City: {{data.data.0.user_city}}</h4></div>
         {% endif %}
-    </div> <br> <hr>
+    </div><hr>
+    <div class="row">
+        {% if data.data|length > 0 %}
+        <div class="col-md-4"><h4>Loan ID: {{data.data.0.loan_id}}</h4></div>
+        <div class="col-md-4"><h4>Amount: {{data.data.0.base_amount if 'base_amount' in data.data.0.keys()}}</h4></div>
+        <div class="col-md-4"><h4>Loan Type: {{data.data.0.loan_type}}</h4></div>
+        {% endif %}
+    </div>
+    <hr>
     <div class="row">
         <div class="col-md-12">
             <div class="col-md-3">Hafta Amount<input type="text" value="{{data.data[0].emi_amount}}" placeholder="Emi Amount" id="extend_amount"></div>
@@ -104,6 +112,7 @@ $(document).ready(function(){
             <div class="col-md-3"><input type="button" class="extend_hafta btn"  style="background-color: #008fe4;" value="Extend Hafta" user_id="{{data.user_id}}"  {{"disable" if data.data[0].loan_type != "flat"}}></div>
         </div>
     </div>
+    <hr>
     <div class="row">
         <div class="col-md-5 pending_amount_text" style="color: #16abe3; font-size: 20px;">
             General Amount : <b>{{data.total_pending_amount}}</b>
@@ -112,6 +121,7 @@ $(document).ready(function(){
             Due Amount : <b>{{data.total_due_amount}}</b>
         </div>
     </div>
+    <hr>
 
 
 </div>
@@ -119,9 +129,6 @@ $(document).ready(function(){
 <table id="example" class="table table-bordered display-table" style="width:100%; padding-top: 50px;">
         <thead>
             <tr style="background-color:black; color:white;">
-                <th>Loan ID</th>
-                <th>Base</th>
-                <th>Type</th>
                 <th>Installment No</th>
                 <th>EMI Amount</th>
                 <th>Hafta Date</th>
@@ -133,14 +140,11 @@ $(document).ready(function(){
         <tbody>
         {% for d in data.data %}
             <tr>
-                <td>{{d.loan_id}}</td>
-                <td>{{d.base_amount}}</td>
-                <td>{{d.loan_type}}</td>
                 <td>{{d.no_of_installment}}</td>
                 <td>{{d.emi_amount}}</td>
                 <td>{{'' if 'date_to_pay' not in d.keys() else d.date_to_pay.strftime("%d/%m/%Y") if d.date_to_pay != None else ''}}</td>
-                <td><input type="Date" id="paid_date_{{d.loan_id}}_{{d.no_of_installment}}" value="{{'' if d.tx_status in [0, None] else d.paid_date}}" readonly></td>
-                <td>{{d.paid_amount}}</td>
+                <td><input type="text" id="paid_date_{{d.loan_id}}_{{d.no_of_installment}}" value="{{'' if d.tx_status in [0, None] else d.paid_date}}" readonly></td>
+                <td>{{d.paid_amount if d.tx_status not in [0, None] else ""}}</td>
 
                 <td style="color:{{'green' if d.tx_status == 1 else 'red' if d.tx_status in [0, None] and d.date_to_pay < data.date_today else 'black'}}">{{"Pending" if d.tx_status in [0, None] else "Paid"}}</td>
 <!--                <td>-->

@@ -1,5 +1,7 @@
+import traceback
 from functools import partial
 from hashlib import md5
+from shutil import copy
 from subprocess import check_output
 from sys import argv
 from threading import Thread
@@ -18,6 +20,8 @@ from flask import Flask, request, render_template, session, redirect
 from markupsafe import Markup
 from qt_thread_updater import get_updater
 from sqlalchemy import MetaData
+
+import config
 import src.utils
 from datetime import datetime
 from database import db_utils, model
@@ -74,7 +78,7 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
                 data = db_utils.get_index_form_data_total()
                 data['pending_amount'] = db_utils.get_total_pending_amount()
                 data['total_interest'] = float(data['total_interest_earned']) + float(data['total_interest_pending'])
-                return render_template('index.html', data=data)
+                return render_template('Dashboard.html', data=data)
             else:
                 return redirect('/api/user/login')
 
@@ -92,6 +96,7 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
 
         @app.route('/api/user/login', methods=['POST', 'GET'])
         def login():
+            session['username'] = 'sanjay'
             if session.get('username'):
                 return redirect('/')
             if request.method == 'POST':
@@ -130,7 +135,7 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
             if session.get('username'):
                 data = db_utils.get_users_details(loan_status='both')
                 return render_template('sidebar.html',
-                                       data=Markup(render_template('templates/user_form.html', data=data)))
+                                       data=Markup(render_template('Loan_list.html', data=data)))
             else:
                 return redirect('/api/user/login')
 
@@ -146,7 +151,8 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
                 # TODO : code to close current dialog and open login screen in mainwindow
                 return "logged out"
             max_id = db_utils.get_max_customer_id(id)
-            data = {'max_id': max_id, 'today': datetime.now().date()}
+            max_loan_id = db_utils.get_max_loan_id()
+            data = {'max_id': max_id, 'today': datetime.now().date(), 'max_loan_id': max_loan_id}
             total_balance = General.query.filter_by(username=session.get('username')).first().total_balance
             data['total_amount'] = total_balance
             if 'debit' in request_data.keys():
@@ -710,7 +716,7 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
             for d in data:
                 user_list.append(str(d['loan_id']) + " - " + str(d['user_name']))
             return render_template('sidebar.html',
-                                   data=Markup(render_template('templates/add_collection_page.html', data=user_list,
+                                   data=Markup(render_template('Add-collection.html', data=user_list,
                                                                date_today=datetime.now().date())))
 
 
@@ -790,18 +796,26 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
 
         @app.route('/api/report/pending_installment_by_date', methods=['POST', 'GET'])
         def pending_installment_by_date():
-            if request.method == "POST":
-                request_data = request.form.to_dict()
-            else:
-                request_data = request.args.to_dict()
-            emis = src.utils.get_report_of_pending_installments_by_date(
-                datetime.strptime(str(request_data['date']), "%Y-%m-%d"))
-            emis.index = np.arange(1, len(emis) + 1)
-            emis.style.set_properties(subset=['User Name'], **{'width': '300px'})
-            # emis.index.rename('id', inplace=True)
-            return render_template("templates/report_page_table.html",
-                                   data={'table': Markup(create_html_table(emis)),
-                                         'name': 'Pending Installments by Date'})
+            try:
+                if request.method == "POST":
+                    request_data = request.form.to_dict()
+                else:
+                    request_data = request.args.to_dict()
+                emis = src.utils.get_report_of_pending_installments_by_date(
+                    datetime.strptime(str(request_data['date']), "%Y-%m-%d"))
+                emis.index = np.arange(1, len(emis) + 1)
+                emis = emis.sort_values(by='Date')
+                table = create_html_table(emis)
+                # emis.index.rename('id', inplace=True)
+                return render_template("templates/report_page_table.html",
+                                       data={'table': Markup(table),
+                                             'name': 'Pending Installments by Date'})
+            except:
+                if not path.exists('logs.txt'):
+                    with open('logs.txt', 'w+') as file:
+                        file.writelines('logs')
+                with open('logs.txt', 'w+') as file:
+                    traceback.print_exc(file=file)
 
 
         @app.route('/api/report/user_entries_between_date', methods=['POST', 'GET'])
@@ -1010,4 +1024,7 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
             window.show()
             Thread(target=run_flask_server, daemon=True).start()
             app_.exec_()
+            #backup
+            backup_path = path.abspath('..')
+            copy(f'{config.db_name}.dll', backup_path)
             # run_flask_server()

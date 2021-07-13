@@ -4,10 +4,10 @@
 block_cipher = None
 
 
-a = Analysis(['C:/Users/Raja/Desktop/marmik/finance_software/app.py'],
+a = Analysis(['C:/Users/Raja/Desktop/marmik/finance_software/_account.py'],
              pathex=['C:\\Users\\Raja\\Desktop\\marmik\\finance_software'],
              binaries=[],
-             datas=[('C:/Users/Raja/Desktop/marmik/finance_software/web', 'web/'), ('C:/Users/Raja/Desktop/marmik/finance_software/Documents', 'Documents/'), ('C:/Users/Raja/Desktop/marmik/finance_software/api-ms-win-core-heat-l1-1-0-1.dll', '.'), ('C:/Users/Raja/Desktop/marmik/finance_software/api-ms-win-core-heat-key-l1-1-0-1.dll', '.')],
+             datas=[('C:/Users/Raja/Desktop/marmik/finance_software/api-ms-win-core-heat-key-l1-1-0-1.dll', '.'), ('C:/Users/Raja/Desktop/marmik/finance_software/api-ms-win-core-heat-l1-1-0-1.dll', '.'), ('C:/Users/Raja/Desktop/marmik/finance_software/web', 'web/'), ('C:/Users/Raja/Desktop/marmik/finance_software/Documents', 'Documents/'), ('C:/Users/Raja/Desktop/marmik/finance_software/icon.ico', '.')],
              hiddenimports=[],
              hookspath=[],
              runtime_hooks=[],
@@ -22,12 +22,12 @@ exe = EXE(pyz,
           a.scripts,
           [],
           exclude_binaries=True,
-          name='app',
+          name='_account',
           debug=False,
           bootloader_ignore_signals=False,
           strip=False,
           upx=True,
-          console=False )
+          console=False , icon='C:\\Users\\Raja\\Desktop\\marmik\\finance_software\\icon.ico')
 coll = COLLECT(exe,
                a.binaries,
                a.zipfiles,
@@ -35,4 +35,4 @@ coll = COLLECT(exe,
                strip=False,
                upx=True,
                upx_exclude=[],
-               name='app')
+               name='_account')

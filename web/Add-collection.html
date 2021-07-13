@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html style="font-size: 16px;">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <meta name="page_type" content="np-template-header-footer-from-plugin">
+    <title>Add collection</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='nicepage.css')}}" media="screen">
+    <link rel="stylesheet" href="{{ url_for('static', filename='Add-collection.css')}}" media="screen">
+    <script class="u-script" type="text/javascript" src="{{ url_for('static', filename='jquery.js')}}"
+            defer=""></script>
+    <script class="u-script" type="text/javascript" src="{{ url_for('static', filename='nicepage.js')}}"
+            defer=""></script>
+    <meta name="generator" content="Nicepage 3.16.1, nicepage.com">
+
+    <script class="u-script" type="text/javascript" src="jquery.js" defer=""></script>
+    <script class="u-script" type="text/javascript" src="nicepage.js" defer=""></script>
+    <meta name="generator" content="Nicepage 3.16.1, nicepage.com">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+    <link id="u-theme-google-font" rel="stylesheet"
+          href="https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i|Open+Sans:300,300i,400,400i,600,600i,700,700i,800,800i">
+
+
+    <script type="application/ld+json">{
+        "@context": "http://schema.org",
+        "@type": "Organization",
+        "name": "",
+        "url": "index.html"
+    }</script>
+    <meta property="og:title" content="Add collection">
+    <meta property="og:type" content="website">
+    <meta name="theme-color" content="#478ac9">
+    <link rel="canonical" href="index.html">
+    <meta property="og:url" content="index.html">
+</head>
+<body class="u-body">
+<header class="u-align-left u-clearfix u-header u-header" id="sec-ec72">
+    <div class="u-clearfix u-sheet u-sheet-1"></div>
+</header>
+<section class="u-align-center u-clearfix u-section-1" id="sec-c88d">
+    <div class="u-clearfix u-sheet u-valign-middle u-sheet-1">
+        <h3 class="u-align-left u-text u-text-1">Add Collection</h3>
+        <h3 class="u-align-left u-text u-text-palette-4-light-1 u-text-2">Date time<br>
+        </h3>
+    </div>
+</section>
+<section class="u-clearfix u-grey-25 u-section-2" id="sec-1270">
+    <div class="u-clearfix u-sheet u-sheet-1">
+        <div class="u-container-style u-expanded-width u-grey-5 u-group u-group-1">
+            <div class="u-container-layout u-container-layout-1">
+                <div class="row">
+                    <input type="hidden" id="emi_no">
+                    <input type="hidden" id="user_id_text">
+                    <input type="hidden" id="base_amount">
+                    <div class="col-sm-9">
+                        <div class="row" style="padding: 10px;">
+                            <div class="col-sm-6 automplete-2 form-inline control-group">
+                                <label for="date_input" style="font-size: 20px;"
+                                       class="col-sm-3 ">Date: </label>
+                                <div class="col-sm-9 form-control">
+                                    <input type='date' id="date_input" name="date_input" value="{{date_today}}">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" style="padding: 10px;">
+                            <div class="col-sm-8 automplete-2 form-inline control-group">
+                                <label for="lenar" style="font-size: 20px;"
+                                       class="col-sm-3 ">Lenar: </label>
+                                <div class="col-sm-12 form-control">
+                                    <input id="lenar" type="text" name="lenar"
+                                           placeholder="Customer" value="CASH" disabled>
+                                    <!--                <select class="form-select" id="lenar">-->
+                                    <!--                    {% for d in data %}-->
+                                    <!--                    <option value="{{d}}">{{d}}</option>-->
+                                    <!--                    {% endfor %}-->
+                                    <!--                </select>-->
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="col-sm-6">
+                                    <input type="text" id="id_1_total" class="id_1_total" placeholder="Current"
+                                           disabled>
+                                </div>
+                                <div class="col-sm-6">
+                                    <input type="text" id="id_1_update_to" class="id_1_update_to"
+                                           placeholder="Update Bal."
+                                           disabled>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" style="padding: 10px;">
+                            <div class="col-sm-8 autocomplete form-inline control-group">
+                                <label for="denar" style="font-size: 20px;" class="col-sm-3 ">Loan
+                                    ID: </label>
+                                <div class="col-sm-12 form-control">
+                                    <input id="denar" type="text" name="denar" placeholder="Customer">
+                                    <!--                        <select class="form-select" id="denar">-->
+                                    <!--                            {% for d in data %}-->
+                                    <!--                            <option value="{{d}}">{{d}}</option>-->
+                                    <!--                            {% endfor %}-->
+                                    <!--                        </select>-->
+                                </div>
+                            </div>
+
+                        </div>
+                        <br>
+                        <div class="row" style="padding: 10px;">
+                            <div class="col-sm-6 autocomplete form-inline control-group">
+                                <label for="amount" style="font-size: 20px;"
+                                       class="col-sm-4 ">Amount</label>
+                                <div class="col-sm-8 form-control">
+                                    <input id="amount" type="text" name="amount" placeholder="Amount">
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="row" style="padding: 10px;">
+                            <div class="col-sm-6 autocomplete form-inline control-group">
+                                <label for="remark" style="font-size: 20px;"
+                                       class="col-sm-4 ">Remark: </label>
+                                <div class="col-sm-8 form-control">
+                                    <input id="remark" type="text" name="remark" placeholder="Remark">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <table class="data_table"></table>
+                    </div>
+                </div>
+                <a href="https://nicepage.com/"
+                   class="u-btn u-btn-round u-button-style u-hover-palette-1-light-1 u-palette-1-base u-radius-50 u-btn-1">Button</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<section class="u-backlink u-clearfix u-grey-80">
+    <a class="u-link" href="https://nicepage.com/html5-template" target="_blank">
+        <span>HTML5 Templates</span>
+    </a>
+    <p class="u-text">
+        <span>created with</span>
+    </p>
+    <a class="u-link" href="https://nicepage.com/" target="_blank">
+        <span>Website Builder Software</span>
+    </a>.
+</section>
+</body>
+</html>
