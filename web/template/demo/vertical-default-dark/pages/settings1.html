@@ -3,236 +3,296 @@
 
 
 <head>
-  <!-- Required meta tags -->
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <title>Setting</title>
-  <!-- plugins:css -->
-  <link rel="stylesheet" href="{{ url_for('static', filename='template/vendors/mdi/css/materialdesignicons.min.css')}}">
-  <link rel="stylesheet" href="{{ url_for('static', filename='template/vendors/css/vendor.bundle.base.css')}}">
-  <!-- endinject -->
-  <!-- Plugin css for this page -->
-  <link rel="stylesheet" href="{{ url_for('static', filename='template/vendors/select2/select2.min.css')}}">
-  <link rel="stylesheet" href="{{ url_for('static', filename='template/vendors/select2-bootstrap-theme/select2-bootstrap.min.css')}}">
-  <!-- End plugin css for this page -->
-  <link rel="stylesheet" href="{{ url_for('static', filename='template/css/fd-icons.css')}}">
-  <!-- inject:css -->
-  <link rel="stylesheet" href="{{ url_for('static', filename='template/css/vertical-layout-dark/style.css')}}">
-  <!-- endinject -->
-  <link rel="shortcut icon" href="{{ url_for('static', filename='template/images/favicon.png')}}" />
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Setting</title>
+    <!-- plugins:css -->
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='template/vendors/mdi/css/materialdesignicons.min.css')}}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='template/vendors/css/vendor.bundle.base.css')}}">
+    <!-- endinject -->
+    <!-- Plugin css for this page -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='template/vendors/select2/select2.min.css')}}">
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='template/vendors/select2-bootstrap-theme/select2-bootstrap.min.css')}}">
+    <!-- End plugin css for this page -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='template/css/fd-icons.css')}}">
+    <!-- inject:css -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='template/css/vertical-layout-dark/style.css')}}">
+    <!-- endinject -->
+    <link rel="shortcut icon" href="{{ url_for('static', filename='template/images/favicon.png')}}"/>
 </head>
 
 <body>
-  <div class="container-scroller">
+<div class="container-scroller">
     <!-- partial:../../partials/_navbar.html -->
     <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
-      <div class="navbar-brand-wrapper d-flex justify-content-center">
-        <div class="navbar-brand-inner-wrapper d-flex justify-content-between align-items-center w-100">
-          <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
-            <span class="mdi mdi-menu"></span>
-          </button>
+        <div class="navbar-brand-wrapper d-flex justify-content-center">
+            <div class="navbar-brand-inner-wrapper d-flex justify-content-between align-items-center w-100">
+                <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
+                    <span class="mdi mdi-menu"></span>
+                </button>
+            </div>
         </div>
-      </div>
-      <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end navbar-title">
-        <ul class="navbar-nav mr-lg-2">
-          <li class="nav-item d-none d-lg-block">
-			<label class="col-form-label bold-label"> Personal Settings Of Software |  </label>
-			<label class="col-form-label bold-label-green"> Thursday, June 02, 2021 </label>
-          </li>
-        </ul>
-        <ul class="navbar-nav navbar-nav-right">
-          
-        </ul>
-        <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">
-          <span class="mdi mdi-menu"></span>
-        </button>
-      </div>
+        <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end navbar-title">
+            <ul class="navbar-nav mr-lg-2">
+                <li class="nav-item d-none d-lg-block">
+                    <label class="col-form-label bold-label"> Personal Settings Of Software | </label>
+                    <label class="col-form-label bold-label-green"> {{data.today}} </label>
+                </li>
+            </ul>
+            <ul class="navbar-nav navbar-nav-right">
+
+            </ul>
+            <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button"
+                    data-toggle="offcanvas">
+                <span class="mdi mdi-menu"></span>
+            </button>
+        </div>
     </nav>
     <!-- partial -->
     <div class="container-fluid page-body-wrapper">
-      
-      <!-- partial:../../partials/_sidebar.html -->
-      <nav class="sidebar sidebar-offcanvas" id="sidebar">
-        <ul class="nav">
-          <li class="nav-item">
 
-            <a class="nav-link btn btn-siderbar  btn-rounded btn-fw" href="dashboard1.html">
-              <i class="fd-home"></i>
-              <span class="menu-title">Home</span>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link btn btn-siderbar  btn-rounded btn-fw" href="loanLists1.html">
-              <i class="fd-loan-list"></i>
-              <span class="menu-title">Loan List</span>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link btn btn-siderbar  btn-rounded btn-fw" href="addCollections1.html">
-              <i class="fd-add-collection"></i>
-              <span class="menu-title">Add Collection</span>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link btn btn-siderbar  btn-rounded btn-fw" href="AccountOnBoard1.html">
-              <i class="fd-account"></i>
-              <span class="menu-title">Account</span>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link btn btn-siderbar  btn-rounded btn-fw" href="creditDebitAccount1.html">
-              <i class="fd-credit-account"></i>
-              <span class="menu-title">Cr-De. Acc.</span>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link btn btn-siderbar  btn-rounded btn-fw" href="report1.html">
-              <i class="fd-report"></i>
-              <span class="menu-title">Report</span>
-            </a>
-          </li>
-          <li class="nav-item active">
-            <a class="nav-link btn btn-siderbar  btn-rounded btn-fw" href="settings1.html">
-              <i class="fd-settings"></i>
-              <span class="menu-title">Settings</span>
-            </a>
-          </li>
+        <!-- partial:../../partials/_sidebar.html -->
+        <nav class="sidebar sidebar-offcanvas" id="sidebar">
+            <ul class="nav">
+                <li class="nav-item">
 
-        </ul>
-      </nav>
-      <div class="main-panel">
-        <div class="content-wrapper">
-          <div class="page-title-box">
-            <h2>Settings</h2>
-          </div>
+                    <a class="nav-link btn btn-siderbar  btn-rounded btn-fw" href="/">
+                        <i class="fd-home"></i>
+                        <span class="menu-title">Home</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link btn btn-siderbar  btn-rounded btn-fw" href="/api/hafta">
+                        <i class="fd-loan-list"></i>
+                        <span class="menu-title">Loan List</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link btn btn-siderbar  btn-rounded btn-fw"
+                       href="/api/hafta/add_collection_dialog_new">
+                        <i class="fd-add-collection"></i>
+                        <span class="menu-title">Add Collection</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link btn btn-siderbar  btn-rounded btn-fw" href="/api/account">
+                        <i class="fd-account"></i>
+                        <span class="menu-title">Account</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link btn btn-siderbar  btn-rounded btn-fw" style="background-color: #2f3841;"
+                       href="/api/debit_account">
+                        <i class="fd-credit-account"></i>
+                        <span class="menu-title">Cr-De. Acc.</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link btn btn-siderbar  btn-rounded btn-fw" href="/api/report">
+                        <i class="fd-report"></i>
+                        <span class="menu-title">Report</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link btn btn-siderbar  btn-rounded btn-fw" href="/api/profile">
+                        <i class="fd-settings"></i>
+                        <span class="menu-title">Settings</span>
+                    </a>
+                </li>
 
-          <div class="row">
-            <div class="col-md-12 grid-margin stretch-card">
-              <div class="card card-box">
-                <div class="card-body">
-					<div class="template-demo custom-button setting-btn">
-						<button type="button" class="btn btn-dark  btn-rounded btn-fw"><i class="mdi mdi-lock setting-custom-icon"></i>Set New Log In Password</button>
-					  </div>
-                  <form class="forms-sample custom-form">
-                    <div class="form-group row">
-                      <label for="oldPwd" class="col-sm-3 col-form-label">Old Password</label>
-                      <div class="col-sm-6">
-                        <input type="password" class="form-control" id="oldPwd" placeholder="">
-                      </div>
-                    </div>
-                    <div class="form-group row">
-                      <label for="newPwd" class="col-sm-3 col-form-label">New Password</label>
-                      <div class="col-sm-6">
-                        <input type="password" class="form-control" id="newPwd" placeholder="">
-                      </div>
-                    </div>
-					<div class="form-group row">
-                      <div class="col-sm-3 "></div>
-                      <div class="col-sm-6">
-                        <button type="button" class="btn btn-danger  btn-rounded btn-fw">UPDATE</button>
-                      </div>
-                    </div>
-					
-                  </form>
+            </ul>
+        </nav>
+        <div class="main-panel">
+            <div class="content-wrapper">
+                <div class="page-title-box">
+                    <h2>Settings</h2>
                 </div>
-              </div>
-            </div>
-       
-          </div>
-		  
-		  <div class="row">
-		  <div class="col-md-12 grid-margin stretch-card">
-              <div class="card card-box">
-                <div class="card-body">
-				<div class="template-demo custom-button setting-btn">
-					<button type="button" class="btn btn-dark  btn-rounded btn-fw"><i class="mdi mdi-clock setting-custom-icon"></i>Match Time & Date</button>
-				  </div>
-                  <form class="forms-sample custom-form">
-                    <div class="form-group row">
-                      <label for="settingDate" class="col-sm-3 col-form-label">Set Date</label>
-                      <div class="col-sm-6">
-						<select id="settingDate" class="form-control">
-						  <option>06/05/2021</option>
-						  <option>06/05/2021</option>
-						  <option>06/05/2021</option>
-						</select>
-                      </div>
+
+                <div class="row">
+                    <div class="col-md-12 grid-margin stretch-card">
+                        <div class="card card-box">
+                            <div class="card-body">
+                                <div class="template-demo custom-button setting-btn">
+                                    <button type="button" class="btn btn-dark  btn-rounded btn-fw"><i
+                                            class="mdi mdi-lock setting-custom-icon"></i>Set New Log In Password
+                                    </button>
+                                </div>
+                                <form class="forms-sample custom-form">
+                                    <div class="form-group row">
+                                        <label for="old_password" class="col-sm-3 col-form-label">Old Password</label>
+                                        <div class="col-sm-6">
+                                            <input type="password" class="form-control" id="old_password"
+                                                   placeholder="">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="new_password" class="col-sm-3 col-form-label">New Password</label>
+                                        <div class="col-sm-6">
+                                            <input type="password" class="form-control" id="new_password"
+                                                   placeholder="">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col-sm-3 "></div>
+                                        <div class="col-sm-6">
+                                            <button type="button"
+                                                    class="btn btn-danger  btn-rounded btn-fw btnRegister">UPDATE
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                </form>
+                            </div>
+                        </div>
                     </div>
-                    <div class="form-group row">
-                      <label for="settingTime" class="col-sm-3 col-form-label">Set Time</label>
-                      <div class="col-sm-6">
-						<select id="settingTime" class="form-control">
-						  <option>22:43</option>
-						  <option>22:43</option>
-						  <option>22:43</option>
-						</select>
-                      </div>
-                    </div>
-                    <div class="form-group row">
-                      <label for="settingTimeIST" class="col-sm-3 col-form-label">Auto Match With IST</label>
-                      <div class="col-sm-6">
-						<select id="settingTimeIST" class="form-control">
-						  <option>22:43 IST (UTC+5:30)</option>
-						  <option>22:43 IST (UTC+5:30)</option>
-						  <option>22:43 IST (UTC+5:30)</option>
-						</select>
-                      </div>
-                    </div>
-					<div class="form-group row">
-                      <div class="col-sm-3 "></div>
-                      <div class="col-sm-6">
-                        <button type="button" class="btn btn-danger  btn-rounded btn-fw">UPDATE</button>
-                      </div>
-                    </div>
-                    
-                  </form>
+
                 </div>
-              </div>
+
+                <div class="row">
+                    <div class="col-md-12 grid-margin stretch-card">
+                        <div class="card card-box">
+                            <div class="card-body">
+                                <div class="template-demo custom-button setting-btn">
+                                    <button type="button" class="btn btn-dark  btn-rounded btn-fw"><i
+                                            class="mdi mdi-clock setting-custom-icon"></i>Match Time & Date
+                                    </button>
+                                </div>
+                                <form class="forms-sample custom-form">
+                                    <div class="form-group row">
+                                        <label for="name" class="col-sm-3 col-form-label">Name</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" class="form-control" name="name" id="name"
+                                                   placeholder="Username *" value="{{data.name}}"/>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="phone" class="col-sm-3 col-form-label">Phone</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" class="form-control" name="phone" id="phone"
+                                                   placeholder="Phone *" value="{{data.phone}}"/>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                            <label for="total_balance" class="col-sm-3 col-form-label">Total
+                                                Balance</label>
+                                            <div class="col-sm-6">
+                                                <input type="text" class="form-control" name="total_balance"
+                                                       id="total_balance" placeholder="Total Balance"
+                                                       value="{{data.total_balance}}"/>
+                                            </div>
+                                        </div>
+                                    <div class="form-group row">
+                                        <label for="email" class="col-sm-3 col-form-label">Email</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" class="form-control" name="email" id="email"
+                                                   placeholder="Email *" value="{{data.email}}"/>
+                                        </div>
+
+                                        <div class="form-group row">
+                                            <div class="col-sm-3 "></div>
+                                            <div class="col-sm-6">
+                                                <button type="button"
+                                                        class="btn btn-danger btnRegister btn-rounded btn-fw">UPDATE
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <div class="row">
+                    <div class="col-md-12 grid-margin stretch-card">
+                        <div class="card card-box">
+                            <div class="card-body">
+                                <div class="template-demo custom-button">
+                                    <button class="btn btn-dark btn-rounded btn-fw">Refresh</button>
+
+                                    <i class="mdi mdi-clock menu-icon"></i>
+                                    <label class="col-form-label normal-label"> Last Update on, </label>
+                                    <label class="col-form-label normal-label-green"> 23:32 IST (UTC+5:30) </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-			
-			</div>
-		  
-		  <div class="row">
-				<div class="col-md-12 grid-margin stretch-card">
-					<div class="card card-box">
-						<div class="card-body">
-							<div class="template-demo custom-button">
-								<button class="btn btn-dark btn-rounded btn-fw">Refresh</button>
-								
-								<i class="mdi mdi-clock menu-icon"></i>
-								<label class="col-form-label normal-label"> Last Update on,  </label>
-								<label class="col-form-label normal-label-green"> 23:32 IST (UTC+5:30) </label>
-							  </div>
-						</div>
-					</div>
-				</div>
         </div>
-        </div>
-        </div>
-      <!-- main-panel ends -->
+        <!-- main-panel ends -->
     </div>
     <!-- page-body-wrapper ends -->
-  </div>
-  <!-- container-scroller -->
-  <!-- plugins:js -->
-  <script src="{{ url_for('static', filename='template/vendors/js/vendor.bundle.base.js')}}"></script>
-  <!-- endinject -->
-  <!-- Plugin js for this page -->
-  <script src="{{ url_for('static', filename='template/vendors/typeahead.js/typeahead.bundle.min.js')}}"></script>
-  <script src="{{ url_for('static', filename='template/vendors/select2/select2.min.js')}}"></script>
-  <!-- End plugin js for this page -->
-  <!-- inject:js -->
-  <script src="{{ url_for('static', filename='template/js/off-canvas.js')}}"></script>
-  <script src="{{ url_for('static', filename='template/js/hoverable-collapse.js')}}"></script>
-  <script src="{{ url_for('static', filename='template/js/template.js')}}"></script>
-  <script src="{{ url_for('static', filename='template/js/settings.js')}}"></script>
-  <script src="{{ url_for('static', filename='template/js/todolist.js')}}"></script>
-  <!-- endinject -->
-  <!-- Custom js for this page-->
-  <script src="{{ url_for('static', filename='template/js/file-upload.js')}}"></script>
-  <script src="{{ url_for('static', filename='template/js/typeahead.js')}}"></script>
-  <script src="{{ url_for('static', filename='template/js/select2.js')}}"></script>
-  <!-- End custom js for this page-->
+</div>
+<!-- container-scroller -->
+<!-- plugins:js -->
+<script src="{{ url_for('static', filename='template/vendors/js/vendor.bundle.base.js')}}"></script>
+<!-- endinject -->
+<!-- Plugin js for this page -->
+<script src="{{ url_for('static', filename='template/vendors/typeahead.js/typeahead.bundle.min.js')}}"></script>
+<script src="{{ url_for('static', filename='template/vendors/select2/select2.min.js')}}"></script>
+<!-- End plugin js for this page -->
+<!-- inject:js -->
+<script src="{{ url_for('static', filename='template/js/off-canvas.js')}}"></script>
+<script src="{{ url_for('static', filename='template/js/hoverable-collapse.js')}}"></script>
+<script src="{{ url_for('static', filename='template/js/template.js')}}"></script>
+<script src="{{ url_for('static', filename='template/js/settings.js')}}"></script>
+<script src="{{ url_for('static', filename='template/js/todolist.js')}}"></script>
+<!-- endinject -->
+<!-- Custom js for this page-->
+<script src="{{ url_for('static', filename='template/js/file-upload.js')}}"></script>
+<script src="{{ url_for('static', filename='template/js/typeahead.js')}}"></script>
+<script src="{{ url_for('static', filename='template/js/select2.js')}}"></script>
+<!-- End custom js for this page-->
 </body>
+
+<script>
+$(document).ready(function(){
+    $(".btnRegister").click(function(){
+    var name = document.getElementById('name').value;
+    var total_balance = document.getElementById('total_balance').value;
+    var email = document.getElementById('email').value;
+    var old_password = document.getElementById('old_password').value;
+    var new_password = document.getElementById('new_password').value;
+    var phone = document.getElementById('phone').value;
+    $.post('/api/update_profile', {'name': name, 'phone': phone, 'total_balance': total_balance,
+                                    'email': email, 'old_password': old_password, 'new_password':new_password},
+            function(returnedData){
+            $('.msg').hide();
+            console.log(returnedData);
+                if (returnedData.code == 200){
+                    alert("Profile Updated");
+
+
+                }
+                else if (returnedData.code == 500){
+                    alert("Something went wrong, Please contact develper!!");
+                }
+
+        }).fail(function(){
+              console.log("error");
+        });
+  });
+
+  $("#ok").click(function(){
+    $('.register-form').show();
+    $('.bb').hide();
+    $('.message').hide();
+    $('.check').hide();
+    location.reload();
+  });
+
+  });
+
+
+
+</script>
 
 </html>

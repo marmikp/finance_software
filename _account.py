@@ -76,6 +76,7 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
         def index():
             if session.get('username'):
                 data = db_utils.get_index_form_data_total()
+                data['today'] = datetime.now().strftime("%A, %d %B, %Y")
                 data['pending_amount'] = db_utils.get_total_pending_amount()
                 data['total_interest'] = float(data['total_interest_earned']) + float(data['total_interest_pending'])
                 return render_template('template/demo/vertical-default-dark/pages/dashboard1.html', data=data)
@@ -96,7 +97,6 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
 
         @app.route('/api/user/login', methods=['POST', 'GET'])
         def login():
-            session['username'] = 'sanjay'
             if session.get('username'):
                 return redirect('/')
             if request.method == 'POST':
@@ -107,10 +107,10 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
                     session['username'] = username
                     return redirect("/")
                 else:
-                    return render_template('login.html', data="invalid username or password")
+                    return render_template('template/demo/vertical-default-dark/pages/login.html', data="invalid username or password")
             else:
 
-                return render_template('login.html')
+                return render_template('template/demo/vertical-default-dark/pages/login.html')
 
 
         @app.route("/api/add_new_customer", methods=['POST', 'GET'])
@@ -123,6 +123,7 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
             data_query['user_address'] = data['address']
             data_query['user_phone'] = data['phone']
             data_query['user_city'] = data['city']
+            data_query['today'] = datetime.now().strftime("%A, %d %B, %Y")
             if 'debit' not in data.keys():
                 data_query['user_phone_2'] = data['phone_2'] if 'phone_2' in data.keys() else 0
             db_resp = db_utils.add_new_customer(**data_query)
@@ -134,8 +135,9 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
         def hafta():
             if session.get('username'):
                 data = db_utils.get_users_details(loan_status='both')
+                today = datetime.now().strftime("%A, %d %B, %Y")
                 print(data)
-                return render_template('template/demo/vertical-default-dark/pages/loanLists1.html', data=data)
+                return render_template('template/demo/vertical-default-dark/pages/loanLists1.html', data=data, today=today)
             else:
                 return redirect('/api/user/login')
 
@@ -155,6 +157,7 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
             data = {'max_id': max_id, 'today': datetime.now().date(), 'max_loan_id': max_loan_id}
             total_balance = General.query.filter_by(username=session.get('username')).first().total_balance
             data['total_amount'] = total_balance
+            data['today'] = datetime.now().strftime("%A, %d %B, %Y")
             if 'debit' in request_data.keys():
                 return render_template('templates/usermain_debit.html', data=data)
             else:
@@ -259,6 +262,7 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
                 data = db_utils.get_user_info_by_id(request.args['user_id'], return_type="dict")
 
             print(data)
+
             return render_template('template/demo/vertical-default-dark/pages/editCustomerLoan.html', data=data[0])
 
 
@@ -270,6 +274,7 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
                 data = db_utils.get_user_info_by_id(request.args['user_id'], return_type="dict", user_type='account')
 
             print(data)
+
             return render_template('template/demo/vertical-default-dark/pages/editCustomerAccount.html', data=data[0])
 
 
@@ -403,7 +408,8 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
         def account():
             if session.get('username'):
                 data = db_utils.get_users_details(user_type="account")
-                return render_template('template/demo/vertical-default-dark/pages/AccountOnBoard1.html', data=data)
+                today = datetime.now().strftime("%A, %d %B, %Y")
+                return render_template('template/demo/vertical-default-dark/pages/AccountOnBoard1.html', data=data, today=today)
             else:
                 return redirect('/api/user/login')
 
@@ -483,7 +489,7 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
                 return "logged out"
             max_id = db_utils.get_max_customer_id(id)
             data = {'max_id': max_id, 'today': datetime.now().date()}
-            return render_template("templates/account_usermain.html", data=data)
+            return render_template("template/demo/vertical-default-dark/pages/addNewAccount.html", data=data)
 
 
         @app.route('/api/account/current_user_account_entry', methods=['POST', 'GET'])
@@ -676,7 +682,7 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
             for d in data:
                 user_list.append(str(d['loan_id']) + " - " + str(d['user_name']))
             return render_template('template/demo/vertical-default-dark/pages/creditDebitAccount1.html', data=user_list,
-                                                               date_today=datetime.now().date())
+                                                               date_today=datetime.now().date(), today=datetime.now().strftime("%A, %d %B, %Y"))
 
 
         @app.route('/api/hafta/add_collection_user_info', methods=['GET', 'POST'])
@@ -716,7 +722,7 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
                 except Exception as e:
                     continue
             return render_template('template/demo/vertical-default-dark/pages/addCollections1.html', data=user_list,
-                                                               date_today=datetime.now().date())
+                                                               date_today=datetime.now().date(), today=datetime.now().strftime("%A, %d %B, %Y"))
 
 
         @app.route('/api/debit_account/add_new', methods=['post', 'get'])
@@ -759,6 +765,7 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
         def profile_accounts():
             data = db_utils.finance_user_details()
             data['msg'] = ""
+            data['today']=datetime.now().strftime("%A, %d %B, %Y")
             return render_template('template/demo/vertical-default-dark/pages/settings1.html', data=data)
 
 
@@ -789,7 +796,7 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
             data = get_users_details(loan_status='both')
             account_data = get_users_details(user_type='account')
             return render_template('template/demo/vertical-default-dark/pages/report1.html', data=data,
-                                                               account_data=account_data)
+                                                               account_data=account_data, today=datetime.now().strftime("%A, %d %B, %Y"))
 
 
         @app.route('/api/report/pending_installment_by_date', methods=['POST', 'GET'])

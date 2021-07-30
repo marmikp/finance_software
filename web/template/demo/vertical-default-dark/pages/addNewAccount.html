@@ -29,30 +29,30 @@
 <body>
 <div class="container-scroller">
     <!-- partial:../../partials/_navbar.html -->
-<!--    <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">-->
-        <!--      <div class="navbar-brand-wrapper d-flex justify-content-center">-->
-        <!--        <div class="navbar-brand-inner-wrapper d-flex justify-content-between align-items-center w-100">-->
-        <!--          <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">-->
-        <!--            <span class="mdi mdi-menu"></span>-->
-        <!--          </button>-->
-        <!--        </div>-->
-        <!--      </div>-->
-<!--        <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end navbar-title">-->
-<!--            <ul class="navbar-nav mr-lg-2">-->
-<!--                <li class="nav-item d-none d-lg-block">-->
-<!--                    <label class="col-form-label bold-label"> Add New Loan | </label>-->
-<!--                    <label class="col-form-label bold-label-green"> Thursday, June 02, 2021 </label>-->
-<!--                </li>-->
-<!--            </ul>-->
-<!--            <ul class="navbar-nav navbar-nav-right">-->
+    <!--    <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">-->
+    <!--      <div class="navbar-brand-wrapper d-flex justify-content-center">-->
+    <!--        <div class="navbar-brand-inner-wrapper d-flex justify-content-between align-items-center w-100">-->
+    <!--          <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">-->
+    <!--            <span class="mdi mdi-menu"></span>-->
+    <!--          </button>-->
+    <!--        </div>-->
+    <!--      </div>-->
+    <!--        <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end navbar-title">-->
+    <!--            <ul class="navbar-nav mr-lg-2">-->
+    <!--                <li class="nav-item d-none d-lg-block">-->
+    <!--                    <label class="col-form-label bold-label"> Add New Loan | </label>-->
+    <!--                    <label class="col-form-label bold-label-green"> Thursday, June 02, 2021 </label>-->
+    <!--                </li>-->
+    <!--            </ul>-->
+    <!--            <ul class="navbar-nav navbar-nav-right">-->
 
-<!--            </ul>-->
-<!--            <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button"-->
-<!--                    data-toggle="offcanvas">-->
-<!--                <span class="mdi mdi-menu"></span>-->
-<!--            </button>-->
-<!--        </div>-->
-<!--    </nav>-->
+    <!--            </ul>-->
+    <!--            <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button"-->
+    <!--                    data-toggle="offcanvas">-->
+    <!--                <span class="mdi mdi-menu"></span>-->
+    <!--            </button>-->
+    <!--        </div>-->
+    <!--    </nav>-->
     <!-- partial -->
     <div class="container-fluid page-body-wrapper">
 
@@ -126,13 +126,15 @@
                                     <div class="form-group row">
                                         <label for="loan_id" class=" col-sm-3  col-form-label">Loan No.</label>
                                         <div class="col-sm-3">
-                                            <input type="hidden" class="form-control" name="id" value="{{data.max_id}}" id="id"/>
-                                            <input type="text" class="form-control" id="loan_id" name="loan_id" placeholder=""
+                                            <input type="hidden" class="form-control" name="id" value="{{data.max_id}}"
+                                                   id="id"/>
+                                            <input type="text" class="form-control" id="loan_id" name="loan_id"
+                                                   placeholder=""
                                                    value="{{data.max_id}}" disabled>
 
                                         </div>
                                         <div class="col-sm-6">
-                                            <input type="text" class="form-control" id="name" name="name" placeholder=""
+                                            <input type="text" class="form-control" id="name" name="name" placeholder="Name"
                                                    value="{{data.user_name if 'user_name' in data.keys() else ''}}">
 
 
@@ -141,27 +143,32 @@
                                     <div class="form-group row">
                                         <label for="address" class=" col-sm-3  col-form-label">Alias</label>
                                         <div class="col-sm-5">
-                                            <input type="text" class="form-control" id="alias" name="alias" value="{{data.user_address if 'user_address' in data.keys() else ''}}" placeholder="Address">
+                                            <input type="text" class="form-control" id="alias" name="alias"
+                                                   value="{{data.user_address if 'user_address' in data.keys() else ''}}"
+                                                   placeholder="Short Name">
                                         </div>
                                     </div>
                                     <div class="form-group row">
                                         <label for="address" class=" col-sm-3  col-form-label">Address</label>
                                         <div class="col-sm-5">
-                                            <input type="text" class="form-control" id="address" name="address" value="{{data.user_address if 'user_address' in data.keys() else ''}}" placeholder="Address">
+                                            <input type="text" class="form-control" id="address" name="address"
+                                                   value="{{data.user_address if 'user_address' in data.keys() else ''}}"
+                                                   placeholder="Address">
                                         </div>
                                     </div>
                                     <div class="form-group row">
                                         <label for="city" class=" col-sm-3 col-form-label">City</label>
                                         <div class="col-sm-5">
-                                            <input type="text" class="form-control" id="city" name="city" placeholder=""
+                                            <input type="text" class="form-control" id="city" name="city" placeholder="City"
                                                    value="{{data.user_city if 'user_city' in data.keys() else ''}}">
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="phone" class=" col-sm-3 col-form-label">Phone-1</label>
+                                        <label for="phone" class=" col-sm-3 col-form-label">Phone</label>
                                         <div class="col-sm-4">
                                             <input type="text" class="form-control" style="width: 110%" id="phone"
-                                                   placeholder="Phone-1" value="{{data.user_phone if 'user_phone' in data.keys() else ''}}">
+                                                   placeholder="Phone"
+                                                   value="{{data.user_phone if 'user_phone' in data.keys() else ''}}">
                                         </div>
 
                                     </div>
@@ -174,125 +181,41 @@
                     <div class="col-md-5 grid-margin stretch-card">
                         <div class="card card-box">
                             <div class="card-body">
-                                <!-- <h4 class="card-title">Horizontal Form</h4> -->
-                                <!-- <p class="card-description"> -->
-                                <!-- Horizontal form layout -->
-                                <!-- </p> -->
                                 <form class="forms-sample custom-form ">
-                                    <div class="form-group row">
-                                        <label for="loan_type" class=" col-sm-3 col-form-label">Type</label>
-                                        <div class="col-sm-4">
-                                            <select class="form-control" id="loan_type" name="loan_type">
-                                                <option value="flat">Flat</option>
-                                                <option value="hafta">Hafta</option>
-                                            </select>
 
-
-                                        </div>
-<!--                                        <div class="col-sm-4">-->
-<!--                                            <select class="form-control">-->
-<!--                                                <option>Flat</option>-->
-<!--                                                <option>Flat</option>-->
-<!--                                            </select>-->
-
-
-<!--                                        </div>-->
-                                    </div>
                                     <div class="form-group row">
                                         <label for="base_amount" class=" col-sm-3 col-form-label">Amount</label>
                                         <div class="col-sm-7">
-                                            <input type="text" class="form-control base_amount" id="base_amount" name="base_amount" placeholder="" onkeyup="validate()">
+                                            <input type="text" class="form-control base_amount" id="base_amount"
+                                                   name="base_amount" placeholder="Amount">
                                             <input class="form-control total_amount" type="hidden" id="total_amount"
-                                       placeholder="BaseAmount *" name="base_amount" value="{{data.total_amount}}">
+                                                   placeholder="BaseAmount *" name="base_amount"
+                                                   value="{{data.total_amount}}">
                                         </div>
                                     </div>
-                                    <div class="form-group row">
-                                        <label for="interest" class="col-sm-3 col-form-label">Intrest</label>
-                                        <div class="col-sm-7">
-                                            <input type="text" class="form-control" id="interest" name="interest" placeholder="">
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label for="noi" class=" col-sm-3 col-form-label">Loan EMI</label>
-                                        <div class="col-sm-7">
-                                            <input type="text" class="form-control" id="noi" name="noi" placeholder="">
-                                        </div>
-                                    </div>
+
+
                                     <div class="form-group row">
                                         <label for="startdate" class=" col-sm-3 col-form-label">Date</label>
                                         <div class="col-sm-7">
-                                            <input type="date" id="startdate" name="startdate" class="form-control" value="{{data.today}}">
+                                            <input type="date" id="startdate" name="startdate" class="form-control"
+                                                   value="{{data.today}}">
 
                                         </div>
                                     </div>
                                     <div class="form-group row">
                                         <label for="remark" class=" col-sm-3 col-form-label">Remark</label>
                                         <div class="col-sm-7">
-                                            <input type="text" id="remark" name="remark" class="form-control" value="">
-                                            <input type="hidden" id="period" name="period" class="form-control" value="Monthly">
+                                            <input type="text" id="remark" name="remark" class="form-control" placeholder="Remark" value="">
+
 
                                         </div>
                                     </div>
-                                    <div class="form-group row">
-                                        <label for="paid_amount" class=" col-sm-3 col-form-label">Paid Amount</label>
-                                        <div class="col-sm-7">
-                                            <input type="text" id="paid_amount" name="paid_amount" class="form-control" value="">
-
-                                        </div>
-                                    </div>
-<!--                                    <div class="form-group row">-->
-<!--                                        <label for="remark" class="col-sm-3 col-form-label">End</label>-->
-<!--                                        <div class="col-sm-7">-->
-<!--                                            <select id="" class="form-control">-->
-<!--                                                <option>06/05/2021</option>-->
-<!--                                                <option>06/05/2021</option>-->
-<!--                                                <option>06/05/2021</option>-->
-<!--                                            </select>-->
-<!--                                        </div>-->
-<!--                                    </div>-->
-<!--                                    <div class="form-group row">-->
-<!--                                        <label for="remark" class=" col-sm-3 col-form-label">Day</label>-->
-<!--                                        <div class="col-sm-7">-->
-<!--                                            <input type="text" class="form-control" id="address" placeholder="">-->
-<!--                                        </div>-->
-<!--                                    </div>-->
-                                    <div class="form-group row">
-                                        <button type="button"
-                                                class="btn btn-success btn-rounded btn-fw right-align-button count">Count
-                                        </button>
-                                        <div class="col-sm-7">
-
-                                        </div>
-                                    </div>
-
-
                                 </form>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-2 grid-margin stretch-card">
-                        <div class="card card-box">
-                            <div class="card-body">
-                                <!-- <h4 class="card-title">Horizontal Form</h4> -->
-                                <!-- <p class="card-description"> -->
-                                <!-- Horizontal form layout -->
-                                <!-- </p> -->
-                                <table class="table table-bordered table_test">
-                                    <thead class="thead thead-dark">
-                                    <tr>
 
-                                        <th scope="col">Date</th>
-                                        <th scope="col">Amount</th>
-
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
 
                 </div>
 
@@ -302,7 +225,8 @@
                             <div class="card-body">
                                 <div class="template-demo custom-button">
 
-                                    <button type="button" class="btn btn-warning btn-rounded btn-fw right-align-button register_btn">
+                                    <button type="button"
+                                            class="btn btn-warning btn-rounded btn-fw right-align-button btnRegister">
                                         <i class="mdi mdi-checkbox-marked-circle mr-1"></i>Add Safely
                                     </button>
                                 </div>
@@ -363,12 +287,9 @@ $(document).ready(function(){
     $.post('/api/account/new_account_entry', {'id': id, 'name': name, 'alias': alias, 'address': address, 'phone': phone,
                                         'city': city, 'remark': remark, 'base_amount': base_amount,'startdate': startdate},
             function(returnedData){
-                console.log(returnedData);
+            console.log(returnedData);
                 if (returnedData.code == 200){
-                    $('.bb').fadeToggle(200);
-                    $('.message').toggleClass('comein');
-                    $('.check').toggleClass('scaledown');
-                    $('.register-form').hide();
+                    alert("Entry Added!!");
 
                 }
 
@@ -388,7 +309,7 @@ $(document).ready(function(){
   });
 
 
-</script>
 
+</script>
 <!-- Mirrored from www.bootstrapdash.com/demo/silica/template/demo/vertical-default-dark/pages/forms/basic_elements.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 13 Jul 2021 21:03:13 GMT -->
 </html>
