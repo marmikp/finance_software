@@ -1,8 +1,8 @@
 Traceback (most recent call last):
-  File "C:\Users\Raja\Desktop\marmik\finance_software\_account.py", line 806, in pending_installment_by_date
-    emis = emis.sort_values(by='date')
-  File "C:\Users\Raja\miniconda3\envs\finance_software\lib\site-packages\pandas\core\frame.py", line 5455, in sort_values
-    k = self._get_label_or_level_values(by, axis=axis)
-  File "C:\Users\Raja\miniconda3\envs\finance_software\lib\site-packages\pandas\core\generic.py", line 1684, in _get_label_or_level_values
-    raise KeyError(key)
-KeyError: 'date'
+  File "/home/ezdi/marmik/finance_software/_account.py", line 803, in pending_installment_by_date
+    datetime.strptime(str(request_data['date']), "%Y/%m/%d"))
+  File "/home/ezdi/anaconda3/envs/fin/lib/python3.7/_strptime.py", line 577, in _strptime_datetime
+    tt, fraction, gmtoff_fraction = _strptime(data_string, format)
+  File "/home/ezdi/anaconda3/envs/fin/lib/python3.7/_strptime.py", line 359, in _strptime
+    (data_string, format))
+ValueError: time data '2021-07-28' does not match format '%Y/%m/%d'

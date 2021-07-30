@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Dashboard</title>
+  <!-- plugins:css -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='template/vendors/mdi/css/materialdesignicons.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='template/vendors/css/vendor.bundle.base.css')}}">
+  <!-- endinject -->
+  <!-- Plugin css for this page -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='template/vendors/select2/select2.min.css')}}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='template/vendors/select2-bootstrap-theme/select2-bootstrap.min.css')}}">
+  <!-- End plugin css for this page -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='template/css/fd-icons.css')}}">
+  <!-- inject:css -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='template/css/vertical-layout-dark/style.css')}}">
+  <!-- endinject -->
+  <link rel="shortcut icon" href="{{ url_for('static', filename='template/images/favicon.png')}}" />
+</head>
+
+<body>
+  <div class="container-scroller">
+    <!-- partial:../../partials/_navbar.html -->
+    <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
+      <div class="navbar-brand-wrapper d-flex justify-content-center">
+        <div class="navbar-brand-inner-wrapper d-flex justify-content-between align-items-center w-100">
+          <!-- <a class="navbar-brand brand-logo" href="../../index.html"><img src="../../../images/logo.svg" alt="logo"/></a> -->
+          <!-- <a class="navbar-brand brand-logo-mini" href="../../index.html"><img src="../../../images/logo-mini.svg" alt="logo"></a> -->
+          <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
+            <span class="mdi mdi-menu"></span>
+          </button>
+        </div>
+      </div>
+      <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end navbar-title">
+        <ul class="navbar-nav mr-lg-2">
+          <li class="nav-item d-none d-lg-block">
+            <label class="col-form-label bold-label"> Your Financial Dashboard | </label>
+            <label class="col-form-label bold-label-green"> Thursday, June 02, 2021 </label>
+          </li>
+        </ul>
+        <ul class="navbar-nav navbar-nav-right">
+
+        </ul>
+        <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button"
+          data-toggle="offcanvas">
+          <span class="mdi mdi-menu"></span>
+        </button>
+      </div>
+    </nav>
+    <!-- partial -->
+    <div class="container-fluid page-body-wrapper">
+
+        <!-- partial:../../partials/_sidebar.html -->
+        <nav class="sidebar sidebar-offcanvas" id="sidebar">
+            <ul class="nav">
+                <li class="nav-item">
+
+                    <a class="nav-link btn btn-siderbar  btn-rounded btn-fw" href="/">
+                        <i class="fd-home"></i>
+                        <span class="menu-title">Home</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link btn btn-siderbar  btn-rounded btn-fw" href="/api/hafta">
+                        <i class="fd-loan-list"></i>
+                        <span class="menu-title">Loan List</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link btn btn-siderbar  btn-rounded btn-fw"
+                       href="/api/hafta/add_collection_dialog_new">
+                        <i class="fd-add-collection"></i>
+                        <span class="menu-title">Add Collection</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link btn btn-siderbar  btn-rounded btn-fw" href="/api/account">
+                        <i class="fd-account"></i>
+                        <span class="menu-title">Account</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link btn btn-siderbar  btn-rounded btn-fw" href="/api/debit_account">
+                        <i class="fd-credit-account"></i>
+                        <span class="menu-title">Cr-De. Acc.</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link btn btn-siderbar  btn-rounded btn-fw" href="/api/report">
+                        <i class="fd-report"></i>
+                        <span class="menu-title">Report</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link btn btn-siderbar  btn-rounded btn-fw" href="/api/profile">
+                        <i class="fd-settings"></i>
+                        <span class="menu-title">Settings</span>
+                    </a>
+                </li>
+
+            </ul>
+        </nav>
+      <!-- partial -->
+      <div class="main-panel">
+        <div class="content-wrapper">
+          <div class="page-title-box">
+            <h2>Total Page</h2>
+          </div>
+
+          <div class="row">
+            <div class="col-md-4 grid-margin stretch-card">
+              <div class="card dashboard-card loan-card">
+                <div class="card-body">
+                  <h2>Loan Customer</h2>
+                    <div class="number-icon-box">
+                      <h3>{{data.loan_customer}}</h3>
+                      <i class="fd-box-check"></i>
+                    </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4 grid-margin stretch-card">
+              <div class="card dashboard-card account-card">
+                <div class="card-body">
+                  <h2>Account Customer</h2>
+                  <div class="number-icon-box">
+                    <h3>{{data.account_customer}}</h3>
+                    <i class="fd-box-check"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4 grid-margin stretch-card">
+              <div class="card dashboard-card debit-card">
+                <div class="card-body">
+                  <h2>Debit Customer</h2>
+                  <div class="number-icon-box">
+                    <h3>00</h3>
+                    <i class="fd-box-check"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-12 grid-margin stretch-card">
+              <div class="card card-box">
+                <div class="card-body">
+                  <form class="forms-sample custom-form">
+                    <div class="form-group row">
+                      <label for="blncAvl" class="col-sm-3 col-form-label">Available Balance</label>
+                      <div class="col-sm-6">
+						<div class="input-with-icon">
+                          <i class="fd-loan-list"></i>
+                        <input type="text" class="form-control" id="blncAvl" placeholder="" value="{{data.total_balance}}" disabled>
+                      </div>
+                        
+                      </div>
+                    </div>
+                    <div class="form-group row">
+                      <label for="blncPending" class="col-sm-3 col-form-label">Pending Balance</label>
+                      <div class="col-sm-6">
+                        
+						<div class="input-with-icon">
+                          <i class="fd-loan-list"></i>
+                        <input type="text" class="form-control" id="blncPending" placeholder="" value="{{data.pending_amount}}" disabled>
+                      </div>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="row">
+            <div class="col-md-12 grid-margin stretch-card">
+              <div class="card card-box">
+                <div class="card-body">
+                  <form class="forms-sample custom-form">
+                    <div class="form-group row">
+                      <label for="earnedInt" class="col-sm-3 col-form-label">Earned Interest</label>
+                      <div class="col-sm-6">
+                        
+						<div class="input-with-icon">
+                          <i class="fd-loan-list"></i>
+                        <input type="text" class="form-control" id="earnedInt" placeholder="" value="{{data.total_interest_earned}}" disabled>
+                      </div>
+                      </div>
+                    </div>
+                    <div class="form-group row">
+                      <label for="pendingInt" class="col-sm-3 col-form-label">Pending Interest</label>
+                      <div class="col-sm-6">
+                        
+						<div class="input-with-icon">
+                          <i class="fd-loan-list"></i>
+                        <input type="text" class="form-control" id="pendingInt" placeholder="" value="{{data.total_interest_pending}}" disabled>
+                      </div>
+                      </div>
+                    </div>
+                    <div class="form-group row">
+                      <label for="totalInt" class="col-sm-3 col-form-label">Total Interest</label>
+                      <div class="col-sm-6">
+                        
+						<div class="input-with-icon">
+                          <i class="fd-loan-list"></i>
+                        <input type="text" class="form-control" id="totalInt" placeholder="" value="{{data.total_interest}}" disabled>
+                      </div>
+                      </div>
+                    </div>
+
+                  </form>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="row">
+            <div class="col-md-12 grid-margin stretch-card">
+              <div class="card card-box">
+                <div class="card-body">
+                  <div class="template-demo custom-button">
+                    <button class="btn btn-dark btn-rounded btn-fw">Refresh</button>
+
+                    <i class="mdi mdi-clock menu-icon"></i>
+                    <label class="col-form-label normal-label"> Last Update on, </label>
+                    <label class="col-form-label normal-label-green"> 23:32 IST (UTC+5:30) </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- content-wrapper ends -->
+        <!-- partial:partials/_footer.html -->
+
+        <!-- partial -->
+      </div>
+      <!-- main-panel ends -->
+    </div>
+    <!-- page-body-wrapper ends -->
+  </div>
+  <!-- container-scroller -->
+  <!-- plugins:js -->
+  <script src="{{ url_for('static', filename='template/vendors/js/vendor.bundle.base.js')}}"></script>
+  <!-- endinject -->
+  <!-- Plugin js for this page -->
+  <script src="{{ url_for('static', filename='template/vendors/typeahead.js/typeahead.bundle.min.js')}}"></script>
+  <script src="{{ url_for('static', filename='template/vendors/select2/select2.min.js')}}"></script>
+  <!-- End plugin js for this page -->
+  <!-- inject:js -->
+  <script src="{{ url_for('static', filename='template/js/off-canvas.js')}}"></script>
+  <script src="{{ url_for('static', filename='template/js/hoverable-collapse.js')}}"></script>
+  <script src="{{ url_for('static', filename='template/js/template.js')}}"></script>
+  <script src="{{ url_for('static', filename='template/js/settings.js')}}"></script>
+  <script src="{{ url_for('static', filename='template/js/todolist.js')}}"></script>
+  <!-- endinject -->
+  <!-- Custom js for this page-->
+  <script src="{{ url_for('static', filename='template/js/file-upload.js')}}"></script>
+  <script src="{{ url_for('static', filename='template/js/typeahead.js')}}"></script>
+  <script src="{{ url_for('static', filename='template/js/select2.js')}}"></script>
+  <!-- End custom js for this page-->
+</body>
+
+
+
+
+</html>

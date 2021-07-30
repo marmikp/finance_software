@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Add Collection</title>
+    <!-- plugins:css -->
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='template/vendors/mdi/css/materialdesignicons.min.css')}}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='template/vendors/css/vendor.bundle.base.css')}}">
+    <!-- endinject -->
+    <!-- Plugin css for this page -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='template/vendors/select2/select2.min.css')}}">
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='template/vendors/select2-bootstrap-theme/select2-bootstrap.min.css')}}">
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='template/vendors/bootstrap-datepicker/bootstrap-datepicker.min.css')}}">
+    <!-- End plugin css for this page -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='template/css/fd-icons.css')}}">
+    <!-- inject:css -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='template/css/vertical-layout-dark/style.css')}}">
+    <!-- endinject -->
+    <script src="{{ url_for('static', filename='assets/js/jquery.min.js')}}"></script>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='template/images/favicon.png')}}"/>
+</head>
+<body>
+<div class="container-scroller">
+    <div class="container-fluid page-body-wrapper">
+        <div class="main-panel" style="width: 100%">
+            <div class="content-wrapper" style="padding: 0px;">
+                <div class="page-title-box">
+                    <!--<h2>Collection</h2> -->
+                </div>
+
+                <div class="row">
+
+                    <div class="col-md-5 grid-margin stretch-card">
+                        <div class="card card-box">
+                            <div class="card-body">
+                                <!-- <h4 class="card-title">Horizontal Form</h4> -->
+                                <!-- <p class="card-description"> -->
+                                <!-- Horizontal form layout -->
+                                <!-- </p> -->
+                                <form class="forms-sample custom-form ">
+                                    <div class="form-group row">
+                                        <label for="id" class=" col-sm-3  col-form-label">Loan No.</label>
+                                        <div class="col-sm-3">
+                                            <input type="text" class="form-control" name="id" value="{{data.id}}" id="id" disabled/>
+
+
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <input type="text" class="form-control" id="name" name="name" placeholder=""
+                                                   value="{{data.user_name if 'user_name' in data.keys() else ''}}">
+
+
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="address" class=" col-sm-3  col-form-label">Alias</label>
+                                        <div class="col-sm-5">
+                                            <input type="text" class="form-control" id="alias" name="alias" value="{{data.user_alias if 'user_alias' in data.keys() else ''}}" placeholder="Address">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="address" class=" col-sm-3  col-form-label">Address</label>
+                                        <div class="col-sm-5">
+                                            <input type="text" class="form-control" id="address" name="address" value="{{data.user_address if 'user_address' in data.keys() else ''}}" placeholder="Address">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="city" class=" col-sm-3 col-form-label">City</label>
+                                        <div class="col-sm-5">
+                                            <input type="text" class="form-control" id="city" name="city" placeholder=""
+                                                   value="{{data.user_city if 'user_city' in data.keys() else ''}}">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="phone" class=" col-sm-3 col-form-label">Phone-1</label>
+                                        <div class="col-sm-4">
+                                            <input type="text" class="form-control" style="width: 110%" id="phone"
+                                                   placeholder="Phone-1" value="{{data.user_phone if 'user_phone' in data.keys() else ''}}">
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <input type="text" class="form-control" style="width: 110%" id="phone_2"
+                                                   placeholder="" value="{{data.user_phone_2 if 'user_phone_2' in data.keys() else ''}}">
+                                        </div>
+                                    </div>
+                                    <div class="form-group input-container">
+                                          <i class="fa fa-key icon"></i>
+                                            <select class="input-field" id="loan_id" name="loan_id">
+                                                {% for d in data.loans %}
+                                                    <option value="{{d}}">{{d}}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+
+
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-5 grid-margin stretch-card">
+                        <div class="card card-box">
+                            <div class="card-body">
+                                <form class="forms-sample custom-form ">
+                                    <div class="form-group row">
+                                        <label for="guarantor_1_name" class=" col-sm-3 col-form-label">Sakshi 1</label>
+                                        <div class="col-sm-7">
+                                            <input type="text" class="form-control" id="guarantor_1_name" name="guarantor_1_name" placeholder="">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="guarantor_1_phone" class="col-sm-3 col-form-label">Phone</label>
+                                        <div class="col-sm-7">
+                                            <input type="text" class="form-control" id="guarantor_1_phone" name="guarantor_1_phone" placeholder="">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="guarantor_1_address" class=" col-sm-3 col-form-label">Address</label>
+                                        <div class="col-sm-7">
+                                            <input type="text" class="form-control" id="guarantor_1_address" name="guarantor_1_address" placeholder="">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="guarantor_2_name" class=" col-sm-3 col-form-label">Sakshi 2</label>
+                                        <div class="col-sm-7">
+                                            <input type="text" class="form-control" id="guarantor_2_name"  name="guarantor_2_name" placeholder="">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="guarantor_2_phone" class="col-sm-3 col-form-label">Phone</label>
+                                        <div class="col-sm-7">
+                                            <input type="text" class="form-control" id="guarantor_2_phone" name="guarantor_2_phone" placeholder="">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="guarantor_2_address" class=" col-sm-3 col-form-label">Address</label>
+                                        <div class="col-sm-7">
+                                            <input type="text" class="form-control" id="guarantor_2_address" name="guarantor_2_address" placeholder="">
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2 grid-margin stretch-card">
+                        <div class="card card-box">
+                            <div class="card-body">
+                                <table class="table table-bordered table_test">
+                                    <thead class="thead thead-dark">
+                                    <tr>
+                                        <th scope="col">Date</th>
+                                        <th scope="col">Amount</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12 grid-margin stretch-card">
+                        <div class="card card-box">
+                            <div class="card-body">
+                                <div class="template-demo custom-button">
+
+                                    <button type="button" class="btn btn-warning btn-rounded btn-fw right-align-button register_btn">
+                                        <i class="mdi mdi-checkbox-marked-circle mr-1"></i>Add Safely
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- content-wrapper ends -->
+            <!-- partial:../../partials/_footer.html -->
+
+            <!-- partial -->
+        </div>
+        <!-- main-panel ends -->
+    </div>
+    <!-- page-body-wrapper ends -->
+</div>
+<!-- container-scroller -->
+<!-- plugins:js -->
+<script src="{{ url_for('static', filename='template/vendors/js/vendor.bundle.base.js')}}"></script>
+<!-- endinject -->
+<!-- Plugin js for this page -->
+<script src="{{ url_for('static', filename='template/vendors/typeahead.js/typeahead.bundle.min.js')}}"></script>
+<script src="{{ url_for('static', filename='template/vendors/select2/select2.min.js')}}"></script>
+<script src="{{ url_for('static', filename='template/vendors/moment/moment.min.js')}}"></script>
+<script src="{{ url_for('static', filename='template/vendors/tempusdominus-bootstrap-4/tempusdominus-bootstrap-4.js')}}"></script>
+<script src="{{ url_for('static', filename='template/vendors/bootstrap-datepicker/bootstrap-datepicker.min.js')}}"></script>
+<!-- End plugin js for this page -->
+<!-- inject:js -->
+<script src="{{ url_for('static', filename='template/js/off-canvas.js')}}"></script>
+<script src="{{ url_for('static', filename='template/js/hoverable-collapse.js')}}"></script>
+<script src="{{ url_for('static', filename='template/js/template.js')}}"></script>
+<script src="{{ url_for('static', filename='template/js/settings.js')}}"></script>
+<script src="{{ url_for('static', filename='template/js/todolist.js')}}"></script>
+<!-- endinject -->
+<!-- Custom js for this page-->
+<script src="{{ url_for('static', filename='template/js/file-upload.js')}}"></script>
+<script src="{{ url_for('static', filename='template/js/typeahead.js')}}"></script>
+<script src="{{ url_for('static', filename='template/js/select2.js')}}"></script>
+<script src="{{ url_for('static', filename='template/js/formpickers.js')}}"></script>
+<!-- End custom js for this page-->
+</body>
+
+<script>
+$(document).ready(function(){
+    $(".btnRegister").click(function(){
+    var id = document.getElementById('id').value;
+    var name = document.getElementById('name').value;
+    var alias = document.getElementById('alias').value;
+    var address = document.getElementById('address').value;
+    var city = document.getElementById('city').value;
+    var phone = document.getElementById('phone').value;
+    var phone_2 = document.getElementById('phone_2').value;
+    var guarantor_1_name = document.getElementById('guarantor_1_name').value;
+    var guarantor_1_phone = document.getElementById('guarantor_1_phone').value;
+    var guarantor_1_address = document.getElementById('guarantor_1_address').value;
+    var guarantor_2_name = document.getElementById('guarantor_2_name').value;
+    var guarantor_2_phone = document.getElementById('guarantor_2_phone').value;
+    var guarantor_2_address = document.getElementById('guarantor_2_address').value;
+    var loan_id = document.getElementById('loan_id').value;
+    $.post('/api/hafta/customeredit', {'id': id, 'loan_id': loan_id,'name': name, 'alias': alias, 'address': address, 'phone': phone,
+                                        'phone_2': phone_2, 'city': city,
+                                        'guarantor_1_name': guarantor_1_name, 'guarantor_1_phone': guarantor_1_phone,
+                                        'guarantor_1_address': guarantor_1_address,
+                                        'guarantor_2_name': guarantor_2_name,
+                                        'guarantor_2_phone': guarantor_2_phone,
+                                        'guarantor_2_address': guarantor_2_address},
+            function(returnedData){
+            console.log(returnedData);
+                if (returnedData.code == 200){
+                    alert("Success");
+                }
+
+        }).fail(function(){
+              console.log("error");
+        });
+  });
+
+  $("#ok").click(function(){
+    $('.register-form').show();
+    $('.bb').hide();
+    $('.message').hide();
+    $('.check').hide();
+    location.reload();
+  });
+
+  });
+
+</script>
+
+<script>
+$(document).ready(function(){
+    $("#loan_id").click(function(){
+
+    var loan_id = document.getElementById('loan_id').value;
+    var user_id = document.getElementById('id').value;
+
+    $.post('/api/get_guarantor_details_by_loan_id', {'user_id': user_id, 'loan_id': loan_id},
+            function(returnedData){
+            console.log(returnedData);
+                if (returnedData.code == 200){
+                    $('.btnRegister').show();
+                    var guarantor_1_name = returnedData.data['guarantor_1_name']
+                    var guarantor_1_phone = returnedData.data['guarantor_1_phone']
+                    var guarantor_1_address = returnedData.data['guarantor_1_address']
+                    var guarantor_2_name = returnedData.data['guarantor_2_name']
+                    var guarantor_2_phone = returnedData.data['guarantor_2_phone']
+                    var guarantor_2_address = returnedData.data['guarantor_2_address']
+                    $('#guarantor_1_name').val(guarantor_1_name);
+                    $('#guarantor_1_phone').val(guarantor_1_phone);
+                    $('#guarantor_1_address').val(guarantor_1_address);
+                    $('#guarantor_2_name').val(guarantor_2_name);
+                    $('#guarantor_2_phone').val(guarantor_2_phone);
+                    $('#guarantor_2_address').val(guarantor_2_address);
+
+                }
+                else{
+                    $('.btnRegister').hide();
+                }
+
+        }).fail(function(){
+              console.log("error");
+        });
+
+  });
+  });
+
+</script>
+
+<!-- Mirrored from www.bootstrapdash.com/demo/silica/template/demo/vertical-default-dark/pages/forms/basic_elements.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 13 Jul 2021 21:03:13 GMT -->
+</html>

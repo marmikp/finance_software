@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Add Collection</title>
+    <script src="{{ url_for('static', filename='assets/js/jquery-3.5.1.js')}}"></script>
+    <link href="{{ url_for('static', filename='assets/css/jquery-ui.css')}}" rel="stylesheet"/>
+
+    <!-- plugins:css -->
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='template/vendors/mdi/css/materialdesignicons.min.css')}}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='template/vendors/css/vendor.bundle.base.css')}}">
+    <!-- endinject -->
+    <!-- Plugin css for this page -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='template/vendors/select2/select2.min.css')}}">
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='template/vendors/select2-bootstrap-theme/select2-bootstrap.min.css')}}">
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='template/vendors/bootstrap-datepicker/bootstrap-datepicker.min.css')}}">
+    <!-- End plugin css for this page -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='template/css/fd-icons.css')}}">
+    <!-- inject:css -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='template/css/vertical-layout-dark/style.css')}}">
+    <!-- endinject -->
+    <link rel="shortcut icon" href="{{ url_for('static', filename='template/images/favicon.png')}}"/>
+</head>
+<script>
+$(document).ready(function(){
+    $(".new_loan").click(function(){
+    if (confirm("Press OK to New Loan")){
+        $.post('/api/test', {'url': 'http://127.0.0.1:5000/api/hafta/current_user_hafta_entry_dialog',
+                                        'user_id': $(this).attr('user_id')},
+                function(returnedData){
+                    var w = window.open('about:blank');
+                    w.document.open();
+                    w.document.write(returnedData);
+                    w.document.close();
+            }).fail(function(){
+                  console.log("error");
+            });
+
+    }
+  });
+  $(".extend_hafta").click(function(){
+    if (confirm("Press OK to Extend hafta")){
+        var amount = document.getElementById("extend_amount").value;
+        var months = document.getElementById("extend_month").value;
+        var loan_id = document.getElementById("extend_loan_id").value;
+        $.post('/api/test', {'url': 'http://127.0.0.1:5000/api/hafta/extend_hafta', 'user_id': $(this).attr('user_id'),
+                                'loan_id': loan_id, 'amount': amount, 'months': months},
+                function(returnedData){
+                    var w = window.open('about:blank');
+                    w.document.open();
+                    w.document.write(returnedData);
+                    w.document.close();
+            }).fail(function(){
+                  console.log("error");
+            });
+
+    }
+  });
+});
+
+
+
+</script>
+<script>
+$(document).ready(function() {
+    $('#example').DataTable();
+
+   $(".display-table tr").click(function(){
+   $(this).addClass('selected').siblings().removeClass('selected');
+   var value=$(this).find('td:first').html();
+
+   });
+
+
+} );
+
+
+
+
+</script>
+<script>
+    function getDate(){
+    var today = new Date();
+
+document.getElementById("date").value = today.getFullYear() + '-' + ('0' + (today.getMonth() + 1)).slice(-2) + '-' + ('0' + today.getDate()).slice(-2);
+}
+
+
+
+</script>
+<body>
+<div class="container-scroller">
+    <!-- partial:../../partials/_navbar.html -->
+    <!--         <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">-->
+    <!--            <div class="navbar-brand-wrapper d-flex justify-content-center">-->
+    <!--               <div class="navbar-brand-inner-wrapper d-flex justify-content-between align-items-center w-100">-->
+    <!--                  <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">-->
+    <!--                  <span class="mdi mdi-menu"></span>-->
+    <!--                  </button>-->
+    <!--               </div>-->
+    <!--            </div>-->
+    <!--            <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end navbar-title">-->
+    <!--               <ul class="navbar-nav mr-lg-2">-->
+    <!--                  <li class="nav-item d-none d-lg-block">-->
+    <!--                     <label class="col-form-label bold-label"> Party Information |  </label>-->
+    <!--                     <label class="col-form-label bold-label-green"> Thursday, June 02, 2021 </label>-->
+    <!--                  </li>-->
+    <!--               </ul>-->
+
+    <!--               <ul class="navbar-nav navbar-nav-right">-->
+    <!--               </ul>-->
+    <!--               <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">-->
+    <!--               <span class="mdi mdi-menu"></span>-->
+    <!--               </button>-->
+    <!--            </div>-->
+    <!--         </nav>-->
+
+    <!--         &lt;!&ndash; partial &ndash;&gt;-->
+    <!--         <div class="container-fluid page-body-wrapper">-->
+    <!--            &lt;!&ndash; partial:../../partials/_sidebar.html &ndash;&gt;-->
+    <!--            <nav class="sidebar sidebar-offcanvas" id="sidebar">-->
+    <!--               <ul class="nav">-->
+    <!--                  <li class="nav-item">-->
+    <!--                     <a class="nav-link btn btn-siderbar  btn-rounded btn-fw" href="dashboard1.html">-->
+    <!--                     <i class="fd-home"></i>-->
+    <!--                     <span class="menu-title">Home</span>-->
+    <!--                     </a>-->
+    <!--                  </li>-->
+    <!--                  <li class="nav-item">-->
+    <!--                     <a class="nav-link btn btn-siderbar  btn-rounded btn-fw" href="loanLists1.html">-->
+    <!--                     <i class="fd-loan-list"></i>-->
+    <!--                     <span class="menu-title">Loan List</span>-->
+    <!--                     </a>-->
+    <!--                  </li>-->
+    <!--                  <li class="nav-item">-->
+    <!--                     <a class="nav-link btn btn-siderbar  btn-rounded btn-fw" href="addCollections1.html">-->
+    <!--                     <i class="fd-add-collection"></i>-->
+    <!--                     <span class="menu-title">Add Collection</span>-->
+    <!--                     </a>-->
+    <!--                  </li>-->
+    <!--                  <li class="nav-item">-->
+    <!--                     <a class="nav-link btn btn-siderbar  btn-rounded btn-fw" href="AccountOnBoard1.html">-->
+    <!--                     <i class="fd-account"></i>-->
+    <!--                     <span class="menu-title">Account</span>-->
+    <!--                     </a>-->
+    <!--                  </li>-->
+    <!--                  <li class="nav-item">-->
+    <!--                     <a class="nav-link btn btn-siderbar  btn-rounded btn-fw" href="creditDebitAccount1.html">-->
+    <!--                     <i class="fd-credit-account"></i>-->
+    <!--                     <span class="menu-title">Cr-De. Acc.</span>-->
+    <!--                     </a>-->
+    <!--                  </li>-->
+    <!--                  <li class="nav-item">-->
+    <!--                     <a class="nav-link btn btn-siderbar  btn-rounded btn-fw" href="report1.html">-->
+    <!--                     <i class="fd-report"></i>-->
+    <!--                     <span class="menu-title">Report</span>-->
+    <!--                     </a>-->
+    <!--                  </li>-->
+    <!--                  <li class="nav-item">-->
+    <!--                     <a class="nav-link btn btn-siderbar  btn-rounded btn-fw" href="settings1.html">-->
+    <!--                     <i class="fd-settings"></i>-->
+    <!--                     <span class="menu-title">Settings</span>-->
+    <!--                     </a>-->
+    <!--                  </li>-->
+    <!--               </ul>-->
+    <!--            </nav>-->
+    <!-- partial -->
+    <!-- partial -->
+    <div class="main-panel" style="width: 100%">
+        <div class="content-wrapper">
+            <div class="page-title-box" style="background-color: #3c4650">
+                <!--<h2>Collection</h2> -->
+                <div class="row">
+                    <div class="col-md-4">
+                        <input type="text" class="ml-5 mb-3 mt-3" name="name" style="width: 100%"
+                               value="{{data.data.0.user_name if 'user_name' in data.data.0.keys()}}" disabled>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="ml-5 mb-3 mt-3" style="color:#fff">General : {{data.data.0.pending_amount}}</div>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="row">
+                <div class="col-md-12 grid-margin stretch-card">
+                    <div class="card card-box">
+                        <div class="card-body">
+                            <!-- <h4 class="card-title">Horizontal Form</h4> -->
+                            <!-- <p class="card-description"> -->
+                            <!-- Horizontal form layout -->
+                            <!-- </p> -->
+                            <table class="table table-bordered" width="100%">
+                                <thead class="thead thead-dark" style="background-color: #3c4650;">
+                                <tr>
+                                    <th scope="col" width="20%">Id</th>
+                                    <th scope="col" width="10%">Loan No</th>
+                                    <th scope="col" width="5%">Credit Amt</th>
+                                    <th scope="col" width="5%">Debit Amt</th>
+                                    <th scope="col" width="20%">Date</th>
+                                    <th scope="col" width="10%">Tx Type</th>
+                                    <th scope="col" width="10%">Remark</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for d in data.data %}
+                                <tr>
+                                    <td>{{d.id}}</td>
+                                    <td>{{d.tx_id}}</td>
+                                    <td>{{d.amount if d.tx_type == 'cr' else ''}}</td>
+                                    <td>{{d.amount if d.tx_type == 'dr' else ''}}</td>
+                                    <td>{{d.date.date().strftime("%d/%m/%Y")}}</td>
+                                    <td style="color: {{'red' if d.tx_type == 'dr' else 'green'}}">{{d.tx_type}}</td>
+                                    <td>{{d.remark}}</td>
+                                </tr>
+                                {% endfor %}
+
+                                </tbody>
+                                <tfoot>
+                                <tr>
+                                    <th><b></b></th>
+                                    <th><b>Total</b></th>
+                                    <th style="color: green">{{data.credit_amt}}</th>
+                                    <th style="color: red">{{data.debit_amt}}</th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 grid-margin stretch-card">
+                    <div class="card card-box">
+                        <div class="card-body">
+                            <div class="template-demo custom-button">
+                                <button type="button" class="btn btn-success  btn-rounded btn-fw">Print</button>
+                                <button type="button" class="btn btn-warning btn-rounded btn-fw right-align-button"><i
+                                        class="mdi mdi-checkbox-marked-circle mr-1"></i>Exit Info
+                                </button>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- content-wrapper ends -->
+        <!-- partial:../../partials/_footer.html -->
+        <!-- partial -->
+    </div>
+    <!-- main-panel ends -->
+</div>
+<!-- page-body-wrapper ends -->
+<!-- container-scroller -->
+<!-- plugins:js -->
+<script src="{{ url_for('static', filename='template/vendors/js/vendor.bundle.base.js')}}"></script>
+<!-- endinject -->
+<!-- Plugin js for this page -->
+<script src="{{ url_for('static', filename='template/vendors/typeahead.js/typeahead.bundle.min.js')}}"></script>
+<script src="{{ url_for('static', filename='template/vendors/select2/select2.min.js')}}"></script>
+<script src="{{ url_for('static', filename='template/vendors/moment/moment.min.js')}}"></script>
+<script src="{{ url_for('static', filename='template/vendors/tempusdominus-bootstrap-4/tempusdominus-bootstrap-4.js')}}"></script>
+<script src="{{ url_for('static', filename='template/vendors/bootstrap-datepicker/bootstrap-datepicker.min.js')}}"></script>
+<!-- End plugin js for this page -->
+<!-- inject:js -->
+<script src="{{ url_for('static', filename='template/js/off-canvas.js')}}"></script>
+<script src="{{ url_for('static', filename='template/js/hoverable-collapse.js')}}"></script>
+<script src="{{ url_for('static', filename='template/js/template.js')}}"></script>
+<script src="{{ url_for('static', filename='template/js/settings.js')}}"></script>
+<script src="{{ url_for('static', filename='template/js/todolist.js')}}"></script>
+<!-- endinject -->
+<!-- Custom js for this page-->
+<script src="{{ url_for('static', filename='template/js/file-upload.js')}}"></script>
+<script src="{{ url_for('static', filename='template/js/typeahead.js')}}"></script>
+<script src="{{ url_for('static', filename='template/js/select2.js')}}"></script>
+<script src="{{ url_for('static', filename='template/js/formpickers.js')}}"></script>
+<!-- End custom js for this page-->
+</body>
+<!-- Mirrored from www.bootstrapdash.com/demo/silica/template/demo/vertical-default-dark/pages/forms/basic_elements.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 13 Jul 2021 21:03:13 GMT -->
+</html>

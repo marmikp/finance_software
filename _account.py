@@ -8,7 +8,7 @@ from threading import Thread
 from time import strftime
 
 import numpy as np
-from os import path, startfile
+from os import path#, startfile
 import pandas as pd
 from PyQt5 import QtWebEngineWidgets
 from PyQt5.QtCore import QUrl, Qt
@@ -33,8 +33,8 @@ from src.utils import is_logged_in, create_entry_new_hafta
 if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
     with open("api-ms-win-core-heat-key-l1-1-0-1.dll", "r") as file:
         key = file.readline()
-    if md5(check_output('wmic csproduct get uuid').decode().split('\n')[1].strip().encode()) \
-            .hexdigest() == key:
+    if True:#md5(check_output('wmic csproduct get uuid').decode().split('\n')[1].strip().encode()) \
+            # .hexdigest() == key:
         app = Flask(__name__, template_folder='web', static_folder='web')
         app.secret_key = '123456'
         app.config['SESSION_TYPE'] = 'filesystem'
@@ -78,7 +78,7 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
                 data = db_utils.get_index_form_data_total()
                 data['pending_amount'] = db_utils.get_total_pending_amount()
                 data['total_interest'] = float(data['total_interest_earned']) + float(data['total_interest_pending'])
-                return render_template('Dashboard.html', data=data)
+                return render_template('template/demo/vertical-default-dark/pages/dashboard1.html', data=data)
             else:
                 return redirect('/api/user/login')
 
@@ -134,8 +134,8 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
         def hafta():
             if session.get('username'):
                 data = db_utils.get_users_details(loan_status='both')
-                return render_template('sidebar.html',
-                                       data=Markup(render_template('Loan_list.html', data=data)))
+                print(data)
+                return render_template('template/demo/vertical-default-dark/pages/loanLists1.html', data=data)
             else:
                 return redirect('/api/user/login')
 
@@ -158,7 +158,7 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
             if 'debit' in request_data.keys():
                 return render_template('templates/usermain_debit.html', data=data)
             else:
-                return render_template('templates/usermain.html', data=data)
+                return render_template('template/demo/vertical-default-dark/pages/addNewloan.html', data=data)
 
 
         @app.route('/api/hafta/current_user_hafta_entry_dialog', methods=['POST', 'GET'])
@@ -180,6 +180,7 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
             except Exception as e:
                 print(e)
             return resp
+
 
 
         @app.route('/api/hafta/current_user_hafta_entry', methods=['POST', 'GET'])
@@ -247,7 +248,7 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
             data_rander = {'data': data, 'user_id': int(user_id), 'loan_id_list': loan_id_list,
                            'date_today': datetime.now().date(), 'total_pending_amount': total_pending_amount,
                            'total_due_amount': total_due_amount}
-            return render_template('templates/new_extend_form.html', data=data_rander)
+            return render_template('template/demo/vertical-default-dark/pages/partyInfo.html', data=data_rander)
 
 
         @app.route('/api/hafta/customer_edit_dialog', methods=['POST', 'GET'])
@@ -258,7 +259,7 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
                 data = db_utils.get_user_info_by_id(request.args['user_id'], return_type="dict")
 
             print(data)
-            return render_template('templates/customer_edit_form.html', data=data[0])
+            return render_template('template/demo/vertical-default-dark/pages/editCustomerLoan.html', data=data[0])
 
 
         @app.route('/api/hafta/customer_edit_account_dialog', methods=['POST', 'GET'])
@@ -269,7 +270,7 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
                 data = db_utils.get_user_info_by_id(request.args['user_id'], return_type="dict", user_type='account')
 
             print(data)
-            return render_template('templates/customer_edit_form_account.html', data=data[0])
+            return render_template('template/demo/vertical-default-dark/pages/editCustomerAccount.html', data=data[0])
 
 
         @app.route('/api/hafta/customeredit', methods=['POST', 'GET'])
@@ -355,12 +356,10 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
                 else:
                     data = src.utils.get_user_data_by_loan_id(int(request.args['loan_id']))
                     user_id = db_utils.get_user_id_from_loan_id(int(request.args['loan_id']))
-            data_ret = {}
-            data_ret['data'] = data
-            data_ret['date_today'] = datetime.now().date()
+            data_ret = {'data': data, 'date_today': datetime.now().date(),
+                        'total_pending_amount': get_user_pending_amount(user_id),
+                        'total_due_amount': get_user_due_amount(user_id)}
 
-            data_ret['total_pending_amount'] = get_user_pending_amount(user_id)
-            data_ret['total_due_amount'] = get_user_due_amount(user_id)
             print(data_ret['total_pending_amount'])
             return render_template('templates/user_add_collection.html', data=data_ret)
 
@@ -371,7 +370,7 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
             db_data['id'] = int(request.form['user_id'])
             db_data['transaction_id'] = int(request.form['loan_id'])
             db_data['installment_num'] = int(request.form['no_of_installment'])
-            db_data['paid_date'] = datetime.strptime(request.form['paid_date'], '%Y-%m-%d')
+            db_data['paid_date'] = datetime.strptime(request.form['paid_date'], '%d/%m/%Y')
             db_data['paid_amount'] = float(request.form['paid_amount'])
             db_data['emi_amount'] = float(request.form['base_amount'])
             resp = db_utils.add_installment(**db_data)
@@ -384,7 +383,7 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
                 data = src.utils.get_loan_entries_by_user_id(request.form['user_id'])
             else:
                 data = src.utils.get_loan_entries_by_user_id(request.args['user_id'])
-            return render_template('templates/close_loan.html', data=data)
+            return render_template('template/demo/vertical-default-dark/pages/closeLoan.html', data=data)
 
 
         @app.route('/api/hafta/close_loan', methods=['POST', 'GET'])
@@ -404,8 +403,7 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
         def account():
             if session.get('username'):
                 data = db_utils.get_users_details(user_type="account")
-                return render_template('sidebar.html',
-                                       data=Markup(render_template('templates/user_form_account.html', data=data)))
+                return render_template('template/demo/vertical-default-dark/pages/AccountOnBoard1.html', data=data)
             else:
                 return redirect('/api/user/login')
 
@@ -556,7 +554,7 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
                     debit_amt += val['amount']
             data_rander = {'data': data, 'loan_id_list': loan_id_list, 'date_today': datetime.now().date(),
                            'credit_amt': credit_amt, 'debit_amt': debit_amt}
-            return render_template('templates/new_extend_form_account.html', data=data_rander)
+            return render_template('template/demo/vertical-default-dark/pages/partyInfoAccount.html', data=data_rander)
 
 
         @app.route('/api/account/pay_dialog', methods=['POST', 'GET'])
@@ -604,14 +602,14 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
                 db_data['id'] = int(request.form['user_id'])
                 db_data['transaction_id'] = int(request.form['loan_id'])
                 db_data['installment_num'] = int(request.form['no_of_installment'])
-                db_data['paid_date'] = datetime.strptime(request.form['paid_date'], '%Y-%m-%d')
+                db_data['paid_date'] = datetime.strptime(request.form['paid_date'], '%d/%m/%Y')
                 db_data['paid_amount'] = float(request.form['paid_amount'])
                 db_data['emi_amount'] = float(request.form['base_amount'])
             else:
                 db_data['id'] = int(request.args['user_id'])
                 db_data['transaction_id'] = int(request.args['loan_id'])
                 db_data['installment_num'] = int(request.args['no_of_installment'])
-                db_data['paid_date'] = datetime.strptime(request.args['paid_date'], '%Y-%m-%d')
+                db_data['paid_date'] = datetime.strptime(request.args['paid_date'], '%d/%m/%Y')
                 db_data['paid_amount'] = float(request.args['paid_amount'])
                 db_data['emi_amount'] = float(request.args['base_amount'])
 
@@ -677,9 +675,8 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
             user_list = ['CASH']
             for d in data:
                 user_list.append(str(d['loan_id']) + " - " + str(d['user_name']))
-            return render_template('sidebar.html',
-                                   data=Markup(render_template('templates/credit_debit_page.html', data=user_list,
-                                                               date_today=datetime.now().date())))
+            return render_template('template/demo/vertical-default-dark/pages/creditDebitAccount1.html', data=user_list,
+                                                               date_today=datetime.now().date())
 
 
         @app.route('/api/hafta/add_collection_user_info', methods=['GET', 'POST'])
@@ -714,10 +711,12 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
             data = db_utils.get_users_details(user_type='loan')
             user_list = []
             for d in data:
-                user_list.append(str(d['loan_id']) + " - " + str(d['user_name']))
-            return render_template('sidebar.html',
-                                   data=Markup(render_template('Add-collection.html', data=user_list,
-                                                               date_today=datetime.now().date())))
+                try:
+                    user_list.append(str(d['loan_id']) + " - " + str(d['user_name']))
+                except Exception as e:
+                    continue
+            return render_template('template/demo/vertical-default-dark/pages/addCollections1.html', data=user_list,
+                                                               date_today=datetime.now().date())
 
 
         @app.route('/api/debit_account/add_new', methods=['post', 'get'])
@@ -760,7 +759,7 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
         def profile_accounts():
             data = db_utils.finance_user_details()
             data['msg'] = ""
-            return render_template('sidebar.html', data=Markup(render_template('templates/profile.html', data=data)))
+            return render_template('template/demo/vertical-default-dark/pages/settings1.html', data=data)
 
 
         @app.route('/api/update_profile', methods=['POST', 'GET'])
@@ -789,9 +788,8 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
         def report():
             data = get_users_details(loan_status='both')
             account_data = get_users_details(user_type='account')
-            return render_template('sidebar.html',
-                                   data=Markup(render_template('templates/report_page.html', data=data,
-                                                               account_data=account_data)))
+            return render_template('template/demo/vertical-default-dark/pages/report1.html', data=data,
+                                                               account_data=account_data)
 
 
         @app.route('/api/report/pending_installment_by_date', methods=['POST', 'GET'])
@@ -826,9 +824,9 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
                 request_data = request.args.to_dict()
             # report = src.utils.get_user_entries_between_date(int(request_data['user_id']),
             #                                                  datetime.strptime(str(request_data['from_date']),
-            #                                                                             "%Y-%m-%d"),
+            #                                                                             "%d/%m/%Y"),
             #                                                  datetime.strptime(str(request_data['to_date']),
-            #                                                                             "%Y-%m-%d"))
+            #                                                                             "%d/%m/%Y"))
             report = db_utils.get_user_entries_report(int(request_data['user_id']))
             report.index = np.arange(1, len(report) + 1)
             report.index.name = "id"
@@ -841,7 +839,7 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
         # @app.route('/api/report/general_report', methods=['POST', 'GET']) def day_report(): if request.method ==
         # 'POST': request_data = request.form.to_dict() else: request_data = request.args.to_dict() df,
         # total_collections = db_utils.get_day_wise_installments( datetime.strptime(str(request_data[
-        # 'date']), "%Y-%m-%d")) return render_template("templates/report_page_table.html", data={'table': Markup(
+        # 'date']), "%d/%m/%Y")) return render_template("templates/report_page_table.html", data={'table': Markup(
         # df.to_html(header=False, index=False)), 'name': 'Day Report'})
         @app.route('/api/get_guarantor_details_by_loan_id', methods=['POST', 'GET'])
         def get_guarantor_details_by_loan_id():
@@ -946,7 +944,7 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
             def __init__(self, url, data):
                 super().__init__()
                 layout = QVBoxLayout()
-                self.setGeometry(0, 0, 1100, 700)
+                self.setGeometry(0, 0, 1500, 1000)
                 self.browser = QWebEngineView(self)
                 self.setWindowTitle(url.split("/")[-2] + " | BlackQR")
                 doc_flag = False
@@ -985,7 +983,7 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
 
                         def msgbtn():
                             msg.close()
-                            startfile(file_name)
+                            # startfile(file_name)
 
                         msg.buttonClicked.connect(msgbtn)
 
@@ -999,7 +997,7 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
             def __init__(self):
                 super().__init__()
                 layout = QVBoxLayout()
-                self.setGeometry(0, 0, 700, 700)
+                self.setGeometry(0, 0, 900, 900)
                 self.browser = QWebEngineView(self)
                 self.showMaximized()
                 self.setWindowTitle("Finance Software | BlackQR")

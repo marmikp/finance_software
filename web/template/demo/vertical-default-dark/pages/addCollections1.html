@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Loan List</title>
+    <script src="{{ url_for('static', filename='assets/js/jquery-3.5.1.js')}}"></script>
+    <!-- plugins:css -->
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='template/vendors/mdi/css/materialdesignicons.min.css')}}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='template/vendors/css/vendor.bundle.base.css')}}">
+    <!-- endinject -->
+    <!-- Plugin css for this page -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='template/vendors/select2/select2.min.css')}}">
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='template/vendors/select2-bootstrap-theme/select2-bootstrap.min.css')}}">
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='template/vendors/datatables.net-bs4/dataTables.bootstrap4.css')}}">
+    <!-- End plugin css for this page -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='template/css/fd-icons.css')}}">
+    <!-- inject:css -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='template/css/vertical-layout-dark/style.css')}}">
+    <!-- endinject -->
+    <link rel="shortcut icon" href="{{ url_for('static', filename='template/images/favicon.png')}}"/>
+    <script src="{{ url_for('static', filename='assets/js/a076d05399.js')}}"></script>
+    <!--    <link href="https://code.jquery.com/ui/1.10.4/themes/ui-lightness/jquery-ui.css"-->
+    <!--          rel="stylesheet">-->
+    <!--    <script src="https://code.jquery.com/jquery-1.10.2.js"></script>-->
+    <!--    <script src="https://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>-->
+</head>
+<script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
+<script>
+$(document).ready(function(){
+
+
+    $(".update").click(function(){
+    if (confirm("Press OK to add collection")){
+        var paid_date = document.getElementById("date_input").value;
+        alert(paid_date);
+        var paid_amount = document.getElementById("amount").value;
+        var user_id = document.getElementById("user_id_text").value;
+        var loan_id = document.getElementById("denar").value.split(' - ')[0];
+        var noi = document.getElementById("emi_no").value;
+        var base_amount = document.getElementById("base_amount").value;
+        $.post('/api/hafta/add_collection', {'user_id': user_id, 'loan_id': loan_id,
+        'no_of_installment': noi, 'paid_date': paid_date, 'paid_amount': paid_amount, 'base_amount': base_amount},
+
+                function(returnedData){
+                    if (returnedData['code'] == 200){
+                     $(".topmid-left b").html("Data updated successfully");
+                     }
+                     else{
+                        $(".topmid-left b").html("Some error occured, Make sure your data are okay.");
+                     }
+            }).fail(function(){
+                  console.log("error");
+            });
+
+    }
+  });
+
+  $('#lenar').change(function() {
+        var lenar = document.getElementById('lenar').value;
+          $.post('/api/account/get_account_user_details_credit_debit', {'lenar': lenar},
+            function(returnedData){
+                $('#id_1_total').val(parseFloat(returnedData));
+                var amount = document.getElementById('amount').value;
+                $('#id_1_update_to').val(parseFloat(returnedData) + parseFloat(amount));
+
+        }).fail(function(){
+              console.log("error");
+        });
+  });
+
+    $('#denar').change(function() {
+        var denar = document.getElementById('denar').value;
+        $('.update').prop('disabled', false);
+          $.post('/api/hafta/add_collection_user_info', {'lenar': denar},
+            function(returnedData){
+                $('.data_table').html(returnedData['table']);
+                $('#amount').val(returnedData['value']);
+                $('#emi_no').val(returnedData['emi_no']);
+                $('#id_1_total').val(returnedData['cash_amount']);
+                $('#user_id_text').val(returnedData['user_id']);
+                $('#base_amount').val(returnedData['value']);
+                $('#denar').val(returnedData['name']);
+                $('#id_1_update_to').val(parseFloat(returnedData['cash_amount']) + parseFloat(returnedData['value']));
+<!--                $('#id_2_total').val(parseFloat(returnedData));-->
+<!--                var amount = document.getElementById('amount').value;-->
+<!--                if (denar == 'CASH' & ((parseFloat(returnedData) - parseFloat(amount)) < 0)){-->
+<!--                    alert('Values should be less');-->
+<!--                    $('.update').prop('disabled', true);-->
+<!--                }-->
+<!--                $('#id_2_update_to').val(parseFloat(returnedData) - parseFloat(amount));-->
+
+        }).fail(function(){
+              console.log("error");
+        });
+  });
+
+  $('#amount').change(function() {
+        var amount = document.getElementById('amount').value;
+        var cash_amount = document.getElementById('id_1_total').value;
+        $('#id_1_update_to').val(parseFloat(cash_amount) + parseFloat(amount));
+
+  });
+
+});
+
+
+
+
+
+
+
+
+</script>
+
+<body>
+<div class="container-scroller">
+    <!-- partial:../../partials/_navbar.html -->
+    <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
+        <div class="navbar-brand-wrapper d-flex justify-content-center">
+            <div class="navbar-brand-inner-wrapper d-flex justify-content-between align-items-center w-100">
+                <!-- <a class="navbar-brand brand-logo" href="../../index.html"><img src="../../../images/logo.svg" alt="logo"/></a> -->
+                <!-- <a class="navbar-brand brand-logo-mini" href="../../index.html"><img src="../../../images/logo-mini.svg" alt="logo"></a> -->
+                <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
+                    <span class="mdi mdi-menu"></span>
+                </button>
+            </div>
+        </div>
+        <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end navbar-title">
+            <ul class="navbar-nav mr-lg-2">
+                <li class="nav-item d-none d-lg-block">
+                    <label class="col-form-label bold-label"> Add Collection On Data | </label>
+                    <label class="col-form-label bold-label-green"> Thursday, June 02, 2021 </label>
+                </li>
+            </ul>
+            <ul class="navbar-nav navbar-nav-right">
+
+            </ul>
+            <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button"
+                    data-toggle="offcanvas">
+                <span class="mdi mdi-menu"></span>
+            </button>
+        </div>
+    </nav>
+    <!-- partial -->
+    <div class="container-fluid page-body-wrapper">
+
+        <!-- partial:../../partials/_sidebar.html -->
+        <nav class="sidebar sidebar-offcanvas" id="sidebar">
+            <ul class="nav">
+                <li class="nav-item">
+
+                    <a class="nav-link btn btn-siderbar  btn-rounded btn-fw" href="/">
+                        <i class="fd-home"></i>
+                        <span class="menu-title">Home</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link btn btn-siderbar  btn-rounded btn-fw" href="/api/hafta">
+                        <i class="fd-loan-list"></i>
+                        <span class="menu-title">Loan List</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link btn btn-siderbar  btn-rounded btn-fw"
+                       href="/api/hafta/add_collection_dialog_new">
+                        <i class="fd-add-collection"></i>
+                        <span class="menu-title">Add Collection</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link btn btn-siderbar  btn-rounded btn-fw" href="/api/account">
+                        <i class="fd-account"></i>
+                        <span class="menu-title">Account</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link btn btn-siderbar  btn-rounded btn-fw" href="/api/debit_account">
+                        <i class="fd-credit-account"></i>
+                        <span class="menu-title">Cr-De. Acc.</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link btn btn-siderbar  btn-rounded btn-fw" href="/api/report">
+                        <i class="fd-report"></i>
+                        <span class="menu-title">Report</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link btn btn-siderbar  btn-rounded btn-fw" href="/api/profile">
+                        <i class="fd-settings"></i>
+                        <span class="menu-title">Settings</span>
+                    </a>
+                </li>
+
+            </ul>
+        </nav>
+        <!-- partial -->
+        <!-- partial -->
+        <div class="main-panel">
+            <div class="content-wrapper">
+                <div class="page-title-box">
+                    <h2>Collection</h2>
+                </div>
+
+
+                <div class="row">
+                    <input type="hidden" id="emi_no">
+                    <input type="hidden" id="user_id_text">
+                    <input type="hidden" id="base_amount">
+
+                    <div class="col-md-8 grid-margin stretch-card">
+                        <div class="card card-box">
+                            <div class="card-body">
+                                <!-- <h4 class="card-title">Horizontal Form</h4> -->
+                                <!-- <p class="card-description"> -->
+                                <!-- Horizontal form layout -->
+                                <!-- </p> -->
+                                <form class="forms-sample custom-form ">
+                                    <div class="form-group row">
+                                        <label for="dateCollect" class="col-sm-3 col-form-label">Date</label>
+                                        <div class="col-sm-6">
+                                            <!-- <input type="text" class="form-control" id="dateCollect" placeholder=""> -->
+                                            <div id="datepicker-popup" class="input-group date datepicker" data-date-format="dd/mm/yyyy">
+                                                <input type="text" class="form-control" id="date_input">
+                                                <span class="input-group-addon input-group-append border-left">
+                          <!-- <span class="mdi mdi-calendar input-group-text"></span> -->
+                        </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="lenar" class="col-sm-3 col-form-label">Lenar</label>
+                                        <div class="col-sm-6 autocomplete">
+                                            <input id="lenar" type="text" name="lenar" placeholder="Customer"
+                                                   value="CASH" disabled>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row autocomplete">
+                                        <label for="denar" class="col-sm-3 col-form-label">Denar</label>
+                                        <div class="col-sm-6">
+                                            <div class="input-with-icon">
+                                                <i class="mdi mdi-account-outline"></i>
+                                                <input type="text" class="form-control denar" id="denar" name="denar"
+                                                       placeholder="">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="amount" class="col-sm-3 col-form-label">Amount</label>
+                                        <div class="col-sm-6">
+                                            <div class="input-with-icon">
+                                                <i class="fd-loan-list"></i>
+                                                <input type="text" class="form-control" id="amount" placeholder="">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="remark" class="col-sm-3 col-form-label">Remark</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" class="form-control" id="remark" placeholder="">
+                                        </div>
+                                    </div>
+
+                                    <button type="submit" class="btn btn-success  btn-rounded btn-fw update">Update</button>
+
+                                </form>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="col-sm-4">
+                        <table class="data_table" style="color: black;"></table>
+                    </div>
+
+                </div>
+
+
+            </div>
+
+            <!-- content-wrapper ends -->
+            <!-- partial:../../partials/_footer.html -->
+
+            <!-- partial -->
+        </div>
+        <!-- main-panel ends -->
+    </div>
+    <!-- page-body-wrapper ends -->
+</div>
+<!-- container-scroller -->
+<!-- plugins:js -->
+
+<script>
+$(document).ready(function() {
+    $('#example').DataTable();
+
+   $(".display-table tr").click(function(){
+   $(this).addClass('selected').siblings().removeClass('selected');
+   var value=$(this).find('td:first').html();
+
+   });
+
+} );
+
+
+
+
+
+
+
+</script>
+
+<script>
+function autocomplete(inp, arr) {
+  /*the autocomplete function takes two arguments,
+  the text field element and an array of possible autocompleted values:*/
+  var currentFocus;
+  /*execute a function when someone writes in the text field:*/
+  inp.addEventListener("input", function(e) {
+      var a, b, i, val = this.value;
+      /*close any already open lists of autocompleted values*/
+      closeAllLists();
+      if (!val) { return false;}
+      currentFocus = -1;
+      /*create a DIV element that will contain the items (values):*/
+      a = document.createElement("DIV");
+      a.setAttribute("id", this.id + "autocomplete-list");
+      a.setAttribute("class", "autocomplete-items");
+      /*append the DIV element as a child of the autocomplete container:*/
+      this.parentNode.appendChild(a);
+      /*for each item in the array...*/
+      for (i = 0; i < arr.length; i++) {
+        /*check if the item starts with the same letters as the text field value:*/
+        if (arr[i].substr(0, val.length).toUpperCase() == val.toUpperCase()) {
+          /*create a DIV element for each matching element:*/
+          b = document.createElement("DIV");
+          /*make the matching letters bold:*/
+          b.innerHTML = "<strong>" + arr[i].substr(0, val.length) + "</strong>";
+          b.innerHTML += arr[i].substr(val.length);
+          /*insert a input field that will hold the current array item's value:*/
+          b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
+          /*execute a function when someone clicks on the item value (DIV element):*/
+          b.addEventListener("click", function(e) {
+              /*insert the value for the autocomplete text field:*/
+              inp.value = this.getElementsByTagName("input")[0].value;
+              /*close the list of autocompleted values,
+              (or any other open lists of autocompleted values:*/
+              closeAllLists();
+          });
+          a.appendChild(b);
+        }
+      }
+  });
+  /*execute a function presses a key on the keyboard:*/
+  inp.addEventListener("keydown", function(e) {
+      var x = document.getElementById(this.id + "autocomplete-list");
+      if (x) x = x.getElementsByTagName("div");
+      if (e.keyCode == 40) {
+        /*If the arrow DOWN key is pressed,
+        increase the currentFocus variable:*/
+        currentFocus++;
+        /*and and make the current item more visible:*/
+        addActive(x);
+      } else if (e.keyCode == 38) { //up
+        /*If the arrow UP key is pressed,
+        decrease the currentFocus variable:*/
+        currentFocus--;
+        /*and and make the current item more visible:*/
+        addActive(x);
+      } else if (e.keyCode == 13) {
+        /*If the ENTER key is pressed, prevent the form from being submitted,*/
+        e.preventDefault();
+        if (currentFocus > -1) {
+          /*and simulate a click on the "active" item:*/
+          if (x) x[currentFocus].click();
+        }
+      }
+  });
+  function addActive(x) {
+    /*a function to classify an item as "active":*/
+    if (!x) return false;
+    /*start by removing the "active" class on all items:*/
+    removeActive(x);
+    if (currentFocus >= x.length) currentFocus = 0;
+    if (currentFocus < 0) currentFocus = (x.length - 1);
+    /*add class "autocomplete-active":*/
+    x[currentFocus].classList.add("autocomplete-active");
+  }
+  function removeActive(x) {
+    /*a function to remove the "active" class from all autocomplete items:*/
+    for (var i = 0; i < x.length; i++) {
+      x[i].classList.remove("autocomplete-active");
+    }
+  }
+  function closeAllLists(elmnt) {
+    /*close all autocomplete lists in the document,
+    except the one passed as an argument:*/
+    var x = document.getElementsByClassName("autocomplete-items");
+    for (var i = 0; i < x.length; i++) {
+      if (elmnt != x[i] && elmnt != inp) {
+        x[i].parentNode.removeChild(x[i]);
+      }
+    }
+  }
+  /*execute a function when someone clicks in the document:*/
+  document.addEventListener("click", function (e) {
+      closeAllLists(e.target);
+  });
+}
+
+/*An array containing all the country names in the world:*/
+var countries = {{data|safe}};
+
+/*initiate the autocomplete function on the "myInput" element, and pass along the countries array as possible autocomplete values:*/
+autocomplete(document.getElementById("lenar"), countries);
+autocomplete(document.getElementById("denar"), countries);
+
+
+
+
+
+
+
+
+
+
+</script>
+
+<script>
+         $(function() {
+            var availableTutorials = [
+               "ActionScript",
+               "Bootstrap",
+               "C",
+               "C++",
+            ];
+            $( "#automplete-2" ).autocomplete({
+               source: availableTutorials,
+               autoFocus:true
+            });
+         });
+
+
+
+
+
+
+
+</script>
+<script src="{{ url_for('static', filename='template/vendors/js/vendor.bundle.base.js')}}"></script>
+<!-- endinject -->
+<!-- Plugin js for this page -->
+<script src="{{ url_for('static', filename='template/vendors/typeahead.js/typeahead.bundle.min.js')}}"></script>
+<script src="{{ url_for('static', filename='template/vendors/select2/select2.min.js')}}"></script>
+<script src="{{ url_for('static', filename='template/vendors/moment/moment.min.js')}}"></script>
+<script src="{{ url_for('static', filename='template/vendors/tempusdominus-bootstrap-4/tempusdominus-bootstrap-4.js')}}"></script>
+<script src="{{ url_for('static', filename='template/vendors/bootstrap-datepicker/bootstrap-datepicker.min.js')}}"></script>
+<!-- End plugin js for this page -->
+<!-- inject:js -->
+<script src="{{ url_for('static', filename='template/js/off-canvas.js')}}"></script>
+<script src="{{ url_for('static', filename='template/js/hoverable-collapse.js')}}"></script>
+<script src="{{ url_for('static', filename='template/js/template.js')}}"></script>
+<script src="{{ url_for('static', filename='template/js/settings.js')}}"></script>
+<script src="{{ url_for('static', filename='template/js/todolist.js')}}"></script>
+<!-- endinject -->
+<!-- Custom js for this page-->
+<script src="{{ url_for('static', filename='template/js/file-upload.js')}}"></script>
+<script src="{{ url_for('static', filename='template/js/typeahead.js')}}"></script>
+<script src="{{ url_for('static', filename='template/js/select2.js')}}"></script>
+<script src="{{ url_for('static', filename='template/js/formpickers.js')}}"></script>
+<!-- End custom js for this page-->
+</body>
+
+
+<!-- Mirrored from www.bootstrapdash.com/demo/silica/template/demo/vertical-default-dark/pages/forms/basic_elements.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 13 Jul 2021 21:03:13 GMT -->
+</html>

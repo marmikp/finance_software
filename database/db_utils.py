@@ -1094,7 +1094,7 @@ def add_account_entry(data):
             tx_id = AccountEntry.query.filter_by(id=int(data['user_id'])).first().transaction_id
             status = 'cr'
             db.engine.execute(user_table.insert(), **{'user_id': data['user_id'], 'tx_id': tx_id, 'amount':
-                data['amount_new'], 'date': datetime.strptime(data['date'], '%Y-%m-%d'), 'tx_type': 'cr',
+                data['amount_new'], 'date': datetime.strptime(data['date'], '%d/%m/%Y'), 'tx_type': 'cr',
                                                       'remark': data['remark']})
             sum_sub_value_in_balance_amount(float(data['amount_new']), 'sum')
         else:
@@ -1103,7 +1103,7 @@ def add_account_entry(data):
             tx_id = AccountEntry.query.filter_by(id=int(data['user_id'])).first().transaction_id
             status = 'dr'
             db.engine.execute(user_table.insert(), **{'user_id': data['user_id'], 'tx_id': tx_id, 'amount':
-                data['amount_new'], 'date': datetime.strptime(data['date'], '%Y-%m-%d'), 'tx_type': 'dr',
+                data['amount_new'], 'date': datetime.strptime(data['date'], '%d/%m/%Y'), 'tx_type': 'dr',
                                                       'remark': data['remark']})
             sum_sub_value_in_balance_amount(float(data['amount_new']), 'sub')
 

@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Account On Board</title>
+    <script src="{{ url_for('static', filename='assets/js/jquery-3.5.1.js')}}"></script>
+    <!-- plugins:css -->
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='template/vendors/mdi/css/materialdesignicons.min.css')}}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='template/vendors/css/vendor.bundle.base.css')}}">
+    <!-- endinject -->
+    <!-- Plugin css for this page -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='template/vendors/select2/select2.min.css')}}">
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='template/vendors/select2-bootstrap-theme/select2-bootstrap.min.css')}}">
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='template/vendors/datatables.net-bs4/dataTables.bootstrap4.css')}}">
+    <!-- End plugin css for this page -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='template/css/fd-icons.css')}}">
+    <!-- inject:css -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='template/css/vertical-layout-dark/style.css')}}">
+    <!-- endinject -->
+    <link rel="shortcut icon" href="{{ url_for('static', filename='template/images/favicon.png')}}"/>
+    <script src="{{ url_for('static', filename='assets/js/a076d05399.js')}}"></script>
+</head>
+<script>
+$(document).ready(function(){
+    $(".new_customer").click(function(){
+          $.post('/api/test', {'url': 'http://127.0.0.1:5000/api/account/new_account_entry_dialog'},
+            function(returnedData){
+                 var w = window.open('about:blank');
+                    w.document.open();
+                    w.document.write(returnedData);
+                    w.document.close();
+        }).fail(function(){
+              console.log("error");
+        });
+  });
+
+  $(".new").click(function(){
+    $.post('/api/test', {'url': 'http://127.0.0.1:5000/api/account/account_hafta_extend_dialog', 'user_id': $(this).attr('user_id')},
+            function(returnedData){
+                var w = window.open('about:blank');
+                w.document.open();
+                w.document.write(returnedData);
+                w.document.close();
+
+        }).fail(function(){
+              console.log("error");
+        });
+  });
+  $(".add_collection").click(function(){
+    $.post('/api/test', {'url': 'http://127.0.0.1:5000/api/account/add_collection_dialog',
+                        'user_id': $(this).attr('data'),
+                        'loan_id': $(this).attr('loan_id')},
+            function(returnedData){
+            var w = window.open('about:blank');
+            w.document.open();
+            w.document.write(returnedData);
+            w.document.close();
+                 console.log(returnedData);
+        }).fail(function(){
+              console.log("error");
+        });
+  });
+
+  $(".edit").click(function(){
+    $.post('/api/test', {'url': 'http://127.0.0.1:5000/api/hafta/customer_edit_account_dialog', 'user_id': $(this).attr('user_id')},
+            function(returnedData){
+                var w = window.open('about:blank');
+                w.document.open();
+                w.document.write(returnedData);
+                w.document.close();
+
+        }).fail(function(){
+              console.log("error");
+        });
+  });
+
+
+  $(".close_loan").click(function(){
+    $.post('/api/test', {'url':'http://127.0.0.1:5000/api/account/close_loan_dialog', 'user_id': $(this).attr('data')},
+            function(returnedData){var w = window.open('about:blank');
+            w.document.open();
+            w.document.write(returnedData);
+            w.document.close();
+                 console.log(returnedData);
+        }).fail(function(){
+              console.log("error");
+        });
+  });
+
+});
+</script>
+<script>
+<!--$(document).ready(function() {-->
+<!--    $('#example').DataTable();-->
+
+<!--   $(".display-table tr").click(function(){-->
+<!--   $(this).addClass('selected').siblings().removeClass('selected');-->
+<!--   var value=$(this).find('td:first').html();-->
+
+<!--   });-->
+<!--} );-->
+
+$(document).ready(function() {
+    $('#example').DataTable( {
+        "scrollY": 300,
+        "scrollX": true
+    } );
+    $(".display-table tr").click(function(){
+   $(this).addClass('selected').siblings().removeClass('selected');
+   var value=$(this).find('td:first').html();
+   });
+} );
+</script>
+
+<body>
+<div class="container-scroller">
+    <!-- partial:../../partials/_navbar.html -->
+    <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
+        <div class="navbar-brand-wrapper d-flex justify-content-center">
+            <div class="navbar-brand-inner-wrapper d-flex justify-content-between align-items-center w-100">
+                <!-- <a class="navbar-brand brand-logo" href="../../index.html"><img src="../../../images/logo.svg" alt="logo"/></a> -->
+                <!-- <a class="navbar-brand brand-logo-mini" href="../../index.html"><img src="../../../images/logo-mini.svg" alt="logo"></a> -->
+                <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
+                    <span class="mdi mdi-menu"></span>
+                </button>
+            </div>
+        </div>
+        <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end navbar-title">
+            <ul class="navbar-nav mr-lg-2">
+                <li class="nav-item d-none d-lg-block">
+                    <h4 class="mb-0">Accounts On Board | Thursday, June 02, 2021</h4>
+                </li>
+            </ul>
+            <ul class="navbar-nav navbar-nav-right">
+
+            </ul>
+            <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button"
+                    data-toggle="offcanvas">
+                <span class="mdi mdi-menu"></span>
+            </button>
+        </div>
+    </nav>
+    <!-- partial -->
+    <div class="container-fluid page-body-wrapper">
+
+        <!-- partial:../../partials/_sidebar.html -->
+        <nav class="sidebar sidebar-offcanvas" id="sidebar">
+            <ul class="nav">
+                <li class="nav-item">
+
+                    <a class="nav-link btn btn-siderbar  btn-rounded btn-fw" href="/">
+                        <i class="fd-home"></i>
+                        <span class="menu-title">Home</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link btn btn-siderbar  btn-rounded btn-fw" href="/api/hafta">
+                        <i class="fd-loan-list"></i>
+                        <span class="menu-title">Loan List</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link btn btn-siderbar  btn-rounded btn-fw"
+                       href="/api/hafta/add_collection_dialog_new">
+                        <i class="fd-add-collection"></i>
+                        <span class="menu-title">Add Collection</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link btn btn-siderbar  btn-rounded btn-fw" href="/api/account">
+                        <i class="fd-account"></i>
+                        <span class="menu-title">Account</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link btn btn-siderbar  btn-rounded btn-fw" style="background-color: #2f3841;" href="/api/debit_account">
+                        <i class="fd-credit-account"></i>
+                        <span class="menu-title">Cr-De. Acc.</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link btn btn-siderbar  btn-rounded btn-fw" href="/api/report">
+                        <i class="fd-report"></i>
+                        <span class="menu-title">Report</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link btn btn-siderbar  btn-rounded btn-fw" href="/api/profile">
+                        <i class="fd-settings"></i>
+                        <span class="menu-title">Settings</span>
+                    </a>
+                </li>
+
+            </ul>
+        </nav>
+        <!-- partial -->
+        <!-- partial -->
+        <div class="main-panel">
+            <div class="content-wrapper">
+                <div class="page-title-box">
+                    <h2>Account</h2>
+                </div>
+
+                <div class="card card-box">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="table-responsive">
+                                    <table id="order-listing" class="table">
+                                        <thead>
+                                        <tr>
+                                            <th style="text-align: center;"><b>Id</b></th>
+                                            <th style="text-align: center;"><b>Name</b></th>
+                                            <th style="text-align: center;"><b>Phone</b></th>
+                                            <th style="text-align: center;"><b>Type</b></th>
+                                            <th style="text-align: center;"><b>Loans</b></th>
+                                            <th style="text-align: center;"><b>A/C</b></th>
+                                            <th style="text-align: center;"><b>Actions</b></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for d in data %}
+                                        <tr>
+                                            <td><span>{{d.loan_id}}</span></td>
+                                            <td><span>{{d.user_name}}</span></td>
+                                            <td><span>{{d.user_phone}}</span></td>
+                                            <td><span>{{d.customer_type}}</span></td>
+                                            <td><span>{{d.num_loan_hafta}}</span></td>
+                                            <td><span>{{d.num_loan_account}}</span></td>
+                                            <td><span>
+                                                <div class="row" style="padding: 10px;">
+                                                    <div class="col-md-5 box"><button
+                                                            style="color: white;" class="edit add btn btn-dark btn-rounded btn-fw right-align-button" title="Edit"
+                                                            data-toggle="tooltip" user_id="{{d.id}}">Edit Detail</button>
+                                                    </div>
+                                                    <div style="text-align: center;" class="col-md-5 box"><button
+                                                            style="color: white;" class="new add btn btn-dark btn-rounded btn-fw right-align-button" title="New/Extend"
+                                                            data-toggle="tooltip" user_id="{{d.id}}">View A/C</button></div>
+                                                    <!--                        <div style="text-align: center;" class="col-md-4 box bg-primary"><a style="color: white;" class="add_collection" title="Add Collection" data-toggle="tooltip" data="{{d.id}}">Hafta</a></div>-->
+                                                </div>
+
+                                                </span>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br/> <br/>
+                <div class="row">
+                    <div class="col-md-12 grid-margin stretch-card">
+                        <div class="card card-box">
+                            <div class="card-body">
+                                <div class="template-demo custom-button">
+                                    <button type="button" class="btn btn-warning  btn-rounded btn-fw">Add New Account
+                                    </button>
+                                    <button type="button" class="btn btn-light btn-rounded btn-fw right-align-button">
+                                        Edit
+                                        Details
+                                    </button>
+                                    <button type="button" class="btn btn-dark btn-rounded btn-fw right-align-button">
+                                        View
+                                        Account
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                <!-- content-wrapper ends -->
+                <!-- partial:../../partials/_footer.html -->
+
+                <!-- partial -->
+            </div>
+            <!-- main-panel ends -->
+        </div>
+        <!-- page-body-wrapper ends -->
+    </div>
+    <!-- container-scroller -->
+    <!-- plugins:js -->
+
+    <!-- End custom js for this page-->
+</body>
+
+<script src="{{ url_for('static', filename='template/vendors/js/vendor.bundle.base.js')}}"></script>
+    <!-- endinject -->
+    <!-- Plugin js for this page-->
+<script src="{{ url_for('static', filename='template/vendors/datatables.net/jquery.dataTables.js')}}"></script>
+<script src="{{ url_for('static', filename='template/vendors/datatables.net-bs4/dataTables.bootstrap4.js')}}"></script>
+<!-- End plugin js for this page-->
+<!-- inject:js -->
+<script src="{{ url_for('static', filename='template/js/off-canvas.js')}}"></script>
+<script src="{{ url_for('static', filename='template/js/hoverable-collapse.js')}}"></script>
+<script src="{{ url_for('static', filename='template/js/template.js')}}"></script>
+<script src="{{ url_for('static', filename='template/js/settings.js')}}"></script>
+<script src="{{ url_for('static', filename='template/js/todolist.js')}}"></script>
+<!-- endinject -->
+<!-- Custom js for this page-->
+<script src="{{ url_for('static', filename='template/js/data-table.js')}}"></script>
+</html>

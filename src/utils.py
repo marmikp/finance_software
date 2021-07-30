@@ -24,7 +24,7 @@ def create_entry_new_hafta(user_type="loan", **kwargs):
     if user_type == 'debit':
         query_data['id'] = int(kwargs['id'])
         query_data['base_amount'] = float(kwargs['base_amount'])
-        query_data['paid_date'] = datetime.strptime(str(kwargs['startdate']), "%Y-%m-%d")
+        query_data['paid_date'] = datetime.strptime(str(kwargs['startdate']), "%d/%m/%Y")
         query_data['remark'] = kwargs['remark']
         crdr_query = CrDrEntry(**query_data)
         db.session.add(crdr_query)
@@ -45,7 +45,7 @@ def create_entry_new_hafta(user_type="loan", **kwargs):
         query_data['interest'] = float(kwargs['interest']) if 'interest' in kwargs.keys() else 0
         query_data['total_amount'] = query_data['base_amount'] + query_data['interest']
         query_data['no_installment'] = int(kwargs['noi']) if 'noi' in kwargs.keys() else 0
-        query_data['start_date'] = datetime.strptime(str(kwargs['startdate']), "%Y-%m-%d")
+        query_data['start_date'] = datetime.strptime(str(kwargs['startdate']), "%d/%m/%Y")
         query_data['installment_period'] = kwargs['period'] if 'period' in kwargs.keys() else 'monthly'
         query_data['loan_type'] = kwargs['loan_type'] if 'loan_type' in kwargs.keys() else 'flat'
         query_data['last_installment_date'] = query_data['start_date'] + relativedelta(

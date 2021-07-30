@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Add Collection</title>
+  <!-- plugins:css -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='template/vendors/mdi/css/materialdesignicons.min.css')}}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='template/vendors/css/vendor.bundle.base.css')}}">
+  <!-- endinject -->
+  <!-- Plugin css for this page -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='template/vendors/select2/select2.min.css')}}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='template/vendors/select2-bootstrap-theme/select2-bootstrap.min.css')}}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='template/vendors/bootstrap-datepicker/bootstrap-datepicker.min.css')}}">
+  <!-- End plugin css for this page -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='template/css/fd-icons.css')}}">
+  <!-- inject:css -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='template/css/vertical-layout-dark/style.css')}}">
+  <!-- endinject -->
+  <link rel="shortcut icon" href="{{ url_for('static', filename='template/images/favicon.png')}}" />
+</head>
+
+<body>
+  <div class="container-scroller">
+    <!-- partial:../../partials/_navbar.html -->
+    <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
+      <div class="navbar-brand-wrapper d-flex justify-content-center">
+        <div class="navbar-brand-inner-wrapper d-flex justify-content-between align-items-center w-100">
+          <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
+            <span class="mdi mdi-menu"></span>
+          </button>
+        </div>
+      </div>
+      <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end navbar-title">
+        <ul class="navbar-nav mr-lg-2">
+          <li class="nav-item d-none d-lg-block">
+			<label class="col-form-label bold-label"> Add Hafta |  </label>
+			<label class="col-form-label bold-label-green"> Thursday, June 02, 2021 </label>
+          </li>
+        </ul>
+        <ul class="navbar-nav navbar-nav-right">
+          
+        </ul>
+        <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">
+          <span class="mdi mdi-menu"></span>
+        </button>
+      </div>
+    </nav>
+    <!-- partial -->
+    <div class="container-fluid page-body-wrapper">
+      
+      <!-- partial:../../partials/_sidebar.html -->
+      <nav class="sidebar sidebar-offcanvas" id="sidebar">
+        <ul class="nav">
+          <li class="nav-item">
+
+            <a class="nav-link btn btn-siderbar  btn-rounded btn-fw" href="dashboard1.html">
+              <i class="fd-home"></i>
+              <span class="menu-title">Home</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link btn btn-siderbar  btn-rounded btn-fw" href="loanLists1.html">
+              <i class="fd-loan-list"></i>
+              <span class="menu-title">Loan List</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link btn btn-siderbar  btn-rounded btn-fw" href="addCollections1.html">
+              <i class="fd-add-collection"></i>
+              <span class="menu-title">Add Collection</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link btn btn-siderbar  btn-rounded btn-fw" href="AccountOnBoard1.html">
+              <i class="fd-account"></i>
+              <span class="menu-title">Account</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link btn btn-siderbar  btn-rounded btn-fw" href="creditDebitAccount1.html">
+              <i class="fd-credit-account"></i>
+              <span class="menu-title">Cr-De. Acc.</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link btn btn-siderbar  btn-rounded btn-fw" href="report1.html">
+              <i class="fd-report"></i>
+              <span class="menu-title">Report</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link btn btn-siderbar  btn-rounded btn-fw" href="settings1.html">
+              <i class="fd-settings"></i>
+              <span class="menu-title">Settings</span>
+            </a>
+          </li>
+
+        </ul>
+      </nav>
+      <!-- partial -->
+      <!-- partial -->
+      <div class="main-panel">        
+        <div class="content-wrapper">
+          <div class="page-title-box">
+            <!--<h2>Collection</h2> -->
+          </div>
+
+          <div class="row">
+            
+            <div class="col-md-12 grid-margin stretch-card">
+              <div class="card card-box">
+                <div class="card-body">
+                  <!-- <h4 class="card-title">Horizontal Form</h4> -->
+                  <!-- <p class="card-description"> -->
+                    <!-- Horizontal form layout -->
+                  <!-- </p> -->
+                  <form class="forms-sample custom-form ">
+                    <div class="form-group row">
+                      <label for="remark" class="col-sm-3 col-form-label">Loan No.</label>
+                      <div class="col-sm-6">
+                        <input type="text" class="form-control" id="loanNo" placeholder="">
+                      </div>
+                    </div>
+                    <div class="form-group row">
+                      <label for="remark" class="col-sm-3 col-form-label">Name</label>
+                      <div class="col-sm-6">
+                        <input type="text" class="form-control" id="name" placeholder="">
+                      </div>
+                    </div>
+                    <div class="form-group row">
+                      <label for="remark" class="col-sm-3 col-form-label">Add Month</label>
+                      <div class="col-sm-6">
+                        <input type="text" class="form-control" id="addmonth" placeholder="">
+                      </div>
+                    </div>
+                    <div class="form-group row">
+                      <label for="remark" class="col-sm-3 col-form-label">Amount</label>
+                      <div class="col-sm-6">
+                        <input type="text" class="form-control" id="amount" placeholder="">
+                      </div>
+                    </div>
+                    
+                    
+                  </form>
+                </div>
+              </div>
+            </div>
+       
+          </div>
+		  
+		  <div class="row">
+				<div class="col-md-12 grid-margin stretch-card">
+					<div class="card card-box">
+						<div class="card-body">
+							<div class="template-demo custom-button">
+								<button type="button" class="btn btn-danger btn-rounded btn-fw right-align-button">Exit</button>
+                    			<button type="button" class="btn btn-warning btn-rounded btn-fw right-align-button"><i class="mdi mdi-checkbox-marked-circle mr-1"></i>Save</button>
+							  </div>
+						</div>
+					</div>
+				</div>
+        </div>
+        </div>
+        <!-- content-wrapper ends -->
+        <!-- partial:../../partials/_footer.html -->
+        
+        <!-- partial -->
+      </div>
+      <!-- main-panel ends -->
+    </div>
+    <!-- page-body-wrapper ends -->
+  </div>
+  <!-- container-scroller -->
+  <!-- plugins:js -->
+  <script src="{{ url_for('static', filename='template/vendors/js/vendor.bundle.base.js')}}"></script>
+  <!-- endinject -->
+  <!-- Plugin js for this page -->
+  <script src="{{ url_for('static', filename='template/vendors/typeahead.js/typeahead.bundle.min.js')}}"></script>
+  <script src="{{ url_for('static', filename='template/vendors/select2/select2.min.js')}}"></script>
+  <script src="{{ url_for('static', filename='template/vendors/moment/moment.min.js')}}"></script>
+  <script src="{{ url_for('static', filename='template/vendors/tempusdominus-bootstrap-4/tempusdominus-bootstrap-4.js')}}"></script>
+  <script src="{{ url_for('static', filename='template/vendors/bootstrap-datepicker/bootstrap-datepicker.min.js')}}"></script>
+  <!-- End plugin js for this page -->
+  <!-- inject:js -->
+  <script src="{{ url_for('static', filename='template/js/off-canvas.js')}}"></script>
+  <script src="{{ url_for('static', filename='template/js/hoverable-collapse.js')}}"></script>
+  <script src="{{ url_for('static', filename='template/js/template.js')}}"></script>
+  <script src="{{ url_for('static', filename='template/js/settings.js')}}"></script>
+  <script src="{{ url_for('static', filename='template/js/todolist.js')}}"></script>
+  <!-- endinject -->
+  <!-- Custom js for this page-->
+  <script src="{{ url_for('static', filename='template/js/file-upload.js')}}"></script>
+  <script src="{{ url_for('static', filename='template/js/typeahead.js')}}"></script>
+  <script src="{{ url_for('static', filename='template/js/select2.js')}}"></script>
+  <script src="{{ url_for('static', filename='template/js/formpickers.js')}}"></script>
+  <!-- End custom js for this page-->
+</body>
+
+
+<!-- Mirrored from www.bootstrapdash.com/demo/silica/template/demo/vertical-default-dark/pages/forms/basic_elements.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 13 Jul 2021 21:03:13 GMT -->
+</html>
