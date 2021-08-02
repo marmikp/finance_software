@@ -37,10 +37,7 @@ $(document).ready(function(){
         $.post('/api/hafta/close_loan', {'user_id': $(this).attr('user_id'),
                                 'loan_id': $(this).attr('loan_id'), 'amount': amount},
                 function(returnedData){
-                    var w = window.open('about:blank');
-                    w.document.open();
-                    w.document.write(returnedData);
-                    w.document.close();
+                    alert("Loan Closed successfully");
             }).fail(function(){
                   console.log("error");
             });
