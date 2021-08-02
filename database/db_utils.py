@@ -632,6 +632,7 @@ def get_users_details(loan_status="active", user_type="loan", all_entries=False)
         if data['customer_type_account'] and data['customer_type_loan']:
             data['customer_type'] = "both"
         customer_data[i] = data
+        print("customer data: ",customer_data)
     return customer_data
 
 

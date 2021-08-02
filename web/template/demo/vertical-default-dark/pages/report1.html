@@ -244,7 +244,7 @@ $(".account_user_pending_installments_btn").click(function(){
                                         <select id="user_entry_dropdown_select_user_id"
                                                 class="form-control select-input">
                                             {% for d in data %}
-                                            <option value="{{d.id}}">{{d.id}}&ensp;-&ensp;{{d.user_name}}</option>
+                                            <option value="{{d.id}}">{{d.loan_id}}&ensp;-&ensp;{{d.user_name}}</option>
                                             {% endfor %}
                                         </select>
                                     </div>
@@ -341,7 +341,7 @@ $(".account_user_pending_installments_btn").click(function(){
                                         <select id="user_pending_installment_dropdown_select_user_id"
                                                 class="form-control select-input user_pending_installment_dropdown_select_user_id">
                                             {% for d in data %}
-                                            <option value="{{d.id}}">{{d.id}}&ensp;-&ensp;{{d.user_name}}</option>
+                                            <option value="{{d.id}}">{{d.loan_id}}&ensp;-&ensp;{{d.user_name}}</option>
                                             {% endfor %}
                                         </select>
                                     </div>

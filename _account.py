@@ -123,7 +123,7 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
             data_query['user_address'] = data['address']
             data_query['user_phone'] = data['phone']
             data_query['user_city'] = data['city']
-            data_query['today'] = datetime.now().strftime("%A, %d %B, %Y")
+
             if 'debit' not in data.keys():
                 data_query['user_phone_2'] = data['phone_2'] if 'phone_2' in data.keys() else 0
             db_resp = db_utils.add_new_customer(**data_query)
