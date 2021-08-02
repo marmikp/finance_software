@@ -8,7 +8,7 @@ from threading import Thread
 from time import strftime
 
 import numpy as np
-from os import path#, startfile
+from os import path, startfile
 import pandas as pd
 from PyQt5 import QtWebEngineWidgets
 from PyQt5.QtCore import QUrl, Qt
@@ -33,8 +33,7 @@ from src.utils import is_logged_in, create_entry_new_hafta
 if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
     with open("api-ms-win-core-heat-key-l1-1-0-1.dll", "r") as file:
         key = file.readline()
-    if True:#md5(check_output('wmic csproduct get uuid').decode().split('\n')[1].strip().encode()) \
-            # .hexdigest() == key:
+    if md5(check_output('wmic csproduct get uuid').decode().split('\n')[1].strip().encode()).hexdigest() == key:
         app = Flask(__name__, template_folder='web', static_folder='web')
         app.secret_key = '123456'
         app.config['SESSION_TYPE'] = 'filesystem'
@@ -951,7 +950,7 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
             def __init__(self, url, data):
                 super().__init__()
                 layout = QVBoxLayout()
-                self.setGeometry(0, 0, 1500, 1000)
+                self.setGeometry(0, 0, 1300, 700)
                 self.browser = QWebEngineView(self)
                 self.setWindowTitle(url.split("/")[-2] + " | BlackQR")
                 doc_flag = False
@@ -990,7 +989,7 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
 
                         def msgbtn():
                             msg.close()
-                            # startfile(file_name)
+                            startfile(file_name)
 
                         msg.buttonClicked.connect(msgbtn)
 

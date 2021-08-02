@@ -63,15 +63,15 @@
                                 </div>
                                 <div class="form-group row" style="margin-bottom: 0px;">
                                     <label for="address" class=" col-sm-3  col-form-label">Alias</label>
-                                    <div class="col-sm-5">
+                                    <div class="col-sm-9">
                                         <input type="text" class="form-control" id="alias" name="alias"
-                                               value="{{data.user_address if 'user_address' in data.keys() else ''}}"
+                                               value="{{data.user_alias if 'user_alias' in data.keys() else ''}}"
                                                placeholder="Alias">
                                     </div>
                                 </div>
                                 <div class="form-group row" style="margin-bottom: 0px;">
                                     <label for="address" class=" col-sm-3  col-form-label">Address</label>
-                                    <div class="col-sm-5">
+                                    <div class="col-sm-9">
                                         <input type="text" class="form-control" id="address" name="address"
                                                value="{{data.user_address if 'user_address' in data.keys() else ''}}"
                                                placeholder="Address">
@@ -79,7 +79,7 @@
                                 </div>
                                 <div class="form-group row" style="margin-bottom: 0px;">
                                     <label for="city" class=" col-sm-3 col-form-label">City</label>
-                                    <div class="col-sm-5">
+                                    <div class="col-sm-9">
                                         <input type="text" class="form-control" id="city" name="city" placeholder="City"
                                                value="{{data.user_city if 'user_city' in data.keys() else ''}}">
                                     </div>
@@ -99,42 +99,42 @@
                                 </div>
                                 <div class="form-group row" style="margin-bottom: 0px;">
                                     <label for="guarantor_1_name" class=" col-sm-3 col-form-label">Sakshi 1</label>
-                                    <div class="col-sm-7">
+                                    <div class="col-sm-9">
                                         <input type="text" class="form-control" id="guarantor_1_name"
                                                name="guarantor_1_name" placeholder="">
                                     </div>
                                 </div>
                                 <div class="form-group row" style="margin-bottom: 0px;">
                                     <label for="guarantor_1_phone" class="col-sm-3 col-form-label">Phone</label>
-                                    <div class="col-sm-7">
+                                    <div class="col-sm-9">
                                         <input type="text" class="form-control" id="guarantor_1_phone"
                                                name="guarantor_1_phone" placeholder="">
                                     </div>
                                 </div>
                                 <div class="form-group row" style="margin-bottom: 0px;">
                                     <label for="guarantor_1_address" class=" col-sm-3 col-form-label">Address</label>
-                                    <div class="col-sm-7">
+                                    <div class="col-sm-9">
                                         <input type="text" class="form-control" id="guarantor_1_address"
                                                name="guarantor_1_address" placeholder="">
                                     </div>
                                 </div>
                                 <div class="form-group row" style="margin-bottom: 0px;">
                                     <label for="guarantor_2_name" class=" col-sm-3 col-form-label">Sakshi 2</label>
-                                    <div class="col-sm-7">
+                                    <div class="col-sm-9">
                                         <input type="text" class="form-control" id="guarantor_2_name"
                                                name="guarantor_2_name" placeholder="">
                                     </div>
                                 </div>
                                 <div class="form-group row" style="margin-bottom: 0px;">
                                     <label for="guarantor_2_phone" class="col-sm-3 col-form-label">Phone</label>
-                                    <div class="col-sm-7">
+                                    <div class="col-sm-9">
                                         <input type="text" class="form-control" id="guarantor_2_phone"
                                                name="guarantor_2_phone" placeholder="">
                                     </div>
                                 </div>
                                 <div class="form-group row" style="margin-bottom: 0px;">
                                     <label for="guarantor_2_address" class=" col-sm-3 col-form-label">Address</label>
-                                    <div class="col-sm-7">
+                                    <div class="col-sm-9">
                                         <input type="text" class="form-control" id="guarantor_2_address"
                                                name="guarantor_2_address" placeholder="">
                                     </div>
@@ -145,7 +145,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-5 grid-margin stretch-card">
+                <div class="col-md-4 grid-margin stretch-card">
                     <div class="card card-box">
                         <div class="card-body">
                             <!-- <h4 class="card-title">Horizontal Form</h4> -->
@@ -174,7 +174,7 @@
                                 </div>
                                 <div class="form-group row" style="margin-bottom: 0px;">
                                     <label for="base_amount" class=" col-sm-3 col-form-label">Amount</label>
-                                    <div class="col-sm-7">
+                                    <div class="col-sm-9">
                                         <input type="text" class="form-control base_amount" id="base_amount"
                                                name="base_amount" placeholder="" onkeyup="validate()">
                                         <input class="form-control total_amount" type="hidden" id="total_amount"
@@ -184,20 +184,20 @@
                                 </div>
                                 <div class="form-group row" style="margin-bottom: 0px;">
                                     <label for="interest" class="col-sm-3 col-form-label">Intrest</label>
-                                    <div class="col-sm-7">
+                                    <div class="col-sm-9">
                                         <input type="text" class="form-control" id="interest" name="interest"
                                                placeholder="">
                                     </div>
                                 </div>
                                 <div class="form-group row" style="margin-bottom: 0px;">
                                     <label for="noi" class=" col-sm-3 col-form-label">Loan EMI</label>
-                                    <div class="col-sm-7">
+                                    <div class="col-sm-9">
                                         <input type="text" class="form-control" id="noi" name="noi" placeholder="">
                                     </div>
                                 </div>
                                 <div class="form-group row" style="margin-bottom: 0px;">
                                     <label for="startdate" class=" col-sm-3 col-form-label">Date</label>
-                                    <div class="col-sm-7">
+                                    <div class="col-sm-9">
                                         <input type="date" id="startdate" name="startdate" class="form-control"
                                                value="{{data.today}}">
 
@@ -205,7 +205,7 @@
                                 </div>
                                 <div class="form-group row" style="margin-bottom: 0px;">
                                     <label for="remark" class=" col-sm-3 col-form-label">Remark</label>
-                                    <div class="col-sm-7">
+                                    <div class="col-sm-9">
                                         <input type="text" id="remark" name="remark" class="form-control" value="">
                                         <input type="hidden" id="period" name="period" class="form-control"
                                                value="Monthly">
@@ -214,7 +214,7 @@
                                 </div>
                                 <div class="form-group row" style="margin-bottom: 0px;">
                                     <label for="paid_amount" class=" col-sm-3 col-form-label">Paid Amount</label>
-                                    <div class="col-sm-7">
+                                    <div class="col-sm-9">
                                         <input type="text" id="paid_amount" name="paid_amount" class="form-control"
                                                value="">
 
@@ -253,7 +253,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-2 grid-margin stretch-card">
+                <div class="col-md-3 grid-margin stretch-card">
                     <div class="card card-box">
                         <div class="card-body">
                             <!-- <h4 class="card-title">Horizontal Form</h4> -->
