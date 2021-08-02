@@ -45,7 +45,7 @@
                                 <!-- Horizontal form layout -->
                                 <!-- </p> -->
                                 <form class="forms-sample custom-form ">
-                                    <div class="form-group row">
+                                    <div class="form-group row" style="margin-bottom: 0px;">
                                         <input type="hidden" class="form-control" name="id" value="{{data.id}}" id="id"/>
                                         <label for="name" class=" col-sm-3  col-form-label">Name</label>
                                         <div class="col-sm-6">
@@ -56,29 +56,29 @@
 
                                         </div>
                                     </div>
-                                    <div class="form-group row">
+                                    <div class="form-group row" style="margin-bottom: 0px;">
                                         <label for="address" class=" col-sm-3  col-form-label">Alias</label>
-                                        <div class="col-sm-5">
-                                            <input type="text" class="form-control" id="alias" name="alias" value="{{data.user_alias if 'user_alias' in data.keys() else ''}}" placeholder="Address">
+                                        <div class="col-sm-6">
+                                            <input type="text" class="form-control" id="alias" name="alias" value="{{data.user_alias if 'user_alias' in data.keys() else ''}}" placeholder="Short Name">
                                         </div>
                                     </div>
-                                    <div class="form-group row">
+                                    <div class="form-group row" style="margin-bottom: 0px;">
                                         <label for="address" class=" col-sm-3  col-form-label">Address</label>
-                                        <div class="col-sm-5">
+                                        <div class="col-sm-6">
                                             <input type="text" class="form-control" id="address" name="address" value="{{data.user_address if 'user_address' in data.keys() else ''}}" placeholder="Address">
                                         </div>
                                     </div>
-                                    <div class="form-group row">
+                                    <div class="form-group row" style="margin-bottom: 0px;">
                                         <label for="city" class=" col-sm-3 col-form-label">City</label>
-                                        <div class="col-sm-5">
+                                        <div class="col-sm-6">
                                             <input type="text" class="form-control" id="city" name="city" placeholder=""
                                                    value="{{data.user_city if 'user_city' in data.keys() else ''}}">
                                         </div>
                                     </div>
-                                    <div class="form-group row">
+                                    <div class="form-group row" style="margin-bottom: 0px;">
                                         <label for="phone" class=" col-sm-3 col-form-label">Phone-1</label>
-                                        <div class="col-sm-4">
-                                            <input type="text" class="form-control" style="width: 110%" id="phone"
+                                        <div class="col-sm-6">
+                                            <input type="text" class="form-control"  id="phone"
                                                    placeholder="Phone-1" value="{{data.user_phone if 'user_phone' in data.keys() else ''}}">
                                         </div>
 
