@@ -8,7 +8,7 @@ from threading import Thread
 from time import strftime
 
 import numpy as np
-from os import path#, startfile
+from os import path, startfile
 import pandas as pd
 from PyQt5 import QtWebEngineWidgets
 from PyQt5.QtCore import QUrl, Qt
@@ -1010,7 +1010,7 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
 
                         def msgbtn():
                             msg.close()
-                            # startfile(file_name)
+                            startfile(file_name)
 
                         msg.buttonClicked.connect(msgbtn)
 
