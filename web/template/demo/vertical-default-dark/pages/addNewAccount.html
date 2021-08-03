@@ -124,16 +124,13 @@
                                 <!-- </p> -->
                                 <form class="forms-sample custom-form ">
                                     <div class="form-group row">
-                                        <label for="loan_id" class=" col-sm-3  col-form-label">Loan No.</label>
-                                        <div class="col-sm-3">
+                                        <label for="loan_id" class=" col-sm-3  col-form-label">Name</label>
+                                        <div class="col-sm-5">
                                             <input type="hidden" class="form-control" name="id" value="{{data.max_id}}"
                                                    id="id"/>
-                                            <input type="text" class="form-control" id="loan_id" name="loan_id"
+                                            <input type="hidden" class="form-control" id="loan_id" name="loan_id"
                                                    placeholder=""
                                                    value="{{data.max_id}}" disabled>
-
-                                        </div>
-                                        <div class="col-sm-6">
                                             <input type="text" class="form-control" id="name" name="name" placeholder="Name"
                                                    value="{{data.user_name if 'user_name' in data.keys() else ''}}">
 

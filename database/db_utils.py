@@ -220,6 +220,7 @@ def extend_hafta(customer_id, amount, no_of_hafta, loan_id, user_type="loan"):
     else:
         entry_table = AccountEntry
     no_installments = entry_table.query.filter_by(id=customer_id, transaction_id=loan_id).first().no_installment
+    no_installments += 1
     # update installment number of base amount entry
     META_DATA.reflect()
     table = META_DATA.tables[str(customer_id)]
@@ -234,7 +235,7 @@ def extend_hafta(customer_id, amount, no_of_hafta, loan_id, user_type="loan"):
                 {"no_of_installment": no_installments + no_of_hafta, "date_to_pay": user_data_list[0]['date_to_pay'] +
                                                                                     relativedelta(months=no_of_hafta)}))
         # add entry of each installment
-        for i in range(1, no_of_hafta + 1):
+        for i in range(0, no_of_hafta):
             add_hafta_track_entry(
                 **{'user_id': customer_id, 'loan_id': loan_id, 'emi_amount': amount,
                    'date_to_pay': user_data_list[0]['date_to_pay'] + relativedelta(

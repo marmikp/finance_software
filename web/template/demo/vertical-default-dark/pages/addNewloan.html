@@ -31,9 +31,7 @@
 
     <div class="main-panel" style="width: 100%">
         <div class="content-wrapper" style="padding: 0px;">
-            <div class="page-title-box">
-                <!--<h2>Collection</h2> -->
-            </div>
+
 
             <div class="row">
 
@@ -213,7 +211,7 @@
                                     </div>
                                 </div>
                                 <div class="form-group row" style="margin-bottom: 0px;">
-                                    <label for="paid_amount" class=" col-sm-3 col-form-label">Paid Amount</label>
+                                    <label for="paid_amount" class=" col-sm-3 col-form-label">1st Int. Amt</label>
                                     <div class="col-sm-7">
                                         <input type="text" id="paid_amount" name="paid_amount" class="form-control"
                                                value="">
@@ -243,7 +241,7 @@
                                     <div class="col-sm-7" style="margin-bottom: 0px;">
                                         <button type="button"
                                                 class="btn btn-warning btn-rounded btn-fw right-align-button register_btn">
-                                            <i class="mdi mdi-checkbox-marked-circle mr-1"></i>Add Safely
+                                            <i class="mdi mdi-checkbox-marked-circle mr-1"></i>Add Loan
                                         </button>
                                     </div>
                                 </div>
@@ -325,7 +323,6 @@ $(document).ready(function(){
         }
           else{
             var id = document.getElementById('id').value;
-            alert(id);
             var name = document.getElementById('name').value;
             var alias = document.getElementById('alias').value;
             var address = document.getElementById('address').value;
@@ -348,7 +345,6 @@ $(document).ready(function(){
             var guarantor_2_name = document.getElementById('guarantor_2_name').value;
             var guarantor_2_address = document.getElementById('guarantor_2_address').value;
             var guarantor_2_phone = document.getElementById('guarantor_2_phone').value;
-            alert(startdate);
 
             $.post('/api/hafta/new_hafta_entry', {'id': id, 'name': name, 'alias': alias, 'address': address, 'phone': phone,
                                                 'phone_2': phone_2, 'city': city, 'loan_type': loan_type, 'guarantor_1_phone': guarantor_1_phone,

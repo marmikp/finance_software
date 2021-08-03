@@ -21,7 +21,46 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='template/css/vertical-layout-dark/style.css')}}">
   <!-- endinject -->
   <link rel="shortcut icon" href="{{ url_for('static', filename='template/images/favicon.png')}}" />
+  <script src="{{ url_for('static', filename='assets/js/jquery-3.5.1.js')}}"></script>
 </head>
+<script>
+$(document).ready(function(){
+  $('#loanNo').change(function() {
+    var loanNo = document.getElementById("loanNo").value;
+    $.post('/api/hafta/add_collection_user_info', {'lenar': loanNo},
+            function(returnedData){
+                $('.data_table').html(returnedData['table']);
+                $('#name').val(returnedData['name']);
+                $('#user_id').val(returnedData['user_id']);
+
+
+        }).fail(function(){
+              console.log("error");
+        });
+  });
+
+  $(".extend_hafta").click(function(){
+    if (confirm("Press OK to Extend hafta")){
+        var amount = document.getElementById("amount").value;
+        var months = document.getElementById("addmonth").value;
+        var loan_id = document.getElementById("loanNo").value;
+        var user_id = document.getElementById("user_id").value;
+        $.post('/api/test', {'url': 'http://127.0.0.1:5000/api/hafta/extend_hafta', 'user_id': user_id,
+                                'loan_id': loan_id, 'amount': amount, 'months': months},
+                function(returnedData){
+                    var w = window.open('about:blank');
+                    w.document.open();
+                    w.document.write(returnedData);
+                    w.document.close();
+            }).fail(function(){
+                  console.log("error");
+            });
+
+    }
+  });
+});
+
+</script>
 
 <body>
   <div class="container-scroller">
@@ -57,47 +96,55 @@
         <ul class="nav">
           <li class="nav-item">
 
-            <a class="nav-link btn btn-siderbar  btn-rounded btn-fw" href="dashboard1.html">
-              <i class="fd-home"></i>
-              <span class="menu-title">Home</span>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link btn btn-siderbar  btn-rounded btn-fw" href="loanLists1.html">
-              <i class="fd-loan-list"></i>
-              <span class="menu-title">Loan List</span>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link btn btn-siderbar  btn-rounded btn-fw" href="addCollections1.html">
-              <i class="fd-add-collection"></i>
-              <span class="menu-title">Add Collection</span>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link btn btn-siderbar  btn-rounded btn-fw" href="AccountOnBoard1.html">
-              <i class="fd-account"></i>
-              <span class="menu-title">Account</span>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link btn btn-siderbar  btn-rounded btn-fw" href="creditDebitAccount1.html">
-              <i class="fd-credit-account"></i>
-              <span class="menu-title">Cr-De. Acc.</span>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link btn btn-siderbar  btn-rounded btn-fw" href="report1.html">
-              <i class="fd-report"></i>
-              <span class="menu-title">Report</span>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link btn btn-siderbar  btn-rounded btn-fw" href="settings1.html">
-              <i class="fd-settings"></i>
-              <span class="menu-title">Settings</span>
-            </a>
-          </li>
+                    <a class="nav-link btn btn-siderbar  btn-rounded btn-fw" href="/">
+                        <i class="fd-home"></i>
+                        <span class="menu-title">Home</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link btn btn-siderbar  btn-rounded btn-fw" href="/api/hafta">
+                        <i class="fd-loan-list"></i>
+                        <span class="menu-title">Loan List</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link btn btn-siderbar  btn-rounded btn-fw"
+                       href="/api/hafta/add_collection_dialog_new">
+                        <i class="fd-add-collection"></i>
+                        <span class="menu-title">Add Collection</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+
+                    <a class="nav-link btn btn-siderbar  btn-rounded btn-fw" href="/api/hafta/extend_hafta_page">
+                        <i class="fd-home"></i>
+                        <span class="menu-title">Add Hafta</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link btn btn-siderbar  btn-rounded btn-fw" href="/api/account">
+                        <i class="fd-account"></i>
+                        <span class="menu-title">Account</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link btn btn-siderbar  btn-rounded btn-fw" href="/api/debit_account">
+                        <i class="fd-credit-account"></i>
+                        <span class="menu-title">Cr-De. Acc.</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link btn btn-siderbar  btn-rounded btn-fw" href="/api/report">
+                        <i class="fd-report"></i>
+                        <span class="menu-title">Report</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link btn btn-siderbar  btn-rounded btn-fw" href="/api/profile">
+                        <i class="fd-settings"></i>
+                        <span class="menu-title">Settings</span>
+                    </a>
+                </li>
 
         </ul>
       </nav>
@@ -111,7 +158,7 @@
 
           <div class="row">
             
-            <div class="col-md-12 grid-margin stretch-card">
+            <div class="col-md-8 grid-margin stretch-card">
               <div class="card card-box">
                 <div class="card-body">
                   <!-- <h4 class="card-title">Horizontal Form</h4> -->
@@ -122,7 +169,8 @@
                     <div class="form-group row">
                       <label for="remark" class="col-sm-3 col-form-label">Loan No.</label>
                       <div class="col-sm-6">
-                        <input type="text" class="form-control" id="loanNo" placeholder="">
+                          <input type="hidden" id="user_id">
+                        <input type="text" class="form-control" id="loanNo" placeholder="Loan No.">
                       </div>
                     </div>
                     <div class="form-group row">
@@ -150,7 +198,13 @@
               </div>
             </div>
        
-          </div>
+
+
+            <div class="col-sm-4">
+                        <table class="data_table" style="color: black;"></table>
+                    </div>
+
+              </div>
 		  
 		  <div class="row">
 				<div class="col-md-12 grid-margin stretch-card">
@@ -158,7 +212,7 @@
 						<div class="card-body">
 							<div class="template-demo custom-button">
 								<button type="button" class="btn btn-danger btn-rounded btn-fw right-align-button">Exit</button>
-                    			<button type="button" class="btn btn-warning btn-rounded btn-fw right-align-button"><i class="mdi mdi-checkbox-marked-circle mr-1"></i>Save</button>
+                    			<button type="button" class="btn btn-warning btn-rounded btn-fw right-align-button extend_hafta"><i class="mdi mdi-checkbox-marked-circle mr-1"></i>Save</button>
 							  </div>
 						</div>
 					</div>

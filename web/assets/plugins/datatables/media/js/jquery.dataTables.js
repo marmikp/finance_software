@@ -3768,6 +3768,7 @@
 					.css( {
 						position: 'relative',
 						overflow: 'auto',
+						overflowX: 'hidden',
 						width: size( scrollX )
 					} )
 					.append( table )

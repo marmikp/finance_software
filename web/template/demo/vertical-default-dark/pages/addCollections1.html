@@ -39,7 +39,8 @@ $(document).ready(function(){
     $(".update").click(function(){
     if (confirm("Press OK to add collection")){
         var paid_date = document.getElementById("date_input").value;
-        alert(paid_date);
+        date_attr = paid_date.split("-");
+        paid_date = date_attr[2]+"/"+date_attr[1]+"/"+date_attr[0]
         var paid_amount = document.getElementById("amount").value;
         var user_id = document.getElementById("user_id_text").value;
         var loan_id = document.getElementById("denar").value.split(' - ')[0];
@@ -227,12 +228,9 @@ $(document).ready(function(){
                                         <label for="dateCollect" class="col-sm-3 col-form-label">Date</label>
                                         <div class="col-sm-6">
                                             <!-- <input type="text" class="form-control" id="dateCollect" placeholder=""> -->
-                                            <div id="datepicker-popup" class="input-group date datepicker" data-date-format="dd/mm/yyyy">
-                                                <input type="text" class="form-control" id="date_input">
-                                                <span class="input-group-addon input-group-append border-left">
-                          <!-- <span class="mdi mdi-calendar input-group-text"></span> -->
-                        </span>
-                                            </div>
+
+                                                <input type="date" class="form-control" id="date_input">
+
                                         </div>
                                     </div>
                                     <div class="form-group row">

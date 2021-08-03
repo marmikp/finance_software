@@ -257,7 +257,7 @@ document.getElementById("date").value = today.getFullYear() + '-' + ('0' + (toda
                                         d.date_to_pay != None else ''}}
                                     </td>
                                     <td><input type="text" id="paid_date_{{d.loan_id}}_{{d.no_of_installment}}"
-                                               value="{{'' if d.tx_status in [0, None] else d.paid_date}}" readonly>
+                                               value="{{'' if d.tx_status in [0, None] else d.paid_date.strftime('%d/%m/%Y')}}" readonly>
                                     </td>
                                     <td>{{d.paid_amount if d.tx_status not in [0, None] else ""}}</td>
 

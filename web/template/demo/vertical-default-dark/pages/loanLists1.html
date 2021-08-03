@@ -125,9 +125,9 @@ $(document).ready(function(){
 <body>
 <div class="container-scroller">
     <!-- partial:../../partials/_navbar.html -->
-    <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
-        <div class="navbar-brand-wrapper d-flex justify-content-center">
-            <div class="navbar-brand-inner-wrapper d-flex justify-content-between align-items-center w-100">
+    <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row" style="height: 40px;">
+        <div class="navbar-brand-wrapper d-flex justify-content-center" style="height: 40px;">
+            <div class="navbar-brand-inner-wrapper d-flex justify-content-between align-items-center w-100" style="height: 40px;">
                 <!-- <a class="navbar-brand brand-logo" href="../../index.html"><img src="../../../images/logo.svg" alt="logo"/></a> -->
                 <!-- <a class="navbar-brand brand-logo-mini" href="../../index.html"><img src="../../../images/logo-mini.svg" alt="logo"></a> -->
                 <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
@@ -135,7 +135,7 @@ $(document).ready(function(){
                 </button>
             </div>
         </div>
-        <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end navbar-title">
+        <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end navbar-title" style="height: 40px">
             <ul class="navbar-nav mr-lg-2">
                 <li class="nav-item d-none d-lg-block">
                     <label class="col-form-label bold-label"> Loan List On Board | </label>
@@ -152,7 +152,7 @@ $(document).ready(function(){
         </div>
     </nav>
     <!-- partial -->
-    <div class="container-fluid page-body-wrapper">
+    <div class="container-fluid page-body-wrapper"  style="padding-top: 40px">
 
         <!-- partial:../../partials/_sidebar.html -->
         <nav class="sidebar sidebar-offcanvas" id="sidebar">
@@ -213,7 +213,7 @@ $(document).ready(function(){
                                     </button>
                     <h2>Loan List</h2>
                 </div>
-                <div class="card card-box">
+                <div class="card card-box" style="margin-top: 10px;">
                     <div class="card-body">
                         <div class="row">
                             <div class="col-12">
@@ -236,13 +236,13 @@ $(document).ready(function(){
                                             <td><span>{{d.user_phone}}</span></td>
                                             <td><span>{{d.num_loan_hafta}}</span></td>
                                             <td><span>
-                                                <div class="row" style="padding: 10px;">
+                                                <div class="row" style="padding: 0px;">
                                                     <div class="col-md-3" style="align-center: true;"><button
                                                             style="color: white;"
                                                             class="edit add btn btn-dark btn-rounded btn-fw right-align-button"
                                                             title="Edit"
                                                             data-toggle="tooltip" user_id="{{d.id}}">Edit</button></div>
-                                                    <div class="col-md-3" style="align-center: true;"><button
+                                                    <div class="col-md-4" style="align-center: true;"><button
                                                             style="color: white;"
                                                             class="new add btn btn-dark btn-rounded btn-fw right-align-button"
                                                             title="Add Hafta"

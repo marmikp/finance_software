@@ -337,6 +337,12 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
             resp = db_utils.extend_hafta(**user_data)
             return resp
 
+        @app.route('/api/hafta/extend_hafta_page', methods=['POST', 'GET'])
+        def extend_hafta_page():
+            data = get_users_details()
+            return render_template('template/demo/vertical-default-dark/pages/addHafta.html', data=data)
+
+
 
         @app.route('/api/hafta/party_to_party_transfer', methods=['POST', 'GET'])
         def party_to_party_transfer():
@@ -480,6 +486,8 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
             user_data['no_of_hafta'] = int(request.form['months'])
             resp = db_utils.extend_hafta(user_type="account", **user_data)
             return str(resp)
+
+
 
 
         @app.route('/api/account/new_account_entry_dialog', methods=['POST', 'GET'])
@@ -694,14 +702,23 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
             user_data = db_utils.get_user_data_by_loan_id(loan_id=int(data['lenar'].split(' - ')[0]))
             df = pd.DataFrame(columns=['Id', 'Date', 'Amount', 'Status'])
             for val in user_data:
+
                 row = pd.Series(
-                    [val['no_of_installment'], val['date_to_pay'].date(), val['emi_amount'], val['tx_status']],
+                    [val['no_of_installment'], val['date_to_pay'], val['emi_amount'], val['tx_status']],
                     ['Id', 'Date', 'Amount', 'Status'])
+                print(val['date_to_pay'].date(), val['no_of_installment'])
                 df = df.append(row, ignore_index=True)
-            df = df.sort_values(['Date'], ascending=[True])
+
+            df = df.sort_values(by='Id', ascending=True)
+            print(df)
             for i, val in enumerate(df['Date']):
-                print(val)
-                df['Date'][i] = val.strftime("%d/%m/%Y")
+                print(val, df['Date'].iloc[i])
+                if type(val) == str:
+                    df['Date'].iloc[i] = datetime.strptime(val, "%d/%m/%Y")
+                try:
+                    df['Date'].iloc[i] = val.strftime("%d/%m/%Y")
+                except Exception as e:
+                    df['Date'].iloc[i] = val
             user_id = get_user_id_from_loan_id(int(data['lenar'].split(' - ')[0]))
             value = df.iloc[np.where(df['Status'] == 0)[0][0]]['Amount']
             emi_no = df.iloc[np.where(df['Status'] == 0)[0][0]]['Id']

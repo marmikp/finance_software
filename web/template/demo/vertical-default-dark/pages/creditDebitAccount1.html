@@ -34,6 +34,10 @@ $(document).ready(function(){
         var denar = document.getElementById('denar').value;
         var amount = document.getElementById('amount').value;
         var date_input = document.getElementById('date_input').value;
+        date_attr = date_input.split("-");
+        date_input = date_attr[2]+"/"+date_attr[1]+"/"+date_attr[0]
+
+        alert(date_input);
           $.post('/api/account/credit_debit_amount', {'lenar': lenar, 'denar': denar, 'amount': amount, 'remark': remark,
                                                         'date': date_input},
             function(returnedData){
@@ -222,12 +226,11 @@ $(document).ready(function(){
                                     <div class="form-group row">
                                         <label for="date_input" class="col-sm-3 col-form-label">Date</label>
                                         <div class="col-sm-6">
-                                            <div id="datepicker-popup" class="input-group date datepicker" data-date-format="dd/mm/yyyy">
-                                                <input type="text" class="form-control date_input" id="date_input">
-                                                <span class="input-group-addon input-group-append border-left">
+                                            <input type="date" class="form-control date_input" id="date_input">
+<!--                                                <span class="input-group-addon input-group-append border-left">-->
                           <!-- <span class="mdi mdi-calendar input-group-text"></span> -->
-                        </span>
-                                            </div>
+<!--                        </span>-->
+<!--                                            </div>-->
                                         </div>
                                     </div>
                                     <div class="form-group row">
@@ -283,7 +286,7 @@ $(document).ready(function(){
                                     <div class="form-group row">
                                         <label for="remark" class="col-sm-3 col-form-label">Remark</label>
                                         <div class="col-sm-6">
-                                            <input type="password" class="form-control" id="remark"
+                                            <input type="text" class="form-control" id="remark"
                                                    placeholder="">
                                         </div>
                                     </div>
