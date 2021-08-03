@@ -48,10 +48,7 @@ $(document).ready(function(){
         $.post('/api/test', {'url': 'http://127.0.0.1:5000/api/hafta/extend_hafta', 'user_id': user_id,
                                 'loan_id': loan_id, 'amount': amount, 'months': months},
                 function(returnedData){
-                    var w = window.open('about:blank');
-                    w.document.open();
-                    w.document.write(returnedData);
-                    w.document.close();
+                    alert(returnedData['status']);
             }).fail(function(){
                   console.log("error");
             });

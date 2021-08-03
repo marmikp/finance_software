@@ -120,6 +120,7 @@ $(document).ready(function(){
 
 
 
+
 </script>
 
 
@@ -179,6 +180,14 @@ $(document).ready(function(){
                             </a>
                         </li>
                         <li class="nav-item">
+
+                            <a class="nav-link btn btn-siderbar  btn-rounded btn-fw"
+                               href="/api/hafta/extend_hafta_page">
+                                <i class="fd-home"></i>
+                                <span class="menu-title">Add Hafta</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link btn btn-siderbar  btn-rounded btn-fw" href="/api/account">
                                 <i class="fd-account"></i>
                                 <span class="menu-title">Account</span>
@@ -227,10 +236,10 @@ $(document).ready(function(){
                                         <label for="date_input" class="col-sm-3 col-form-label">Date</label>
                                         <div class="col-sm-6">
                                             <input type="date" class="form-control date_input" id="date_input">
-<!--                                                <span class="input-group-addon input-group-append border-left">-->
-                          <!-- <span class="mdi mdi-calendar input-group-text"></span> -->
-<!--                        </span>-->
-<!--                                            </div>-->
+                                            <!--                                                <span class="input-group-addon input-group-append border-left">-->
+                                            <!-- <span class="mdi mdi-calendar input-group-text"></span> -->
+                                            <!--                        </span>-->
+                                            <!--                                            </div>-->
                                         </div>
                                     </div>
                                     <div class="form-group row">
@@ -369,6 +378,7 @@ $(document).ready(function() {
 
 } );
 
+
 </script>
 
 
@@ -477,6 +487,7 @@ var countries = {{data|safe}};
 autocomplete(document.getElementById("lenar"), countries);
 autocomplete(document.getElementById("denar"), countries);
 
+
 </script>
 
 
@@ -498,6 +509,7 @@ autocomplete(document.getElementById("denar"), countries);
                autoFocus:true
             });
          });
+
 
 </script>
 
