@@ -323,7 +323,6 @@ $(document).ready(function(){
         }
           else{
             var id = document.getElementById('id').value;
-            alert(id);
             var name = document.getElementById('name').value;
             var alias = document.getElementById('alias').value;
             var address = document.getElementById('address').value;
@@ -346,7 +345,6 @@ $(document).ready(function(){
             var guarantor_2_name = document.getElementById('guarantor_2_name').value;
             var guarantor_2_address = document.getElementById('guarantor_2_address').value;
             var guarantor_2_phone = document.getElementById('guarantor_2_phone').value;
-            alert(startdate);
 
             $.post('/api/hafta/new_hafta_entry', {'id': id, 'name': name, 'alias': alias, 'address': address, 'phone': phone,
                                                 'phone_2': phone_2, 'city': city, 'loan_type': loan_type, 'guarantor_1_phone': guarantor_1_phone,
@@ -358,6 +356,7 @@ $(document).ready(function(){
                     console.log(returnedData);
                         if (returnedData.code == 200){
                         alert("Entry Added")
+                        location.reload();
 <!--                            $('.bb').fadeToggle(200);-->
 <!--                            $('.message').toggleClass('comein');-->
 <!--                            $('.check').toggleClass('scaledown');-->

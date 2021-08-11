@@ -12,7 +12,7 @@ from database.model import *
 META_DATA = None
 
 
-def create_html_table(x, length=0, show_col_name=False):
+def create_html_table(x, length=0, show_col_name=False, lines=1):
     row_data = ''
     dtype_list = []
     for col in x.columns.values.tolist():
@@ -31,7 +31,11 @@ def create_html_table(x, length=0, show_col_name=False):
             if i == x.shape[0] - 1:
                 continue
         if i != 0:
-            row_data += '\n<tr> '
+            if (i == 20 and lines == 2) or (i % 23 == 0 and lines == 2 and i!=23) or (i == 30 and lines == 1) or (i % 35 == 0 and lines == 1 and i!=35):
+                row_data += "</table>\n<br/><br/><br/><table><tr>"
+
+            else:
+                row_data += '\n<tr> '
         for j in range(x.shape[1]):
             if pd.isnull(x.iloc[i, j]):
                 val = ''
@@ -58,6 +62,15 @@ def create_html_table(x, length=0, show_col_name=False):
             x.iloc[x.shape[0] - 1, 2]) + '</td>'
         row_data += '\n </tr>'
     return row_data
+
+
+def get_user_basic_info_by_loan_id(loan_id):
+    user_id = get_user_id_from_loan_id(loan_id)
+    customer_data = Customer.query.filter_by(id=user_id).first()
+    loan_data = HaftEntry.query.filter_by(transaction_id=loan_id).first()
+    data = {'user_id': user_id, 'name': customer_data.user_name, 'alias': customer_data.user_alias, 'address':
+        customer_data.user_address, 'phone': customer_data.user_phone, 'phone_2': customer_data.user_phone_2,
+            'city': customer_data.user_city, }
 
 
 def create_general_html_table(x, length=0, show_col_name=False):

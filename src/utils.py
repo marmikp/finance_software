@@ -41,6 +41,7 @@ def create_entry_new_hafta(user_type="loan", **kwargs):
                                            status='dr', total_balance=total_balance)
         db.session.add(tx_hist_query)
         db.session.commit()
+
         resp = {'code': 200, 'status': 'entry for debit account created'}
     else:
         query_data['id'] = int(kwargs['id'])
@@ -59,6 +60,7 @@ def create_entry_new_hafta(user_type="loan", **kwargs):
             months=query_data['no_installment'])
         if query_data['loan_type'] == 'flat':
             total_interest = query_data['interest'] * query_data['no_installment']
+
         else:
             total_interest = query_data['interest']
         current_pending_interest = General.query.filter_by(
@@ -242,11 +244,18 @@ def get_report_of_pending_installments_by_date(date, user_type='loan'):
                 user_data_dict[user_data['id']]['loans'] = user_data_pending_installments
                 user_info = convert_table_to_dict_data(Customer.query.filter_by(id=user_data['id']).first())
                 for loan_id, loan_pending_installment_details in user_data_pending_installments.items():
-                    row = pd.Series([loan_id, user_info['user_name'],
-                                     loan_pending_installment_details[2],
-                                     loan_pending_installment_details[0], user_info['user_phone'],
-                                     user_data['guarantor_1_name'], user_data['guarantor_1_phone'],
-                                     loan_pending_installment_details[3]], columns)
+                    if user_data['guarantor_2_name'] is not None:
+                        row = pd.Series([loan_id, user_info['user_name'],
+                                         loan_pending_installment_details[2],
+                                         str(loan_pending_installment_details[0])+"<br/>"+str(loan_pending_installment_details[3]), user_info['user_phone'],
+                                         user_data['guarantor_1_name']+"<br/>"+user_data['guarantor_2_name'], user_data['guarantor_1_phone']+"<br/>"+user_data['guarantor_2_phone']], columns)
+                    else:
+                        row = pd.Series([loan_id, user_info['user_name'],
+                                         loan_pending_installment_details[2],
+                                         str(loan_pending_installment_details[0])+"<br/>"+str(loan_pending_installment_details[3]), user_info['user_phone'],
+                                         user_data['guarantor_1_name'],
+                                         user_data['guarantor_1_phone'],
+                                         loan_pending_installment_details[3]], columns)
                     df = df.append(row, ignore_index=True)
 
     return df

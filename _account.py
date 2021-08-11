@@ -8,15 +8,17 @@ from threading import Thread
 from time import strftime
 
 import numpy as np
-from os import path, startfile
+from os import path  # , startfile
 import pandas as pd
 from PyQt5 import QtWebEngineWidgets
-from PyQt5.QtCore import QUrl, Qt
-from PyQt5.QtGui import QIcon
+from PyQt5.QtCore import QUrl, Qt, QObject, pyqtSlot, QEventLoop, QPointF
+from PyQt5.QtGui import QIcon, QPainter, QKeySequence
+from PyQt5.QtPrintSupport import QPrinter, QPrintDialog, QPrintPreviewDialog
 from PyQt5.QtWebEngineWidgets import QWebEngineView
-from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QPushButton, QMessageBox
+from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QPushButton, QMessageBox, QDialog, \
+    QProgressDialog, QProgressBar, QShortcut
 from dateutil.relativedelta import relativedelta
-from flask import Flask, request, render_template, session, redirect
+from flask import Flask, request, render_template, session, redirect, jsonify
 from markupsafe import Markup
 from qt_thread_updater import get_updater
 from sqlalchemy import MetaData
@@ -30,10 +32,80 @@ from database.db_utils import get_users_details, create_html_table, get_user_pen
 from database.model import db, General, Customer
 from src.utils import is_logged_in, create_entry_new_hafta
 
+
+from PyQt5.QtCore import (QCoreApplication, QEventLoop, QObject, QPointF, Qt,
+                       QUrl, pyqtSlot)
+from PyQt5.QtGui import QKeySequence, QPainter
+from PyQt5.QtPrintSupport import QPrintDialog, QPrinter, QPrintPreviewDialog
+from PyQt5.QtWebEngineWidgets import QWebEnginePage, QWebEngineView
+from PyQt5.QtWidgets import QApplication, QDialog, QLabel, QProgressBar, QProgressDialog, QShortcut
+
+
+class PrintHandler(QObject):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.m_page = None
+        self.m_inPrintPreview = False
+
+    def setPage(self, page):
+        assert not self.m_page
+        self.m_page = page
+        self.m_page.printRequested.connect(self.printPreview)
+
+    @pyqtSlot()
+    def print(self):
+        printer = QPrinter(QPrinter.HighResolution)
+        dialog = QPrintDialog(printer, self.m_page.view())
+        if dialog.exec_() != QDialog.Accepted:
+            return
+        self.printDocument(printer)
+
+    @pyqtSlot()
+    def printPreview(self):
+        if not self.m_page:
+            return
+        if self.m_inPrintPreview:
+            return
+        self.m_inPrintPreview = True
+        printer = QPrinter()
+        preview = QPrintPreviewDialog(printer, self.m_page.view())
+        preview.paintRequested.connect(self.printDocument)
+        preview.exec()
+        self.m_inPrintPreview = False
+
+    @pyqtSlot(QPrinter)
+    def printDocument(self, printer):
+        loop = QEventLoop()
+        result = False
+
+        def printPreview(success):
+            nonlocal result
+            result = success
+            loop.quit()
+
+        progressbar = QProgressDialog(self.m_page.view())
+        progressbar.findChild(QProgressBar).setTextVisible(False)
+        progressbar.setLabelText("Wait please...")
+        progressbar.setRange(0, 0)
+        progressbar.show()
+        progressbar.canceled.connect(loop.quit)
+        self.m_page.print(printer, printPreview)
+        loop.exec_()
+        progressbar.close()
+        if not result:
+            painter = QPainter()
+            if painter.begin(printer):
+                font = painter.font()
+                font.setPixelSize(20)
+                painter.setFont(font)
+                painter.drawText(QPointF(10, 25), "Could not generate print preview.")
+                painter.end()
+
+
 if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
     with open("api-ms-win-core-heat-key-l1-1-0-1.dll", "r") as file:
         key = file.readline()
-    if True:#md5(check_output('wmic csproduct get uuid').decode().split('\n')[1].strip().encode()).hexdigest() == key:
+    if True:  # md5(check_output('wmic csproduct get uuid').decode().split('\n')[1].strip().encode()).hexdigest() == key:
         app = Flask(__name__, template_folder='web', static_folder='web')
         app.secret_key = '123456'
         app.config['SESSION_TYPE'] = 'filesystem'
@@ -106,7 +178,8 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
                     session['username'] = username
                     return redirect("/")
                 else:
-                    return render_template('template/demo/vertical-default-dark/pages/login.html', data="invalid username or password")
+                    return render_template('template/demo/vertical-default-dark/pages/login.html',
+                                           data="invalid username or password")
             else:
 
                 return render_template('template/demo/vertical-default-dark/pages/login.html')
@@ -136,7 +209,8 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
                 data = db_utils.get_users_details(loan_status='both')
                 today = datetime.now().strftime("%A, %d %B, %Y")
                 print(data)
-                return render_template('template/demo/vertical-default-dark/pages/loanLists1.html', data=data, today=today)
+                return render_template('template/demo/vertical-default-dark/pages/loanLists1.html', data=data,
+                                       today=today)
             else:
                 return redirect('/api/user/login')
 
@@ -182,7 +256,6 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
             except Exception as e:
                 print(e)
             return resp
-
 
 
         @app.route('/api/hafta/current_user_hafta_entry', methods=['POST', 'GET'])
@@ -319,6 +392,17 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
             db_resp = db_utils.add_new_customer(**data_query)
             return db_resp
 
+        @app.route('/api/hafta/get_user_data_by_load_id', methods=['POST', 'GET'])
+        def get_user_data_by_loan_id():
+            if request.method == 'POST':
+                loan_id = int(request.form['loan_id'])
+            else:
+                loan_id = int(request.args['loan_id'])
+            print(loan_id)
+            data = db_utils.get_user_data_by_loan_id(loan_id=loan_id)
+            print(data)
+            return jsonify({'code': 200, 'data':data})
+
 
         @app.route('/api/hafta/extend_hafta', methods=['POST', 'GET'])
         def extend_hafta():
@@ -340,11 +424,11 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
             resp = db_utils.extend_hafta(**user_data)
             return resp
 
+
         @app.route('/api/hafta/extend_hafta_page', methods=['POST', 'GET'])
         def extend_hafta_page():
             data = get_users_details()
             return render_template('template/demo/vertical-default-dark/pages/addHafta.html', data=data)
-
 
 
         @app.route('/api/hafta/party_to_party_transfer', methods=['POST', 'GET'])
@@ -418,7 +502,8 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
             if session.get('username'):
                 data = db_utils.get_users_details(user_type="account")
                 today = datetime.now().strftime("%A, %d %B, %Y")
-                return render_template('template/demo/vertical-default-dark/pages/AccountOnBoard1.html', data=data, today=today)
+                return render_template('template/demo/vertical-default-dark/pages/AccountOnBoard1.html', data=data,
+                                       today=today)
             else:
                 return redirect('/api/user/login')
 
@@ -489,8 +574,6 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
             user_data['no_of_hafta'] = int(request.form['months'])
             resp = db_utils.extend_hafta(user_type="account", **user_data)
             return str(resp)
-
-
 
 
         @app.route('/api/account/new_account_entry_dialog', methods=['POST', 'GET'])
@@ -693,7 +776,7 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
             for d in data:
                 user_list.append(str(d['loan_id']) + " - " + str(d['user_name']))
             return render_template('template/demo/vertical-default-dark/pages/creditDebitAccount1.html', data=user_list,
-                                                               date_today=datetime.now().date(), today=datetime.now().strftime("%A, %d %B, %Y"))
+                                   date_today=datetime.now().date(), today=datetime.now().strftime("%A, %d %B, %Y"))
 
 
         @app.route('/api/hafta/add_collection_user_info', methods=['GET', 'POST'])
@@ -705,7 +788,6 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
             user_data = db_utils.get_user_data_by_loan_id(loan_id=int(data['lenar'].split(' - ')[0]))
             df = pd.DataFrame(columns=['Id', 'Date', 'Amount', 'Status'])
             for val in user_data:
-
                 row = pd.Series(
                     [val['no_of_installment'], val['date_to_pay'], val['emi_amount'], val['tx_status']],
                     ['Id', 'Date', 'Amount', 'Status'])
@@ -729,7 +811,7 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
             df['Status'].replace({1: 'Paid', 0: 'Pending'}, inplace=True)
             name = str(data['lenar'].split(' - ')[0]) + " - " + Customer.query.filter_by(id=user_id).first().user_name
             return {'table': create_html_table(df, show_col_name=True), 'value': value, 'emi_no': emi_no, 'cash_amount':
-                    cash_amount, 'user_id': user_id, 'name': name}
+                cash_amount, 'user_id': user_id, 'name': name}
 
 
         @app.route('/api/hafta/add_collection_dialog_new', methods=['GET', 'POST'])
@@ -742,7 +824,7 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
                 except Exception as e:
                     continue
             return render_template('template/demo/vertical-default-dark/pages/addCollections1.html', data=user_list,
-                                                               date_today=datetime.now().date(), today=datetime.now().strftime("%A, %d %B, %Y"))
+                                   date_today=datetime.now().date(), today=datetime.now().strftime("%A, %d %B, %Y"))
 
 
         @app.route('/api/debit_account/add_new', methods=['post', 'get'])
@@ -785,7 +867,7 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
         def profile_accounts():
             data = db_utils.finance_user_details()
             data['msg'] = ""
-            data['today']=datetime.now().strftime("%A, %d %B, %Y")
+            data['today'] = datetime.now().strftime("%A, %d %B, %Y")
             return render_template('template/demo/vertical-default-dark/pages/settings1.html', data=data)
 
 
@@ -816,7 +898,7 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
             data = get_users_details(loan_status='both')
             account_data = get_users_details(user_type='account')
             return render_template('template/demo/vertical-default-dark/pages/report1.html', data=data,
-                                                               account_data=account_data, today=datetime.now().strftime("%A, %d %B, %Y"))
+                                   account_data=account_data, today=datetime.now().strftime("%A, %d %B, %Y"))
 
 
         @app.route('/api/report/pending_installment_by_date', methods=['POST', 'GET'])
@@ -830,7 +912,10 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
                     datetime.strptime(str(request_data['date']), "%Y-%m-%d"))
                 emis.index = np.arange(1, len(emis) + 1)
                 emis = emis.sort_values(by='Date')
-                table = create_html_table(emis)
+                table = create_html_table(emis, lines=2)
+                html_code = emis.to_html()
+                with open("temp.html", 'w') as f:
+                    f.write(html_code)
                 # emis.index.rename('id', inplace=True)
                 return render_template("templates/report_page_table.html",
                                        data={'table': Markup(table),
@@ -998,6 +1083,15 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
                     loader.page().pdfPrintingFinished.connect(
                         lambda *args: print('finished:', args))
                     loader.load(QUrl(url_f))
+                    # handler = PrintHandler(self.parent())
+                    # handler.setPage(loader.page())
+                    #
+                    # printPreviewShortCut = QShortcut(QKeySequence(Qt.CTRL + Qt.Key_P), loader)
+                    # printShortCut = QShortcut(QKeySequence(Qt.CTRL + Qt.SHIFT + Qt.Key_P), loader)
+                    #
+                    # self.export_button.clicked.connect(handler.printPreview)
+
+                    # printShortCut.activated.connect(handler.print)
 
                     def emit_pdf(finished):
                         loader.page().printToPdf(file_name)
@@ -1010,7 +1104,7 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
 
                         def msgbtn():
                             msg.close()
-                            startfile(file_name)
+                            # startfile(file_name)
 
                         msg.buttonClicked.connect(msgbtn)
 
@@ -1049,7 +1143,7 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
             window.show()
             Thread(target=run_flask_server, daemon=True).start()
             app_.exec_()
-            #backup
+            # backup
             backup_path = path.abspath('..')
             copy(f'{config.db_name}.dll', backup_path)
             # run_flask_server()

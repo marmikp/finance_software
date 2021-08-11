@@ -1,8 +1,6 @@
 Traceback (most recent call last):
-  File "/home/ezdi/marmik/finance_software/_account.py", line 803, in pending_installment_by_date
-    datetime.strptime(str(request_data['date']), "%Y/%m/%d"))
-  File "/home/ezdi/anaconda3/envs/fin/lib/python3.7/_strptime.py", line 577, in _strptime_datetime
-    tt, fraction, gmtoff_fraction = _strptime(data_string, format)
-  File "/home/ezdi/anaconda3/envs/fin/lib/python3.7/_strptime.py", line 359, in _strptime
-    (data_string, format))
-ValueError: time data '2021-07-28' does not match format '%Y/%m/%d'
+  File "/home/ezdi/marmik/finance_software/_account.py", line 830, in pending_installment_by_date
+    datetime.strptime(str(request_data['date']), "%Y-%m-%d"))
+  File "/home/ezdi/marmik/finance_software/src/utils.py", line 250, in get_report_of_pending_installments_by_date
+    user_data['guarantor_1_name']+"<br/>"+user_data['guarantor_2_name'], user_data['guarantor_1_phone']+"<br/>"+user_data['guarantor_2_phone'],
+TypeError: can only concatenate str (not "NoneType") to str
