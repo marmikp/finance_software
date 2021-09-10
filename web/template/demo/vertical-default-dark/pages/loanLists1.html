@@ -216,7 +216,13 @@ $(document).ready(function(){
         <div class="main-panel">
             <div class="content-wrapper">
                 <div class="page-title-box" style="min-height: 20px;">
-                    <button type="button" class="btn btn-danger  btn-rounded btn-fw new_customer">Add New Loan
+                    <button type="button" class="btn btn-warning  btn-rounded btn-fw new_customer">Add New Loan
+                                    </button>
+                    <button type="button" class="btn btn-primary  btn-rounded btn-fw edit" user_id="{{data.0.id}}">Edit
+                                    </button>
+                    <button type="button" class="btn btn-info  btn-rounded btn-fw new" user_id="{{data.0.id}}">Party Info
+                                    </button>
+                    <button type="button" class="btn btn-danger  btn-rounded btn-fw close_loan" data="{{data.0.id}}">Close Loan
                                     </button>
                     <h2>Loan List</h2>
                 </div>
@@ -232,7 +238,7 @@ $(document).ready(function(){
                                             <th style="text-align: center;">Name</th>
                                             <th style="text-align: center;">Phone</th>
                                             <th style="text-align: center;">Loans</th>
-                                            <th style="text-align: center;">Actions</th>
+
                                         </tr>
                                         </thead>
                                         <tbody>
@@ -242,27 +248,7 @@ $(document).ready(function(){
                                             <td><span>{{d.user_name}}</span></td>
                                             <td><span>{{d.user_phone}}</span></td>
                                             <td><span>{{d.num_loan_hafta}}</span></td>
-                                            <td><span>
-                                                <div class="row" style="padding: 0px;">
-                                                    <div class="col-md-3" style="align-center: true;"><button
-                                                            style="color: white;"
-                                                            class="edit add btn btn-dark btn-rounded btn-fw right-align-button"
-                                                            title="Edit"
-                                                            data-toggle="tooltip" user_id="{{d.id}}">Edit</button></div>
-                                                    <div class="col-md-4" style="align-center: true;"><button
-                                                            style="color: white;"
-                                                            class="new add btn btn-dark btn-rounded btn-fw right-align-button"
-                                                            title="Add Hafta"
-                                                            data-toggle="tooltip" user_id="{{d.id}}">Add Hafta</button></div>
-                                                    <div class="col-md-3" style="align-center: true;"><button
-                                                            style="color: white;"
-                                                            class="close_loan btn btn-dark btn-rounded btn-fw right-align-button"
-                                                            title="Close Loan"
-                                                            data-toggle="tooltip" data="{{d.id}}">Close</button></div>
-                                                    </div>
-                                            </span>
 
-                                            </td>
                                         </tr>
                                         {% endfor %}
 

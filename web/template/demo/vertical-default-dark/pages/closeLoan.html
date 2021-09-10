@@ -9,14 +9,11 @@
     <link href="{{ url_for('static', filename='assets/css/jquery-ui.css')}}" rel="stylesheet"/>
 
     <!-- plugins:css -->
-    <link rel="icon" type="image/png" href="{{ url_for('static', filename='assets/img/favicon.png')}}"/>
     <link rel="stylesheet"
           href="{{ url_for('static', filename='template/vendors/mdi/css/materialdesignicons.min.css')}}">
     <link rel="stylesheet" href="{{ url_for('static', filename='template/vendors/css/vendor.bundle.base.css')}}">
     <!-- endinject -->
     <!-- Plugin css for this page -->
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='fontawesome/web-fonts-with-css/css/fontawesome-all.css')}}">
     <link rel="stylesheet" href="{{ url_for('static', filename='template/vendors/select2/select2.min.css')}}">
     <link rel="stylesheet"
           href="{{ url_for('static', filename='template/vendors/select2-bootstrap-theme/select2-bootstrap.min.css')}}">
@@ -28,6 +25,26 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='template/css/vertical-layout-dark/style.css')}}">
     <!-- endinject -->
     <link rel="shortcut icon" href="{{ url_for('static', filename='template/images/favicon.png')}}"/>
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='template/vendors/datatables.net-bs4/dataTables.bootstrap4.css')}}">
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='template/vendors/mdi/css/materialdesignicons.min.css')}}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='template/vendors/css/vendor.bundle.base.css')}}">
+    <!-- endinject -->
+    <!-- Plugin css for this page -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='template/vendors/select2/select2.min.css')}}">
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='template/vendors/select2-bootstrap-theme/select2-bootstrap.min.css')}}">
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='template/vendors/datatables.net-bs4/dataTables.bootstrap4.css')}}">
+    <!-- End plugin css for this page -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='template/css/fd-icons.css')}}">
+    <!-- inject:css -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='template/css/vertical-layout-dark/style.css')}}">
+    <!-- endinject -->
+    <link rel="shortcut icon" href="{{ url_for('static', filename='template/images/favicon.png')}}"/>
+    <script src="{{ url_for('static', filename='assets/js/a076d05399.js')}}"></script>
+
 </head>
 <script>
 $(document).ready(function(){
@@ -48,6 +65,8 @@ $(document).ready(function(){
 
 
 
+
+
 </script>
 
 <script>
@@ -64,6 +83,8 @@ $(document).ready(function() {
 
 
 
+
+
 </script>
 <script>
     function getDate(){
@@ -71,6 +92,8 @@ $(document).ready(function() {
 
 document.getElementById("date").value = today.getFullYear() + '-' + ('0' + (today.getMonth() + 1)).slice(-2) + '-' + ('0' + today.getDate()).slice(-2);
 }
+
+
 
 
 
@@ -155,57 +178,61 @@ document.getElementById("date").value = today.getFullYear() + '-' + ('0' + (toda
     <!-- partial -->
     <div class="main-panel" style="width: 100%">
         <div class="content-wrapper">
-            {% set last = data|last %}
+            {% set last = data|last if data|length > 0 else {} %}
             <div class="page-title-box" style="background-color: #3c4650">
                 <!--<h2>Collection</h2> -->
                 <div class="row">
+                    <div class="col-md-3">
+                        <form action="/api/hafta/close_loan_dialog_t" method="post">
+                            <div class="row">
 
-                    <div class="col-md-4">
-                        <input type="text" class="ml-5 mb-3 mt-3" name="name" style="width: 100%"
-                               value="{{last.user_name}}" disabled>
+                                <div class="col-md-4  ml-0 mb-3 mt-3 mr-0" style="color:#fff;">Loan Id :</div>
+                                <div class="col-md-4  ml-0 mb-3 mt-3 mr-0"><input style="max-width: 80px;" id="lid"
+                                                                                  value="{{data.0.transaction_id if data|length > 0}}"
+                                                                                  name="loan_id"></div>
+                                <div class="col-md-3  ml-0 mb-3 mt-3 mr-0">
+                                    <input type="submit" class="fetch" value="Fetch">
+                                </div>
+                        </form>
                     </div>
-
-
                 </div>
 
+                <div class="col-md-4">
+                    <input type="text" class="ml-5 mb-3 mt-3" name="name" style="width: 100%"
+                           value="{{last.user_name}}" disabled>
+                </div>
+
+
             </div>
-            <div class="row" style="color: black;">
 
-                <div class="col-md-2"><h4>Phone: {{last.user_phone}}</h4></div>
-                <div class="col-md-6"><h4>Address: {{last.user_address}}</h4></div>
-                <div class="col-md-2"><h4>City: {{last.user_city}}</h4></div>
+        </div>
+        <div class="row" style="color: black;">
 
-            </div>
+            <div class="col-md-3" style="font-size: 20px;"><h4>Phone: {{last.user_phone}}</h4></div>
+            <div class="col-md-6" style="font-size: 20px;"><h4>Address: {{last.user_address}}</h4></div>
+            <div class="col-md-2" style="font-size: 20px;"><h4>City: {{last.user_city}}</h4></div>
+
+        </div>
 
 
-            <div class="row">
-                <div class="col-md-12 grid-margin stretch-card">
-                    <div class="card card-box">
-                        <div class="card-body">
-                            <!-- <h4 class="card-title">Horizontal Form</h4> -->
-                            <!-- <p class="card-description"> -->
-                            <!-- Horizontal form layout -->
-                            <!-- </p> -->
-                            <table class="table table-bordered" width="100%">
-                                <thead class="thead thead-dark" style="background-color: #3c4650;">
+        <div class="card card-box" style="margin-top: 10px;">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="table-responsive">
+                            <table id="order-listing" class="table">
+                                <thead class="thead" style="background-color: #3c4650;">
                                 <tr>
-                                    <!--                                    <th scope="col" width="20%">Installment No</th>-->
-                                    <!--                                    <th scope="col" width="10%">EMI Amount</th>-->
-                                    <!--                                    <th scope="col" width="5%">Hafta Date</th>-->
-                                    <!--                                    <th scope="col" width="20%">Paid Date</th>-->
-                                    <!--                                    <th scope="col" width="10%">Paid Amount</th>-->
-                                    <!--                                    <th scope="col" width="10%">Status</th>-->
-                                    <th>User ID</th>
-                                    <th>Loan Id</th>
+                                    <th>L.Id</th>
                                     <th>Pending EMI</th>
-                                    <th>Loan Status</th>
-                                    <th>Pending Amount</th>
+                                    <th>Status</th>
+                                    <th>Pending Rs</th>
                                     <th>Guar 1 Name</th>
-                                    <th>Guar 1 Phone</th>
-                                    <th>Guar 1 Address</th>
+                                    <th>Guar 1 Ph.</th>
+                                    <th>Guar 1 Add.</th>
                                     <th>Guar 2 Name</th>
-                                    <th>Guar 2 Phone</th>
-                                    <th>Guar 2 Address</th>
+                                    <th>Guar 2 Ph.</th>
+                                    <th>Guar 2 Add.</th>
 
                                     <th>Action</th>
                                 </tr>
@@ -213,21 +240,22 @@ document.getElementById("date").value = today.getFullYear() + '-' + ('0' + (toda
                                 <tbody>
                                 {% for d in data %}
                                 <tr>
-                                    <td>{{d.id}}</td>
-                                    <td>{{d.transaction_id}}</td>
-                                    <td>{{d.no_of_pending_installments}}</td>
-                                    <td>{{"Pending" if d.loan_status in [0, None] else "Done"}}</td>
-                                    <td><input type="text" id="paid_amount_{{d.transaction_id}}"
-                                               value="{{d.pending_total_amount}}"></td>
-                                    <td>{{d.guarantor_1_name if d.guarantor_1_name != none else ''}}</td>
-                                    <td>{{d.guarantor_1_phone if d.guarantor_1_phone != none else ''}}</td>
-                                    <td>{{d.guarantor_1_address if d.guarantor_1_address != none else ''}}</td>
-                                    <td>{{d.guarantor_2_name if d.guarantor_2_name != none else ''}}</td>
-                                    <td>{{d.guarantor_2_phone if d.guarantor_2_phone != none else ''}}</td>
-                                    <td>{{d.guarantor_2_address if d.guarantor_2_address != none else ''}}</td>
-                                    <td>
+                                    <td><span>{{d.transaction_id}}</span></td>
+                                    <td><span>{{d.no_of_pending_installments}}</span></td>
+                                    <td><span>{{"Pending" if d.loan_status in [0, None] else "Done"}}</span></td>
+                                    <td><span><input type="text" id="paid_amount_{{d.transaction_id}}"
+                                                     value="{{d.pending_total_amount}}"></span></td>
+                                    <td><span>{{d.guarantor_1_name if d.guarantor_1_name != none else ''}}</span></td>
+                                    <td><span>{{d.guarantor_1_phone if d.guarantor_1_phone != none else ''}}</span></td>
+                                    <td><span>{{d.guarantor_1_address if d.guarantor_1_address != none else ''}}</span>
+                                    </td>
+                                    <td><span>{{d.guarantor_2_name if d.guarantor_2_name != none else ''}}</span></td>
+                                    <td><span>{{d.guarantor_2_phone if d.guarantor_2_phone != none else ''}}</span></td>
+                                    <td><span>{{d.guarantor_2_address if d.guarantor_2_address != none else ''}}</span>
+                                    </td>
+                                    <td><span>
                                         <a class="close_loan add" title="Close" data-toggle="tooltip" user_id="{{d.id}}"
-                                           loan_id="{{d.transaction_id}}"><i class="fa fa-times"></i></a>
+                                           loan_id="{{d.transaction_id}}"><i class="fa fa-times"></i></a></span>
 
 
                                     </td>
@@ -240,31 +268,14 @@ document.getElementById("date").value = today.getFullYear() + '-' + ('0' + (toda
                     </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-md-12 grid-margin stretch-card">
-                    <div class="card card-box">
-                        <div class="card-body">
-                            <div class="template-demo custom-button">
-                                <button type="button" class="btn btn-success  btn-rounded btn-fw">Print</button>
-                                <button type="button" class="btn btn-warning btn-rounded btn-fw right-align-button"><i
-                                        class="mdi mdi-checkbox-marked-circle mr-1"></i>Exit Info
-                                </button>
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
-        <!-- content-wrapper ends -->
-        <!-- partial:../../partials/_footer.html -->
-        <!-- partial -->
+
     </div>
-    <!-- main-panel ends -->
 </div>
-<!-- page-body-wrapper ends -->
-<!-- container-scroller -->
-<!-- plugins:js -->
+<!-- content-wrapper ends -->
+<!-- partial:../../partials/_footer.html -->
+<!-- partial -->
+<!-- main-panel ends -->
 <script src="{{ url_for('static', filename='template/vendors/js/vendor.bundle.base.js')}}"></script>
 <!-- endinject -->
 <!-- Plugin js for this page -->
@@ -286,6 +297,20 @@ document.getElementById("date").value = today.getFullYear() + '-' + ('0' + (toda
 <script src="{{ url_for('static', filename='template/js/typeahead.js')}}"></script>
 <script src="{{ url_for('static', filename='template/js/select2.js')}}"></script>
 <script src="{{ url_for('static', filename='template/js/formpickers.js')}}"></script>
+<script src="{{ url_for('static', filename='template/vendors/js/vendor.bundle.base.js')}}"></script>
+<!-- endinject -->
+<!-- Plugin js for this page-->
+<script src="{{ url_for('static', filename='template/vendors/datatables.net/jquery.dataTables.js')}}"></script>
+<script src="{{ url_for('static', filename='template/vendors/datatables.net-bs4/dataTables.bootstrap4.js')}}"></script>
+<!-- End plugin js for this page-->
+<!-- inject:js -->
+<script src="{{ url_for('static', filename='template/js/off-canvas.js')}}"></script>
+<script src="{{ url_for('static', filename='template/js/hoverable-collapse.js')}}"></script>
+<script src="{{ url_for('static', filename='template/js/template.js')}}"></script>
+<script src="{{ url_for('static', filename='template/js/settings.js')}}"></script>
+<!-- endinject -->
+<!-- Custom js for this page-->
+<script src="{{ url_for('static', filename='template/js/data-table.js')}}"></script>
 <!-- End custom js for this page-->
 </body>
 <!-- Mirrored from www.bootstrapdash.com/demo/silica/template/demo/vertical-default-dark/pages/forms/basic_elements.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 13 Jul 2021 21:03:13 GMT -->

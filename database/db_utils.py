@@ -21,21 +21,25 @@ def create_html_table(x, length=0, show_col_name=False, lines=1):
         else:
             dtype_list.append('text')
     if show_col_name:
-        row_data += '<tr>'
+        row_data += '<tr height:50px;>'
         for col in x.columns.values.tolist():
             row_data += f'<th>{col}</th>'
         row_data += '</tr>'
-    row_data += '<tr>'
+    row_data += '<tr height:50px;>'
     for i in range(x.shape[0]):
         if length != 0:
             if i == x.shape[0] - 1:
                 continue
         if i != 0:
-            if (i == 20 and lines == 2) or (i % 23 == 0 and lines == 2 and i!=23) or (i == 30 and lines == 1) or (i % 35 == 0 and lines == 1 and i!=35):
-                row_data += "</table>\n<br/><br/><br/><table><tr>"
+            if (i == 20 and lines == 2) or (i % 21 == 0 and lines == 2 and i != 21) or (i == 30 and lines == 1) or (
+                    i % 35 == 0 and lines == 1 and i != 35):
+                if i % 21*3 == 0:
+                    row_data += "</table>\n<br/><br/><br/></br><table><tr height:50px;>"
+                else:
+                    row_data += "</table>\n<br/><br/><br/><table><tr height:50px;>"
 
             else:
-                row_data += '\n<tr> '
+                row_data += '\n<tr height:50px;> '
         for j in range(x.shape[1]):
             if pd.isnull(x.iloc[i, j]):
                 val = ''
@@ -51,7 +55,7 @@ def create_html_table(x, length=0, show_col_name=False, lines=1):
         row_data += '\n </tr>'
     if length != 0:
         for i in range(length - x.shape[0]):
-            row_data += '\n<tr> <td></td><td></td><td></td>\n</tr>'
+            row_data += '\n<tr height:50px;> <td></td><td></td><td></td>\n</tr>'
         row_data += '\n<tr> '
         row_data += '\n <td class = "number_column" style="text-align:right">' + str(
             x.iloc[x.shape[0] - 1, 0]) + '</td>'
@@ -68,9 +72,14 @@ def get_user_basic_info_by_loan_id(loan_id):
     user_id = get_user_id_from_loan_id(loan_id)
     customer_data = Customer.query.filter_by(id=user_id).first()
     loan_data = HaftEntry.query.filter_by(transaction_id=loan_id).first()
-    data = {'user_id': user_id, 'name': customer_data.user_name, 'alias': customer_data.user_alias, 'address':
-        customer_data.user_address, 'phone': customer_data.user_phone, 'phone_2': customer_data.user_phone_2,
-            'city': customer_data.user_city, }
+    data={'user_id': user_id, 'name': customer_data.user_name, 'alias': customer_data.user_alias,
+          'address': customer_data.user_address, 'phone': customer_data.user_phone,
+          'phone_2': customer_data.user_phone_2,
+          'city': customer_data.user_city, 'guarantor_1_name': loan_data.guarantor_1_name,
+          'guarantor_2_name': loan_data.guarantor_2_name, 'guarantor_1_phone': loan_data.guarantor_1_phone,
+          'guarantor_2_phone': loan_data.guarantor_2_phone, 'guarantor_1_address': loan_data.guarantor_1_address,
+          'guarantor_2_address': loan_data.guarantor_2_address}
+    return data
 
 
 def create_general_html_table(x, length=0, show_col_name=False):
@@ -124,6 +133,7 @@ def create_general_html_table(x, length=0, show_col_name=False):
 
 
 def convert_table_to_dict_data(data):
+    print("in convert table to dict")
     return {column: getattr(data, column) for column in data.__table__.c.keys()}
 
 
@@ -177,7 +187,7 @@ def get_max_customer_id(id=None):
 def get_max_loan_id():
     max_query_id = db.session.query(db.func.max(HaftEntry.transaction_id))
     max_id = db.session.execute(max_query_id).first()[0]
-    return max_id+1
+    return max_id + 1
 
 
 def get_loan_type_by_loan_id(user_id=None, loan_id=None, user_type='loan'):
@@ -547,6 +557,7 @@ def get_user_id_from_loan_id(loan_id, loan_type='hafta'):
         entry_table = HaftEntry
     else:
         entry_table = AccountEntry
+
     return entry_table.query.filter_by(transaction_id=loan_id).first().id
 
 
@@ -646,7 +657,7 @@ def get_users_details(loan_status="active", user_type="loan", all_entries=False)
         if data['customer_type_account'] and data['customer_type_loan']:
             data['customer_type'] = "both"
         customer_data[i] = data
-        print("customer data: ",customer_data)
+        print("customer data: ", customer_data)
     return customer_data
 
 
@@ -771,7 +782,11 @@ def get_pending_installments_of_user(user_id, date):
             loan_id_dict[val['loan_id']] = [0, 0, 0, 0]
         loan_id_dict[val['loan_id']][0] += val['emi_amount']
         loan_id_dict[val['loan_id']][1] += 1
-        loan_id_dict[val['loan_id']][2] = val['date_to_pay'].date().strftime("%d/%m/%Y")
+        if type(val['date_to_pay']) == str:
+            loan_id_dict[val['loan_id']][2] = datetime.strptime(val['date_to_pay'].split(" ")[0], "%Y-%m-%d").date().strftime("%d/%m/%Y")
+
+        else:
+            loan_id_dict[val['loan_id']][2] = val['date_to_pay'].date().strftime("%d/%m/%Y")
         val['date_to_pay'] = loan_id_dict[val['loan_id']][2]
         loan_id_dict[val['loan_id']][3] = len(emis_dict_count)
     return loan_id_dict, emis_dict
@@ -1070,8 +1085,9 @@ def get_general_report():
         pd.Series(['', 'Interest', math.ceil(general_data.total_interest_earned +
                                              general_data.total_interest_pending)], columns),
         ignore_index=True)
-    account_user_data = account_user_data.append(pd.Series(['', 'Grand Total', account_user_data['amount'].sum()], columns),
-                                                 ignore_index=True)
+    account_user_data = account_user_data.append(
+        pd.Series(['', 'Grand Total', account_user_data['amount'].sum()], columns),
+        ignore_index=True)
     # vv = 0
     # for val in general_table_dict['value']:
     #     vv += val

@@ -229,13 +229,13 @@ $(document).ready(function(){
 
                     <div class="col-md-12 grid-margin stretch-card">
                         <div class="card card-box">
-                            <div class="card-body">
+                            <div class="card-body" style="margin-bottom: 0px">
 
                                 <form class="forms-sample custom-form ">
                                     <div class="form-group row">
                                         <label for="date_input" class="col-sm-3 col-form-label">Date</label>
                                         <div class="col-sm-6">
-                                            <input type="date" class="form-control date_input" id="date_input">
+                                            <input type="date" class="form-control date_input" id="date_input" value="{{date_today}}">
                                             <!--                                                <span class="input-group-addon input-group-append border-left">-->
                                             <!-- <span class="mdi mdi-calendar input-group-text"></span> -->
                                             <!--                        </span>-->
@@ -300,10 +300,10 @@ $(document).ready(function(){
                                         </div>
                                     </div>
 
-
-                                    <button type="submit" class="btn btn-success  btn-rounded btn-fw update">Update
+                                    <div class="form-group row justify-content-center">
+                                    <button type="submit" class="btn btn-success  btn-rounded btn-fw update">Save
                                     </button>
-
+                                    </div>
                                 </form>
                             </div>
                         </div>

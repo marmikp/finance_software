@@ -7,6 +7,9 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Add Collection</title>
+    <script src="{{ url_for('static', filename='assets/js/jquery-3.5.1.js')}}"></script>
+    <link href="{{ url_for('static', filename='assets/css/jquery-ui.css')}}" rel="stylesheet"/>
+
     <!-- plugins:css -->
     <link rel="stylesheet"
           href="{{ url_for('static', filename='template/vendors/mdi/css/materialdesignicons.min.css')}}">
@@ -23,8 +26,32 @@
     <!-- inject:css -->
     <link rel="stylesheet" href="{{ url_for('static', filename='template/css/vertical-layout-dark/style.css')}}">
     <!-- endinject -->
-    <script src="{{ url_for('static', filename='assets/js/jquery.min.js')}}"></script>
     <link rel="shortcut icon" href="{{ url_for('static', filename='template/images/favicon.png')}}"/>
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='template/vendors/datatables.net-bs4/dataTables.bootstrap4.css')}}">
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='template/vendors/mdi/css/materialdesignicons.min.css')}}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='template/vendors/css/vendor.bundle.base.css')}}">
+    <!-- endinject -->
+    <!-- Plugin css for this page -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='template/vendors/select2/select2.min.css')}}">
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='template/vendors/select2-bootstrap-theme/select2-bootstrap.min.css')}}">
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='template/vendors/datatables.net-bs4/dataTables.bootstrap4.css')}}">
+    <!-- End plugin css for this page -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='template/css/fd-icons.css')}}">
+    <!-- inject:css -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='template/css/vertical-layout-dark/style.css')}}">
+    <!-- endinject -->
+    <link rel="shortcut icon" href="{{ url_for('static', filename='template/images/favicon.png')}}"/>
+    <script src="{{ url_for('static', filename='assets/js/a076d05399.js')}}"></script>
+
+    <style>
+    .dataTables_scrollBody{
+        max-height: 400px;
+    }
+</style>
 </head>
 <body>
 <div class="container-scroller">
@@ -38,10 +65,6 @@
                 <div class="col-md-5 grid-margin stretch-card">
                     <div class="card card-box">
                         <div class="card-body">
-                            <!-- <h4 class="card-title">Horizontal Form</h4> -->
-                            <!-- <p class="card-description"> -->
-                            <!-- Horizontal form layout -->
-                            <!-- </p> -->
                             <form class="forms-sample custom-form ">
                                 <div class="form-group row" style="margin-bottom: 0px;">
                                     <label for="loan_id" class=" col-sm-3  col-form-label">Loan No.</label>
@@ -155,8 +178,8 @@
                                     <label for="loan_type" class=" col-sm-3 col-form-label">Type</label>
                                     <div class="col-sm-4">
                                         <select class="form-control" id="loan_type" name="loan_type">
-                                            <option value="flat">Flat</option>
-                                            <option value="hafta">Hafta</option>
+                                            <option style="text-align: center;" value="flat">Flat</option>
+                                            <option style="text-align: center;" value="hafta">Hafta</option>
                                         </select>
 
 
@@ -241,7 +264,7 @@
                                     <div class="col-sm-7" style="margin-bottom: 0px;">
                                         <button type="button"
                                                 class="btn btn-warning btn-rounded btn-fw right-align-button register_btn">
-                                            <i class="mdi mdi-checkbox-marked-circle mr-1"></i>Add Loan
+                                            <i class="mdi mdi-checkbox-marked-circle mr-1"></i>Save
                                         </button>
                                     </div>
                                 </div>
@@ -251,26 +274,33 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-3 grid-margin stretch-card">
+                <div class="col-md-3 grid-margin">
                     <div class="card card-box">
                         <div class="card-body">
                             <!-- <h4 class="card-title">Horizontal Form</h4> -->
                             <!-- <p class="card-description"> -->
                             <!-- Horizontal form layout -->
                             <!-- </p> -->
-                            <table class="table table-bordered table_test">
-                                <thead class="thead thead-dark">
-                                <tr>
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="table-responsive">
+                                        <table id="order-listing" class="table table_test">
+                                            <thead>
+                                            <tr>
 
-                                    <th scope="col">Date</th>
-                                    <th scope="col">Amount</th>
+                                                <th scope="col">Date</th>
+                                                <th scope="col">Amount</th>
 
-                                </tr>
-                                </thead>
-                                <tbody>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
 
-                                </tbody>
-                            </table>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -310,64 +340,82 @@
 <script src="{{ url_for('static', filename='template/js/typeahead.js')}}"></script>
 <script src="{{ url_for('static', filename='template/js/select2.js')}}"></script>
 <script src="{{ url_for('static', filename='template/js/formpickers.js')}}"></script>
+<script src="{{ url_for('static', filename='template/vendors/js/vendor.bundle.base.js')}}"></script>
+<!-- endinject -->
+<!-- Plugin js for this page-->
+<script src="{{ url_for('static', filename='template/vendors/datatables.net/jquery.dataTables.js')}}"></script>
+<script src="{{ url_for('static', filename='template/vendors/datatables.net-bs4/dataTables.bootstrap4.js')}}"></script>
+<!-- End plugin js for this page-->
+<!-- inject:js -->
+<script src="{{ url_for('static', filename='template/js/off-canvas.js')}}"></script>
+<script src="{{ url_for('static', filename='template/js/hoverable-collapse.js')}}"></script>
+<script src="{{ url_for('static', filename='template/js/template.js')}}"></script>
+<script src="{{ url_for('static', filename='template/js/settings.js')}}"></script>
+<!-- endinject -->
+<!-- Custom js for this page-->
+<script src="{{ url_for('static', filename='template/js/data-table.js')}}"></script>
+
 <!-- End custom js for this page-->
 </body>
 
 <script>
 $(document).ready(function(){
     $(".register_btn").click(function(){
-    alert("register_btn");
         var after_apply=$('.total_amount').val()-$('.base_amount').val();
         if (after_apply < 0){
             alert("Amount should be less");
         }
           else{
-            var id = document.getElementById('id').value;
-            var name = document.getElementById('name').value;
-            var alias = document.getElementById('alias').value;
-            var address = document.getElementById('address').value;
-            var city = document.getElementById('city').value;
-            var phone = document.getElementById('phone').value;
-            var phone_2 = document.getElementById('phone_2').value;
+          if (confirm("Press OK to Add New Loan")){
+              $( ".register_btn" ).prop( "disabled", true );
+                var id = document.getElementById('id').value;
+                var name = document.getElementById('name').value;
+                var alias = document.getElementById('alias').value;
+                var address = document.getElementById('address').value;
+                var city = document.getElementById('city').value;
+                var phone = document.getElementById('phone').value;
+                var phone_2 = document.getElementById('phone_2').value;
 
-            var loan_type = document.getElementById('loan_type').value;
-            var guarantor_1_phone = document.getElementById('guarantor_1_phone').value;
-            var guarantor_1_name = document.getElementById('guarantor_1_name').value;
-            var guarantor_1_address = document.getElementById('guarantor_1_address').value;
-            var remark = document.getElementById('remark').value;
-            var base_amount = document.getElementById('base_amount').value;
-            var interest = document.getElementById('interest').value;
+                var loan_type = document.getElementById('loan_type').value;
+                var guarantor_1_phone = document.getElementById('guarantor_1_phone').value;
+                var guarantor_1_name = document.getElementById('guarantor_1_name').value;
+                var guarantor_1_address = document.getElementById('guarantor_1_address').value;
+                var remark = document.getElementById('remark').value;
+                var base_amount = document.getElementById('base_amount').value;
+                var interest = document.getElementById('interest').value;
 
-            var noi = document.getElementById('noi').value;
-            var startdate = document.getElementById('startdate').value;
-            var period = document.getElementById('period').value;
-            var paid_amount = document.getElementById('paid_amount').value;
-            var guarantor_2_name = document.getElementById('guarantor_2_name').value;
-            var guarantor_2_address = document.getElementById('guarantor_2_address').value;
-            var guarantor_2_phone = document.getElementById('guarantor_2_phone').value;
+                var noi = document.getElementById('noi').value;
+                var startdate = document.getElementById('startdate').value;
+                var period = document.getElementById('period').value;
+                var paid_amount = document.getElementById('paid_amount').value;
+                var guarantor_2_name = document.getElementById('guarantor_2_name').value;
+                var guarantor_2_address = document.getElementById('guarantor_2_address').value;
+                var guarantor_2_phone = document.getElementById('guarantor_2_phone').value;
 
-            $.post('/api/hafta/new_hafta_entry', {'id': id, 'name': name, 'alias': alias, 'address': address, 'phone': phone,
-                                                'phone_2': phone_2, 'city': city, 'loan_type': loan_type, 'guarantor_1_phone': guarantor_1_phone,
-                                                'guarantor_1_name': guarantor_1_name, 'guarantor_1_address': guarantor_1_address,
-                                                'remark': remark, 'base_amount': base_amount, 'interest': interest, 'noi': noi, 'startdate': startdate,
-                                                'period': period, 'paid_amount': paid_amount, 'guarantor_2_name': guarantor_2_name, 'guarantor_2_address': guarantor_2_address,
-                                                'guarantor_2_phone': guarantor_2_phone},
-                    function(returnedData){
-                    console.log(returnedData);
-                        if (returnedData.code == 200){
-                        alert("Entry Added")
-                        location.reload();
-<!--                            $('.bb').fadeToggle(200);-->
-<!--                            $('.message').toggleClass('comein');-->
-<!--                            $('.check').toggleClass('scaledown');-->
-<!--                            $('.register-form').hide();-->
+                $.post('/api/hafta/new_hafta_entry', {'id': id, 'name': name, 'alias': alias, 'address': address, 'phone': phone,
+                                                    'phone_2': phone_2, 'city': city, 'loan_type': loan_type, 'guarantor_1_phone': guarantor_1_phone,
+                                                    'guarantor_1_name': guarantor_1_name, 'guarantor_1_address': guarantor_1_address,
+                                                    'remark': remark, 'base_amount': base_amount, 'interest': interest, 'noi': noi, 'startdate': startdate,
+                                                    'period': period, 'paid_amount': paid_amount, 'guarantor_2_name': guarantor_2_name, 'guarantor_2_address': guarantor_2_address,
+                                                    'guarantor_2_phone': guarantor_2_phone},
+                        function(returnedData){
+                        console.log(returnedData);
+                            if (returnedData.code == 200){
+                            alert("Entry Added")
+                            location.reload();
+    <!--                            $('.bb').fadeToggle(200);-->
+    <!--                            $('.message').toggleClass('comein');-->
+    <!--                            $('.check').toggleClass('scaledown');-->
+    <!--                            $('.register-form').hide();-->
+                            $( ".register_btn" ).prop( "disabled", false );
 
 
-                        }
+                            }
 
-                }).fail(function(){
-                      console.log("error");
-                });
+                    }).fail(function(){
+                          console.log("error");
+                    });
+                    }
             }
   });
 
@@ -395,7 +443,7 @@ $(document).ready(function(){
                 let day = date.getDate().toString().padStart(2, '0');
 
                 date = day + '/' + month + '/' + year;
-                markup = "<tr><td>"+date+"</td><td>"+interest+"</td></tr>";
+                markup = "<tr><td style='text-align: center;'><span>"+date+"</span></td><td style='text-align: center;'><span>"+interest+"</span></td></tr>";
                 tableBody.append(markup);
                 startdate.setMonth( startdate.getMonth() + 1);
             }
@@ -405,7 +453,7 @@ $(document).ready(function(){
             let day = date.getDate().toString().padStart(2, '0');
 
             date = day + '/' + month + '/' + year;
-            markup = "<tr><td>"+date+"</td><td>"+base_amount+"</td></tr>";
+            markup = "<tr><td style='text-align: center;'><span>"+date+"</span></td><td style='text-align: center;'><span>"+base_amount+"</span></td></tr>";
             tableBody.append(markup);
         }else{
             var i;
@@ -420,7 +468,7 @@ $(document).ready(function(){
                 let day = date.getDate().toString().padStart(2, '0');
 
                 date = day + '/' + month + '/' + year;
-                markup = "<tr><td>"+date+"</td><td>"+emi_amount+"</td></tr>";
+                markup = "<tr><td style='text-align: center;'><span>"+date+"</span></td><td style='text-align: center;'><span>"+emi_amount+"</span></td></tr>";
                 tableBody.append(markup);
 
             }
@@ -437,6 +485,9 @@ $(document).ready(function(){
   });
 
   });
+
+
+
 
 
 
@@ -467,6 +518,9 @@ function hide_show_paid_amount() {
     $("#paid_amount").hide();
   }
 }
+
+
+
 
 
 

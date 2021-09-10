@@ -23959,11 +23959,12 @@ code {
 }
 
 .card .card-body {
-  padding: 1.75rem 1.687rem;
+  padding: 1.35rem 1.587rem;
+  margin-bottom: -30px;
 }
 
 .card .card-body + .card-body {
-  padding-top: 1rem;
+  padding-top: 0.25rem;
 }
 
 .card .card-title {

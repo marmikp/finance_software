@@ -232,7 +232,7 @@ $(".account_user_pending_installments_btn").click(function(){
         <!-- partial -->
         <div class="main-panel">
             <div class="content-wrapper">
-                <div class="page-title-box">
+                <div class="page-title-box" style="min-height: 30px;">
                     <h2>Report</h2>
                 </div>
 
@@ -240,7 +240,7 @@ $(".account_user_pending_installments_btn").click(function(){
 
                     <div class="col-md-12 grid-margin stretch-card">
                         <div class="card report-card">
-                            <div class="card-body">
+                            <div class="card-body" style="padding-top: 10px;">
                                 <div class="d-flex align-items-start justify-content-between">
                                     <h5 class="card-title">Customer A/C Report</h5>
                                 </div>
@@ -257,7 +257,7 @@ $(".account_user_pending_installments_btn").click(function(){
                                     </div>
                                     <div class="col-sm-3">
                                         <button type="button"
-                                                class="btn btn-success  btn-rounded btn-fw user_entry_btn">Print
+                                                class="btn btn-success  btn-rounded btn-fw user_entry_btn">View
                                         </button>
                                     </div>
                                 </div>
@@ -267,14 +267,14 @@ $(".account_user_pending_installments_btn").click(function(){
 
                     <div class="col-sm-3 grid-margin stretch-card">
                         <div class="card general-report-card report-card">
-                            <div class="card-body">
+                            <div class="card-body" style="padding-top: 10px;">
                                 <div class="d-flex align-items-start justify-content-between">
                                     <h5 class="card-title">General Report</h5>
                                 </div>
                                 <div class="print-btn-right-icon-box">
                                     <button type="button"
                                             class="general_report_btn btn btn-success btn-rounded btn-fw print-btn">
-                                        Print
+                                        View
                                     </button>
                                     <i class="fd-box-check"></i>
                                 </div>
@@ -285,7 +285,7 @@ $(".account_user_pending_installments_btn").click(function(){
 
                     <div class="col-md-9 grid-margin stretch-card">
                         <div class="card card-box">
-                            <div class="card-body">
+                            <div class="card-body" style="padding-top: 10px;">
                                 <form class="forms-sample custom-form">
                                     <div class="form-group row">
                                         <label for="exampleInputUsername2" class="col-sm-3 col-form-label">Due
@@ -293,7 +293,7 @@ $(".account_user_pending_installments_btn").click(function(){
                                         <div class="col-sm-6">
                                             <div class="datepicker-popup input-group date datepicker">
                                                 <input type="date" class="form-control"
-                                                       id="pending_installment_date_date">
+                                                       id="pending_installment_date_date" value="{{date_today}}">
                                                 <span class="input-group-addon input-group-append border-left">
                           <!-- <span class="mdi mdi-calendar input-group-text"></span> -->
                         </span>
@@ -302,7 +302,7 @@ $(".account_user_pending_installments_btn").click(function(){
                                         <div class="col-sm-3">
                                             <button type="button"
                                                     class="btn btn-danger  btn-rounded btn-fw pending_date_installment_btn">
-                                                Print
+                                                View
                                             </button>
                                         </div>
                                     </div>
@@ -312,7 +312,7 @@ $(".account_user_pending_installments_btn").click(function(){
                                         <div class="col-sm-6">
                                             <div class="datepicker-popup input-group date datepicker">
                                                 <input type="date" class="form-control date datepicker"
-                                                       id="day_report_date">
+                                                       id="day_report_date" value="{{date_today}}">
                                                 <span class="input-group-addon input-group-append border-left">
                           <!-- <span class="mdi mdi-calendar input-group-text"></span> -->
                         </span>
@@ -322,7 +322,7 @@ $(".account_user_pending_installments_btn").click(function(){
                                         <div class="col-sm-3">
                                             <button type="button"
                                                     class="btn btn-success day_report_btn btn-rounded btn-fw day_report_btn">
-                                                Print
+                                                View
                                             </button>
                                         </div>
                                     </div>
@@ -334,7 +334,7 @@ $(".account_user_pending_installments_btn").click(function(){
 
                     <div class="col-md-12 grid-margin stretch-card">
                         <div class="card dashboard-card">
-                            <div class="card-body">
+                            <div class="card-body" style="padding-top: 10px;">
                                 <div class="col-sm-6 list-inline-item" style="padding-left:0px;">
                                     <h5 class="card-title">User Pending Installments</h5>
                                 </div>
@@ -354,12 +354,12 @@ $(".account_user_pending_installments_btn").click(function(){
                                     </div>
                                     <div class="col-sm-3">
                                         <input type="date" id="user_pending_installments_date"
-                                               class="user_pending_installments_date">
+                                               class="user_pending_installments_date" value="{{date_today}}">
                                     </div>
                                     <div class="col-sm-3">
                                         <button type="button"
                                                 class="user_pending_installments_btn btn btn-success  btn-rounded btn-fw">
-                                            Print
+                                            View
                                         </button>
                                     </div>
                                 </div>
@@ -370,7 +370,7 @@ $(".account_user_pending_installments_btn").click(function(){
 
                     <div class="col-md-12 grid-margin stretch-card">
                         <div class="card dashboard-card">
-                            <div class="card-body">
+                            <div class="card-body" style="padding-top: 10px;">
                                 <div class="d-flex mt-2 form-group row">
                                     <label class="col-sm-3 col-form-label">Sarafi Acc. Report</label>
                                     <div class="col-sm-6">
@@ -381,7 +381,7 @@ $(".account_user_pending_installments_btn").click(function(){
                                         </select>
                                     </div>
                                     <div class="col-sm-3">
-                                        <button type="button" class="account_user_pending_installments_btn btn btn-success  btn-rounded btn-fw">Print</button>
+                                        <button type="button" class="account_user_pending_installments_btn btn btn-success  btn-rounded btn-fw">View</button>
                                     </div>
                                 </div>
 
@@ -391,11 +391,11 @@ $(".account_user_pending_installments_btn").click(function(){
 
                                     <label class="col-form-label">From</label>
                                     <div class="col-sm-3">
-                                        <input type="date" id="account_user_pending_installments_date_from">
+                                        <input type="date" id="account_user_pending_installments_date_from" value="{{date_today}}">
                                     </div>
                                     <label class="col-form-label">To</label>
                                     <div class="col-sm-3">
-                                        <input type="date" id="account_user_pending_installments_date">
+                                        <input type="date" id="account_user_pending_installments_date" value="{{date_today}}">
                                     </div>
 
                                 </div>

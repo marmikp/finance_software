@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Add Collection</title>
     <script src="{{ url_for('static', filename='assets/js/jquery-3.5.1.js')}}"></script>
-    <link href="{{ url_for('static', filename='assets/css/jquery-ui.css')}}" rel="stylesheet" />
+    <link href="{{ url_for('static', filename='assets/css/jquery-ui.css')}}" rel="stylesheet"/>
 
     <!-- plugins:css -->
     <link rel="stylesheet"
@@ -25,7 +25,74 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='template/css/vertical-layout-dark/style.css')}}">
     <!-- endinject -->
     <link rel="shortcut icon" href="{{ url_for('static', filename='template/images/favicon.png')}}"/>
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='template/vendors/datatables.net-bs4/dataTables.bootstrap4.css')}}">
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='template/vendors/mdi/css/materialdesignicons.min.css')}}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='template/vendors/css/vendor.bundle.base.css')}}">
+    <!-- endinject -->
+    <!-- Plugin css for this page -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='template/vendors/select2/select2.min.css')}}">
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='template/vendors/select2-bootstrap-theme/select2-bootstrap.min.css')}}">
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='template/vendors/datatables.net-bs4/dataTables.bootstrap4.css')}}">
+    <!-- End plugin css for this page -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='template/css/fd-icons.css')}}">
+    <!-- inject:css -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='template/css/vertical-layout-dark/style.css')}}">
+    <!-- endinject -->
+    <link rel="shortcut icon" href="{{ url_for('static', filename='template/images/favicon.png')}}"/>
+    <script src="{{ url_for('static', filename='assets/js/a076d05399.js')}}"></script>
+
+    <style>
+    .dataTables_scrollBody{
+        max-height: 400px;
+    }
+</style>
 </head>
+<script>
+$(document).ready(function(){
+
+
+  $(".fetch").click(function(){
+    var id = document.getElementById('lid').value;
+
+    $.post('/api/hafta/get_user_data_by_load_id', {'loan_id': id},
+            function(returnedData){
+
+            console.log(returnedData);
+                if (returnedData.code == 200){
+                    $("#id").val(returnedData['data']['user_id']);
+                    $("#name").val(returnedData['data']['name']);
+                    $("#alias").val(returnedData['data']['alias']);
+                    $("#address").val(returnedData['data']['address']);
+                    $("#city").val(returnedData['data']['city']);
+                    $("#phone").val(returnedData['data']['phone']);
+                    $("#phone_2").val(returnedData['data']['phone_2']);
+                    $("#guarantor_1_name").val(returnedData['data']['guarantor_1_name']);
+                    $("#guarantor_1_phone").val(returnedData['data']['guarantor_1_phone']);
+                    $("#guarantor_1_address").val(returnedData['data']['guarantor_1_address']);
+                    $("#guarantor_2_name").val(returnedData['data']['guarantor_2_name']);
+                    $("#guarantor_2_phone").val(returnedData['data']['guarantor_2_phone']);
+                    $("#guarantor_2_address").val(returnedData['data']['guarantor_2_address']);
+
+                }
+
+        }).fail(function(){
+              console.log("error");
+        });
+  });
+
+  });
+
+
+
+
+
+
+
+</script>
 <script>
 $(document).ready(function(){
     $(".new_loan").click(function(){
@@ -63,6 +130,12 @@ $(document).ready(function(){
   });
 });
 
+
+
+
+
+
+
 </script>
 <script>
 $(document).ready(function() {
@@ -78,6 +151,12 @@ $(document).ready(function() {
 } );
 
 
+
+
+
+
+
+
 </script>
 <script>
     function getDate(){
@@ -85,6 +164,12 @@ $(document).ready(function() {
 
 document.getElementById("date").value = today.getFullYear() + '-' + ('0' + (today.getMonth() + 1)).slice(-2) + '-' + ('0' + today.getDate()).slice(-2);
 }
+
+
+
+
+
+
 
 </script>
 <body>
@@ -170,19 +255,34 @@ document.getElementById("date").value = today.getFullYear() + '-' + ('0' + (toda
             <div class="page-title-box" style="background-color: #3c4650">
                 <!--<h2>Collection</h2> -->
                 <div class="row">
-                    <div class="col-md-2">
-                        <div class="ml-5 mb-3 mt-3" style="color:#fff">Loan Id : {{data.data.0.loan_id}}</div>
+                    <div class="col-md-3">
+                        <form action="/api/hafta/party_info_dialog" method="post">
+                        <div class="row">
+
+                                <div class="col-md-4  ml-0 mb-3 mt-3 mr-0" style="color:#fff;">Loan Id</div>
+                                <div class="col-md-4  ml-0 mb-3 mt-3 mr-0"><input style="max-width: 80px;" id="lid"
+                                                                                  value="{{data.data.0.loan_id if data.data|length > 0}}"
+                                                                                  name="loan_id"></div>
+                                <div class="col-md-3  ml-0 mb-3 mt-3 mr-0">
+                                    <input type="submit" class="fetch" value="Fetch">
+                                </div>
+                            </form>
+                        </div>
                     </div>
-                    <div class="col-md-4">
-                        <input type="text" class="ml-5 mb-3 mt-3" name="name" style="width: 100%"
-                               value="{{data.data.0.user_name if 'user_name' in data.data.0.keys()}}" disabled>
+                    <div class="col-md-3">
+                        <input type="text" class="ml-1 mb-3 mt-3" name="name" style="width: 100%"
+                               value="{{data.data.0.user_name if 'user_name' in data.data.0.keys() if data.data|length else ''}}"
+                               disabled>
                     </div>
                     <div class="col-md-2">
-                        <div class="ml-5 mb-3 mt-3" style="color:#fff">General : {{data.total_pending_amount}}</div>
+                        <div class="ml-1 mb-3 mt-3" style="color:#fff">General: {{data.total_pending_amount}}</div>
                     </div>
 
                     <div class="col-md-2">
-                        <div class="ml-5 mb-3 mt-3" style="color: #fff">Due : {{data.total_due_amount}}</div>
+                        <div class="ml-1 mb-3 mt-3" style="color: #fff">Due: {{data.total_due_amount}}</div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="ml-1 mb-3 mt-3" style="color: #fff">Type: {{data.data.0.loan_type.capitalize()}}</div>
                     </div>
 
                 </div>
@@ -191,84 +291,52 @@ document.getElementById("date").value = today.getFullYear() + '-' + ('0' + (toda
             <div class="row" style="color: black;">
                 {% if data.data|length > 0 %}
 
-                <div class="col-md-2"><h4>Phone: {{data.data.0.user_phone}}</h4></div>
+                <div class="col-md-3"><h4>Phone: {{data.data.0.user_phone}}</h4></div>
                 <div class="col-md-6"><h4>Address: {{data.data.0.user_address}}</h4></div>
                 <div class="col-md-2"><h4>City: {{data.data.0.user_city}}</h4></div>
                 {% endif %}
             </div>
             <hr>
-            <div class="row" style="color: black;">
-                {% if data.data|length > 0 %}
-
-                <div class="col-md-4"><h4>Loan Type: {{data.data.0.loan_type}}</h4></div>
-                {% endif %}
-            </div>
-            <hr>
-            <div class="row" style="color: black;">
-
-                <div class="col-md-3">Hafta Amount<input type="text" value="{{data.data[0].emi_amount}}"
-                                                         placeholder="Emi Amount" id="extend_amount"></div>
-                <div class="col-md-3">No Of Months<input type="text" value="0" placeholder="Extend Months"
-                                                         id="extend_month"></div>
-                <div class="col-md-2">
-                    Loan Id
-                    <select id="extend_loan_id" name="loan_id_extend">
-                        {% for d in data.loan_id_list %}
-                        <option value="{{d}}">{{d}}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-
-                <div class="col-md-2">
-                    <input type="button" class="btn btn-success btn-rounded btn-fw right-align-button extend_hafta"
-                           style="background-color: #008fe4;"
-                           value="Extend Hafta" user_id="{{data.user_id}}" {{"disable" if data.data[0].loan_type !=
-                    "flat"}}>
-                </div>
-
-            </div>
 
 
-            <div class="row">
-                <div class="col-md-12 grid-margin stretch-card">
-                    <div class="card card-box">
-                        <div class="card-body">
-                            <!-- <h4 class="card-title">Horizontal Form</h4> -->
-                            <!-- <p class="card-description"> -->
-                            <!-- Horizontal form layout -->
-                            <!-- </p> -->
-                            <table class="table table-bordered" width="100%">
-                                <thead class="thead thead-dark" style="background-color: #3c4650;">
-                                <tr>
-                                    <th scope="col" width="20%">Installment No</th>
-                                    <th scope="col" width="10%">EMI Amount</th>
-                                    <th scope="col" width="5%">Hafta Date</th>
-                                    <th scope="col" width="20%">Paid Date</th>
-                                    <th scope="col" width="10%">Paid Amount</th>
-                                    <th scope="col" width="10%">Status</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                {% for d in data.data %}
-                                <tr>
-                                    <td>{{d.no_of_installment}}</td>
-                                    <td>{{d.emi_amount}}</td>
-                                    <td>{{'' if 'date_to_pay' not in d.keys() else d.date_to_pay.strftime("%d/%m/%Y") if
-                                        d.date_to_pay != None else ''}}
-                                    </td>
-                                    <td><input type="text" id="paid_date_{{d.loan_id}}_{{d.no_of_installment}}"
-                                               value="{{'' if d.tx_status in [0, None] else d.paid_date.strftime('%d/%m/%Y')}}" readonly>
-                                    </td>
-                                    <td>{{d.paid_amount if d.tx_status not in [0, None] else ""}}</td>
+            <div class="card card-box" style="margin-top: 10px;">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="table-responsive">
+                                    <table id="order-listing" class="table">
+                                    <thead>
+                                    <tr>
+                                        <th style="text-align: center;">Installment No</th>
+                                        <th style="text-align: center;">EMI Amount</th>
+                                        <th style="text-align: center;">Hafta Date</th>
+                                        <th style="text-align: center;">Paid Date</th>
+                                        <th style="text-align: center;">Paid Amount</th>
+                                        <th style="text-align: center;">Status</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for d in data.data %}
+                                    <tr>
+                                        <td><span>{{d.no_of_installment}}</span></td>
+                                        <td><span>{{d.emi_amount}}</span></td>
+                                        <td><span>{{'' if 'date_to_pay' not in d.keys() else
+                                            d.date_to_pay.strftime("%d/%m/%Y") if
+                                            d.date_to_pay != None else ''}}</span>
+                                        </td>
+                                        <td><span>{{'' if d.tx_status in [0, None] else d.paid_date.strftime('%d/%m/%Y')}}</span>
+                                        </td>
+                                        <td><span>{{d.paid_amount if d.tx_status not in [0, None] else ""}}</span></td>
 
-                                    <td style="color:{{'green' if d.tx_status == 1 else 'red' if d.tx_status in [0, None] and d.date_to_pay < data.date_today else 'black'}}">
-                                        {{"Pending" if d.tx_status in [0, None] else "Paid"}}
-                                    </td>
-                                </tr>
-                                {% endfor %}
+                                        <td style="color:{{'green' if d.tx_status == 1 else 'red' if d.tx_status in [0, None] and d.date_to_pay.date() < data.date_today else 'black'}}"><span>
+                                            {{"Pending" if d.tx_status in [0, None] else "Paid"}}</span>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
 
-                                </tbody>
-                            </table>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -305,6 +373,20 @@ document.getElementById("date").value = today.getFullYear() + '-' + ('0' + (toda
 <script src="{{ url_for('static', filename='template/js/typeahead.js')}}"></script>
 <script src="{{ url_for('static', filename='template/js/select2.js')}}"></script>
 <script src="{{ url_for('static', filename='template/js/formpickers.js')}}"></script>
+<script src="{{ url_for('static', filename='template/vendors/js/vendor.bundle.base.js')}}"></script>
+<!-- endinject -->
+<!-- Plugin js for this page-->
+<script src="{{ url_for('static', filename='template/vendors/datatables.net/jquery.dataTables.js')}}"></script>
+<script src="{{ url_for('static', filename='template/vendors/datatables.net-bs4/dataTables.bootstrap4.js')}}"></script>
+<!-- End plugin js for this page-->
+<!-- inject:js -->
+<script src="{{ url_for('static', filename='template/js/off-canvas.js')}}"></script>
+<script src="{{ url_for('static', filename='template/js/hoverable-collapse.js')}}"></script>
+<script src="{{ url_for('static', filename='template/js/template.js')}}"></script>
+<script src="{{ url_for('static', filename='template/js/settings.js')}}"></script>
+<!-- endinject -->
+<!-- Custom js for this page-->
+<script src="{{ url_for('static', filename='template/js/data-table.js')}}"></script>
 <!-- End custom js for this page-->
 </body>
 <!-- Mirrored from www.bootstrapdash.com/demo/silica/template/demo/vertical-default-dark/pages/forms/basic_elements.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 13 Jul 2021 21:03:13 GMT -->

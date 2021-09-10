@@ -1,6 +1,8 @@
 Traceback (most recent call last):
-  File "/home/ezdi/marmik/finance_software/_account.py", line 830, in pending_installment_by_date
-    datetime.strptime(str(request_data['date']), "%Y-%m-%d"))
-  File "/home/ezdi/marmik/finance_software/src/utils.py", line 250, in get_report_of_pending_installments_by_date
-    user_data['guarantor_1_name']+"<br/>"+user_data['guarantor_2_name'], user_data['guarantor_1_phone']+"<br/>"+user_data['guarantor_2_phone'],
-TypeError: can only concatenate str (not "NoneType") to str
+  File "C:/Users/Raja/Desktop/marmik/finance_software/_account.py", line 962, in pending_installment_by_date
+    emis = src.utils.get_report_of_pending_installments_by_date(
+  File "C:\Users\Raja\Desktop\marmik\finance_software\src\utils.py", line 249, in get_report_of_pending_installments_by_date
+    row = pd.Series([user_info['user_name'],
+  File "C:\Users\Raja\miniconda3\envs\finance_software\lib\site-packages\pandas\core\series.py", line 350, in __init__
+    raise ValueError(
+ValueError: Length of passed values is 7, index implies 6.

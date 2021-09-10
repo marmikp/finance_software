@@ -25,6 +25,26 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='template/css/vertical-layout-dark/style.css')}}">
     <!-- endinject -->
     <link rel="shortcut icon" href="{{ url_for('static', filename='template/images/favicon.png')}}"/>
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='template/vendors/datatables.net-bs4/dataTables.bootstrap4.css')}}">
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='template/vendors/mdi/css/materialdesignicons.min.css')}}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='template/vendors/css/vendor.bundle.base.css')}}">
+    <!-- endinject -->
+    <!-- Plugin css for this page -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='template/vendors/select2/select2.min.css')}}">
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='template/vendors/select2-bootstrap-theme/select2-bootstrap.min.css')}}">
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='template/vendors/datatables.net-bs4/dataTables.bootstrap4.css')}}">
+    <!-- End plugin css for this page -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='template/css/fd-icons.css')}}">
+    <!-- inject:css -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='template/css/vertical-layout-dark/style.css')}}">
+    <!-- endinject -->
+    <link rel="shortcut icon" href="{{ url_for('static', filename='template/images/favicon.png')}}"/>
+    <script src="{{ url_for('static', filename='assets/js/a076d05399.js')}}"></script>
+
 </head>
 <script>
 $(document).ready(function(){
@@ -65,6 +85,8 @@ $(document).ready(function(){
 
 
 
+
+
 </script>
 <script>
 $(document).ready(function() {
@@ -82,6 +104,8 @@ $(document).ready(function() {
 
 
 
+
+
 </script>
 <script>
     function getDate(){
@@ -89,6 +113,8 @@ $(document).ready(function() {
 
 document.getElementById("date").value = today.getFullYear() + '-' + ('0' + (today.getMonth() + 1)).slice(-2) + '-' + ('0' + today.getDate()).slice(-2);
 }
+
+
 
 
 
@@ -189,53 +215,57 @@ document.getElementById("date").value = today.getFullYear() + '-' + ('0' + (toda
             </div>
 
 
+            <!--                <div class="col-md-12 grid-margin stretch-card">-->
+            <div class="card card-box">
+                <div class="card-body">
+                    <div class="row">
+                        <!-- <h4 class="card-title">Horizontal Form</h4> -->
+                        <!-- <p class="card-description"> -->
+                        <!-- Horizontal form layout -->
+                        <!-- </p> -->
+                        <div class="col-12">
+                            <div class="table-responsive">
 
-            <div class="row">
-                <div class="col-md-12 grid-margin stretch-card">
-                    <div class="card card-box">
-                        <div class="card-body">
-                            <!-- <h4 class="card-title">Horizontal Form</h4> -->
-                            <!-- <p class="card-description"> -->
-                            <!-- Horizontal form layout -->
-                            <!-- </p> -->
-                            <table class="table table-bordered" width="100%">
-                                <thead class="thead thead-dark" style="background-color: #3c4650;">
-                                <tr>
-                                    <th scope="col" width="20%">Id</th>
-                                    <th scope="col" width="10%">Loan No</th>
-                                    <th scope="col" width="5%">Credit Amt</th>
-                                    <th scope="col" width="5%">Debit Amt</th>
-                                    <th scope="col" width="20%">Date</th>
-                                    <th scope="col" width="10%">Tx Type</th>
-                                    <th scope="col" width="10%">Remark</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                {% for d in data.data %}
-                                <tr>
-                                    <td>{{d.id}}</td>
-                                    <td>{{d.tx_id}}</td>
-                                    <td>{{d.amount if d.tx_type == 'cr' else ''}}</td>
-                                    <td>{{d.amount if d.tx_type == 'dr' else ''}}</td>
-                                    <td>{{d.date.date().strftime("%d/%m/%Y")}}</td>
-                                    <td style="color: {{'red' if d.tx_type == 'dr' else 'green'}}">{{d.tx_type}}</td>
-                                    <td>{{d.remark}}</td>
-                                </tr>
-                                {% endfor %}
+                                <table class="table" id="order-listing" width="100%">
+                                    <thead>
+                                    <tr>
+                                        <th style="text-align: center;">Id</th>
+                                        <th style="text-align: center;">Loan No</th>
+                                        <th style="text-align: center;">Credit Amt</th>
+                                        <th style="text-align: center;">Debit Amt</th>
+                                        <th style="text-align: center;">Date</th>
+                                        <th style="text-align: center;">Tx Type</th>
+                                        <th style="text-align: center;">Remark</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for d in data.data %}
+                                    <tr>
+                                        <td><span>{{d.id}}</span></td>
+                                        <td><span>{{d.tx_id}}</span></td>
+                                        <td><span>{{d.amount if d.tx_type == 'cr' else ''}}</span></td>
+                                        <td><span>{{d.amount if d.tx_type == 'dr' else ''}}</span></td>
+                                        <td><span>{{d.date.date().strftime("%d/%m/%Y")}}</span></td>
+                                        <td style="color: {{'red' if d.tx_type == 'dr' else 'green'}}"><span>{{d.tx_type}}
+                                        </span></td>
+                                        <td><span>{{d.remark}}</span></td>
+                                    </tr>
+                                    {% endfor %}
 
-                                </tbody>
-                                <tfoot>
-                                <tr>
-                                    <th><b></b></th>
-                                    <th><b>Total</b></th>
-                                    <th style="color: green">{{data.credit_amt}}</th>
-                                    <th style="color: red">{{data.debit_amt}}</th>
-                                    <th></th>
-                                    <th></th>
-                                    <th></th>
-                                </tr>
-                                </tfoot>
-                            </table>
+                                    </tbody>
+                                    <tfoot>
+                                    <tr>
+                                        <th><b></b></th>
+                                        <th><b>Total</b></th>
+                                        <th style="color: green">{{data.credit_amt}}</th>
+                                        <th style="color: red">{{data.debit_amt}}</th>
+                                        <th></th>
+                                        <th></th>
+                                        <th></th>
+                                    </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -271,6 +301,20 @@ document.getElementById("date").value = today.getFullYear() + '-' + ('0' + (toda
 <script src="{{ url_for('static', filename='template/js/typeahead.js')}}"></script>
 <script src="{{ url_for('static', filename='template/js/select2.js')}}"></script>
 <script src="{{ url_for('static', filename='template/js/formpickers.js')}}"></script>
+<script src="{{ url_for('static', filename='template/vendors/js/vendor.bundle.base.js')}}"></script>
+<!-- endinject -->
+<!-- Plugin js for this page-->
+<script src="{{ url_for('static', filename='template/vendors/datatables.net/jquery.dataTables.js')}}"></script>
+<script src="{{ url_for('static', filename='template/vendors/datatables.net-bs4/dataTables.bootstrap4.js')}}"></script>
+<!-- End plugin js for this page-->
+<!-- inject:js -->
+<script src="{{ url_for('static', filename='template/js/off-canvas.js')}}"></script>
+<script src="{{ url_for('static', filename='template/js/hoverable-collapse.js')}}"></script>
+<script src="{{ url_for('static', filename='template/js/template.js')}}"></script>
+<script src="{{ url_for('static', filename='template/js/settings.js')}}"></script>
+<!-- endinject -->
+<!-- Custom js for this page-->
+<script src="{{ url_for('static', filename='template/js/data-table.js')}}"></script>
 <!-- End custom js for this page-->
 </body>
 <!-- Mirrored from www.bootstrapdash.com/demo/silica/template/demo/vertical-default-dark/pages/forms/basic_elements.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 13 Jul 2021 21:03:13 GMT -->
