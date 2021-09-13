@@ -257,7 +257,7 @@ def get_report_of_pending_installments_by_date(date, user_type='loan'):
                                          user_data['guarantor_1_name'],
                                          user_data['guarantor_1_phone']], columns)
                     df = df.append(row, ignore_index=True)
-    df = pd.concat([df]*5, ignore_index=True)
+    #df = pd.concat([df]*5, ignore_index=True)
     return df
 
 
