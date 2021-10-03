@@ -575,6 +575,17 @@ def get_user_data_by_loan_id(loan_id=None, loan_type="hafta", user_type='loan'):
             user_d = db.engine.execute(
                 user_table.select().where(user_table.c.loan_id == loan_id).order_by(user_table.c.tx_status.desc()))
             user_d_list = [{column: value for column, value in rowproxy.items()} for rowproxy in user_d]
+            for data in user_d_list:
+                if type(data['date_to_pay']) == str:
+                    try:
+                        data['date_to_pay'] = datetime.strptime(data['date_to_pay'], "%Y-%m-%d %H:%M:%S.%f")
+                    except:
+                        pass
+                if data['paid_date'] is not None and type(data['paid_date']) == str:
+                    try:
+                        data['paid_date'] = datetime.strptime(data['paid_date'], "%Y-%m-%d %H:%M:%S.%f")
+                    except:
+                        pass
             user_data += user_d_list
             # user_data = sorted(user_data, key=itemgetter('tx_status'))
             print(user_data)

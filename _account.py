@@ -8,7 +8,7 @@ from threading import Thread
 from time import strftime
 
 import numpy as np
-from os import path , startfile
+from os import path #, startfile
 import pandas as pd
 from PyQt5 import QtWebEngineWidgets
 from PyQt5.QtGui import QIcon
@@ -845,6 +845,7 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
                 row = pd.Series(
                     [val['no_of_installment'], val['date_to_pay'], val['emi_amount'], val['tx_status']],
                     ['Id', 'Date', 'Amount', 'Status'])
+
                 print(val['date_to_pay'].date(), val['no_of_installment'])
                 df = df.append(row, ignore_index=True)
 
@@ -1161,7 +1162,7 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
 
                         def msgbtn():
                             msg.close()
-                            startfile(file_name)
+                            #startfile(file_name)
 
                         msg.buttonClicked.connect(msgbtn)
 

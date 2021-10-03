@@ -4,5 +4,5 @@ dist
 dist/*
 *.pyc
 api-ms-win-core-heat-key-l1-1-0-1.dll
-api-ms-win-core-heat-l1-1-0-1.dll
+api-ms-win-core-heat-l1-1-0-1_.dll
 *.pdf

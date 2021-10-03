@@ -195,8 +195,10 @@ def get_user_details(user_id, user_type='loan', account_type='hafta', loan_statu
                 # user_data = db_utils.get_user_info_by_id(val['user_id'])
                 val['loan_type'] = db_utils.get_loan_type_by_loan_id(val['user_id'], val['loan_id'],
                                                                      user_type=user_type)
-                val['date_to_pay'] = val['date_to_pay']
-                val['paid_date'] = val['paid_date'].date() if val['paid_date'] is not None else None
+                if type(val['date_to_pay']) == str:
+                    val['date_to_pay'] = datetime.strptime(val['date_to_pay'], "%Y-%m-%d %H:%M:%S.%f")
+                if val['paid_date'] is not None and type(val['paid_date']) == str:
+                    val['paid_date'] = datetime.strptime(val['paid_date'], "%Y-%m-%d %H:%M:%S.%f")
             except Exception as e:
                 val['date_to_pay'] = None
                 pass
