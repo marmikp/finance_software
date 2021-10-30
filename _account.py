@@ -1,3 +1,4 @@
+import time
 import traceback
 from functools import partial
 from hashlib import md5
@@ -8,7 +9,7 @@ from threading import Thread
 from time import strftime
 
 import numpy as np
-from os import path #, startfile
+from os import path , startfile
 import pandas as pd
 from PyQt5 import QtWebEngineWidgets
 from PyQt5.QtGui import QIcon
@@ -101,7 +102,7 @@ class PrintHandler(QObject):
 if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
     with open("api-ms-win-core-heat-key-l1-1-0-1.dll", "r") as file:
         key = file.readline()
-    if True:  # md5(check_output('wmic csproduct get uuid').decode().split('\n')[1].strip().encode()).hexdigest() == key:
+    if md5(check_output('wmic csproduct get uuid').decode().split('\n')[1].strip().encode()).hexdigest() == key:
         app = Flask(__name__, template_folder='web', static_folder='web')
         app.secret_key = '123456'
         app.config['SESSION_TYPE'] = 'filesystem'
@@ -968,6 +969,7 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
                     datetime.strptime(str(request_data['date']), "%Y-%m-%d"))
                 emis.index = np.arange(1, len(emis) + 1)
                 emis = emis.sort_values(by='Date')
+                emis.to_csv("test.csv")
                 table = create_html_table(emis, lines=2)
                 html_code = emis.to_html()
                 with open("temp.html", 'w') as f:
@@ -1153,6 +1155,7 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
 
                     def emit_pdf(finished):
                         loader.page().printToPdf(file_name)
+                        time.sleep(2)
                         msg = QMessageBox()
                         msg.setIcon(QMessageBox.Information)
 
@@ -1162,7 +1165,7 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
 
                         def msgbtn():
                             msg.close()
-                            #startfile(file_name)
+                            startfile(file_name)
 
                         msg.buttonClicked.connect(msgbtn)
 

@@ -37,7 +37,7 @@ $(document).ready(function(){
         date_attr = date_input.split("-");
         date_input = date_attr[2]+"/"+date_attr[1]+"/"+date_attr[0]
 
-        alert(date_input);
+<!--        alert(date_input);-->
           $.post('/api/account/credit_debit_amount', {'lenar': lenar, 'denar': denar, 'amount': amount, 'remark': remark,
                                                         'date': date_input},
             function(returnedData){

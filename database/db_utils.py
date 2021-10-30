@@ -270,6 +270,21 @@ def extend_hafta(customer_id, amount, no_of_hafta, loan_id, user_type="loan"):
                                                                   transaction_id=loan_id).first().last_installment_date + relativedelta(
                 months=no_of_hafta),
              "no_installment": no_installments + no_of_hafta})
+
+        # db.session.commit()
+        db.session.commit()
+        total_balance = General.query.filter_by(username=session.get('username')).first().total_balance
+        tx_hist_query = TransactionHistory(party_id=customer_id, loan_id=loan_id,
+                                           account_type='Extend Hafta',
+                                           amount=no_of_hafta * amount,
+                                           status='', total_balance=total_balance)
+        db.session.add(tx_hist_query)
+        db.session.commit()
+        current_pending_interest = General.query.filter_by(
+            username=session.get('username')).first().total_interest_pending
+        next_pending_interest = current_pending_interest + (amount * no_of_hafta)
+        General.query.filter_by(username=session.get('username')).update(
+            {'total_interest_pending': next_pending_interest})
         db.session.commit()
         return {"code": 200, "status": "hafta extend done"}
     except Exception as e:
