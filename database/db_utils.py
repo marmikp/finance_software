@@ -243,7 +243,7 @@ def extend_hafta(customer_id, amount, no_of_hafta, loan_id, user_type="loan"):
     else:
         entry_table = AccountEntry
     no_installments = entry_table.query.filter_by(id=customer_id, transaction_id=loan_id).first().no_installment
-    # no_installments += 1
+    no_installments += 1
     # update installment number of base amount entry
     META_DATA.reflect()
     table = META_DATA.tables[str(customer_id)]
@@ -269,7 +269,7 @@ def extend_hafta(customer_id, amount, no_of_hafta, loan_id, user_type="loan"):
             {"last_installment_date": entry_table.query.filter_by(id=customer_id,
                                                                   transaction_id=loan_id).first().last_installment_date + relativedelta(
                 months=no_of_hafta),
-             "no_installment": no_installments + no_of_hafta})
+             "no_installment": no_installments + no_of_hafta-1})
 
         # db.session.commit()
         db.session.commit()
