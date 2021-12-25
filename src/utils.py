@@ -38,7 +38,7 @@ def create_entry_new_hafta(user_type="loan", **kwargs):
         db.session.commit()
         tx_hist_query = TransactionHistory(party_id=query_data['id'], loan_id=loan_id, account_type='debit',
                                            amount=query_data['base_amount'],
-                                           status='dr', total_balance=total_balance)
+                                           status='dr', total_balance=total_balance, tx_date=query_data['paid_date'])
         db.session.add(tx_hist_query)
         db.session.commit()
 
@@ -94,7 +94,7 @@ def create_entry_new_hafta(user_type="loan", **kwargs):
                     tx_hist_query = TransactionHistory(party_id=query_data['id'], loan_id=query_data['transaction_id'],
                                                        account_type='loan',
                                                        amount=query_data['base_amount'],
-                                                       status='dr', total_balance=total_balance)
+                                                       status='dr', total_balance=total_balance, tx_date=query_data['start_date'])
                     db.session.add(tx_hist_query)
                     db.session.commit()
             if user_type == 'account':
@@ -102,7 +102,7 @@ def create_entry_new_hafta(user_type="loan", **kwargs):
                 tx_hist_query = TransactionHistory(party_id=query_data['id'], loan_id=query_data['transaction_id'],
                                                    account_type='account',
                                                    amount=query_data['base_amount'],
-                                                   status='cr', total_balance=total_balance)
+                                                   status='cr', total_balance=total_balance, tx_date=query_data['start_date'])
                 db.session.add(tx_hist_query)
                 db.session.commit()
     return resp

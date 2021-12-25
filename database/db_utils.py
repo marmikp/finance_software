@@ -487,7 +487,7 @@ def add_installment(installment_num=1, paid_date=datetime.now(), user_type="loan
             tx_hist_query = TransactionHistory(party_id=kwargs['id'], loan_id=kwargs['transaction_id'],
                                                account_type='loan emi',
                                                amount=kwargs['paid_amount'],
-                                               status='cr', total_balance=total_balance)
+                                               status='cr', total_balance=total_balance, tx_date=kwargs['paid_date'])
             db.session.add(tx_hist_query)
             db.session.commit()
             tx_id = TransactionHistory.query.order_by(TransactionHistory.tx_id.desc()).first().tx_id
