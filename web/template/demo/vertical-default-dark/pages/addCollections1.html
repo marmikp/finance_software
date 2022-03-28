@@ -7,7 +7,7 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Add Collection</title>
+    <title>Day Collection</title>
     <script src="{{ url_for('static', filename='assets/js/jquery-3.5.1.js')}}"></script>
     <link href="{{ url_for('static', filename='assets/css/jquery-ui.css')}}" rel="stylesheet"/>
 
@@ -55,6 +55,12 @@
 
     </style>
 </head>
+<style>
+.btn:focus {
+  background: #0066ff;
+}
+.dataTables_filter, .dataTables_info { display: none; }
+</style>
 <!--<script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>-->
 <script>
 $(document).ready(function(){
@@ -76,15 +82,18 @@ $(document).ready(function(){
                 function(returnedData){
                     if (returnedData['code'] == 200){
                      $(".topmid-left b").html("Data updated successfully");
+                     document.getElementById("denar").focus();
                      }
                      else{
                         $(".topmid-left b").html("Some error occured, Make sure your data are okay.");
                      }
+
             }).fail(function(){
                   console.log("error");
             });
 
     }
+
   });
 
   $('#lenar').change(function() {
@@ -163,7 +172,7 @@ $(document).ready(function(){
         <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end navbar-title">
             <ul class="navbar-nav mr-lg-2">
                 <li class="nav-item d-none d-lg-block">
-                    <label class="col-form-label bold-label"> Add Collection On Data | </label>
+                    <label class="col-form-label bold-label"> Day Collection On Data | </label>
                     <label class="col-form-label bold-label-green"> {{today}} </label>
                 </li>
             </ul>
@@ -199,7 +208,7 @@ $(document).ready(function(){
                     <a class="nav-link btn btn-siderbar  btn-rounded btn-fw"
                        href="/api/hafta/add_collection_dialog_new">
                         <i class="fd-add-collection"></i>
-                        <span class="menu-title">Add Collection</span>
+                        <span class="menu-title">Day Collection</span>
                     </a>
                 </li>
                 <li class="nav-item">

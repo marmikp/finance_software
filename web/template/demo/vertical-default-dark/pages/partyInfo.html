@@ -4,7 +4,7 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Add Collection</title>
+    <title>Day Collection</title>
     <script src="{{ url_for('static', filename='assets/js/jquery-3.5.1.js')}}"></script>
     <link href="{{ url_for('static', filename='assets/css/jquery-ui.css')}}" rel="stylesheet"/>
 
@@ -51,6 +51,12 @@
     }
 </style>
 </head>
+<style>
+.btn:focus {
+  background: #0066ff;
+}
+.dataTables_filter, .dataTables_info { display: none; }
+</style>
 <script>
 $(document).ready(function(){
 
@@ -219,7 +225,7 @@ document.getElementById("date").value = today.getFullYear() + '-' + ('0' + (toda
     <!--                  <li class="nav-item">-->
     <!--                     <a class="nav-link btn btn-siderbar  btn-rounded btn-fw" href="addCollections1.html">-->
     <!--                     <i class="fd-add-collection"></i>-->
-    <!--                     <span class="menu-title">Add Collection</span>-->
+    <!--                     <span class="menu-title">Day Collection</span>-->
     <!--                     </a>-->
     <!--                  </li>-->
     <!--                  <li class="nav-item">-->
@@ -255,7 +261,7 @@ document.getElementById("date").value = today.getFullYear() + '-' + ('0' + (toda
             <div class="page-title-box" style="background-color: #3c4650">
                 <!--<h2>Collection</h2> -->
                 <div class="row">
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         <form action="/api/hafta/party_info_dialog" method="post">
                         <div class="row">
 
@@ -266,22 +272,27 @@ document.getElementById("date").value = today.getFullYear() + '-' + ('0' + (toda
                                 <div class="col-md-3  ml-0 mb-3 mt-3 mr-0">
                                     <input type="submit" class="fetch" value="Fetch">
                                 </div>
+<!--                        </div>-->
                             </form>
+
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-3" style="padding: 0px;">
                         <input type="text" class="ml-1 mb-3 mt-3" name="name" style="width: 100%"
                                value="{{data.data.0.user_name if 'user_name' in data.data.0.keys() if data.data|length else ''}}"
                                disabled>
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-2" style="padding: 0px;">
                         <div class="ml-1 mb-3 mt-3" style="color:#fff">General: {{data.total_pending_amount}}</div>
                     </div>
 
-                    <div class="col-md-2">
+                    <div class="col-md-1" style="padding: 0px;">
                         <div class="ml-1 mb-3 mt-3" style="color: #fff">Due: {{data.total_due_amount}}</div>
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-2" style="padding: 0px;">
+                        <div class="ml-1 mb-3 mt-3" style="color: #fff">Moody: {{data.base_amount}}</div>
+                    </div>
+                    <div class="col-md-2" style="padding: 0px;">
                         <div class="ml-1 mb-3 mt-3" style="color: #fff">Type: {{data.data.0.loan_type.capitalize()}}</div>
                     </div>
 

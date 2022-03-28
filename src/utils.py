@@ -1,3 +1,4 @@
+import traceback
 from datetime import datetime
 
 import pandas as pd
@@ -6,7 +7,7 @@ from flask import session
 
 from database import db_utils
 from database.db_utils import get_pending_installment_of_loan_id, convert_table_to_dict_data, \
-    get_pending_installments_of_user, get_user_pending_amount, get_user_due_amount
+    get_pending_installments_of_user, get_user_pending_amount, get_user_due_amount, get_pending_installments_of_user_split_emi
 from database.model import db, HaftEntry, CrDrEntry, AccountEntry, Customer, General, TransactionHistory
 
 calculate_emi = lambda a, b: a / b
@@ -236,30 +237,33 @@ def get_report_of_pending_installments_by_date(date, user_type='loan'):
     active_users = table_name.query.filter_by(loan_status=0).all()
     checked_users = []
     user_data_dict = dict()
-    for user_data in active_users:
-        user_data = convert_table_to_dict_data(user_data)
-        if user_data['id'] not in checked_users:
-            checked_users.append(user_data['id'])
-            user_data_pending_installments, _ = get_pending_installments_of_user(user_data['id'], date)
-            print('after convert to date')
-            if user_data_pending_installments:
-                user_data_dict[user_data['id']] = {}
-                user_data_dict[user_data['id']]['loans'] = user_data_pending_installments
-                user_info = convert_table_to_dict_data(Customer.query.filter_by(id=user_data['id']).first())
-                for loan_id, loan_pending_installment_details in user_data_pending_installments.items():
-                    if user_data['guarantor_2_name'] is not None:
-                        row = pd.Series([user_info['user_name'],
-                                         str(loan_pending_installment_details[2]) +"<br/>"+str(loan_id),
-                                         str(loan_pending_installment_details[0])+"<br/>"+str(loan_pending_installment_details[3]), user_info['user_phone'],
-                                         user_data['guarantor_1_name']+"<br/>"+user_data['guarantor_2_name'], str(user_data['guarantor_1_phone'])+"<br/>"+str(user_data['guarantor_2_phone'])], columns)
-                    else:
-                        row = pd.Series([user_info['user_name'],
-                                         str(loan_pending_installment_details[2]) +"<br/>"+str(loan_id),
-                                         str(loan_pending_installment_details[0])+"<br/>"+str(loan_pending_installment_details[3]), user_info['user_phone'],
-                                         user_data['guarantor_1_name'],
-                                         user_data['guarantor_1_phone']], columns)
-                    df = df.append(row, ignore_index=True)
-    #df = pd.concat([df]*5, ignore_index=True)
+    try:
+        for user_data in active_users:
+            user_data = convert_table_to_dict_data(user_data)
+            if user_data['id'] not in checked_users:
+                checked_users.append(user_data['id'])
+                user_data_pending_installments, _ = get_pending_installments_of_user_split_emi(user_data['id'], date)
+                print(user_data_pending_installments)
+                if user_data_pending_installments:
+                    user_data_dict[user_data['id']] = {}
+                    user_data_dict[user_data['id']]['loans'] = user_data_pending_installments
+                    user_info = convert_table_to_dict_data(Customer.query.filter_by(id=user_data['id']).first())
+                    for loan_id, loan_pending_installment_details in user_data_pending_installments.items():
+                        if user_data['guarantor_2_name'] is not None:
+                            row = pd.Series([user_info['user_name'],
+                                             str(loan_pending_installment_details[2]) +"<br/>"+str(loan_id),
+                                             str(loan_pending_installment_details[0])+"<br/>"+str(loan_pending_installment_details[3])+" + "+str(loan_pending_installment_details[4]), str(user_info['user_phone'])+"<br/>"+str(user_info['user_phone_2']),
+                                             user_data['guarantor_1_name']+"<br/>"+user_data['guarantor_2_name'], str(user_data['guarantor_1_phone'])+"<br/>"+str(user_data['guarantor_2_phone'])], columns)
+                        else:
+                            row = pd.Series([user_info['user_name'],
+                                             str(loan_pending_installment_details[2]) +"<br/>"+str(loan_id),
+                                             str(loan_pending_installment_details[0])+"<br/>"+str(loan_pending_installment_details[3])+" + "+str(loan_pending_installment_details[4]), str(user_info['user_phone'])+"<br/>"+str(user_info['user_phone_2']),
+                                             user_data['guarantor_1_name'],
+                                             user_data['guarantor_1_phone']], columns)
+                        df = df.append(row, ignore_index=True)
+        #df = pd.concat([df]*5, ignore_index=True)
+    except:
+        traceback.print_exc()
     return df
 
 

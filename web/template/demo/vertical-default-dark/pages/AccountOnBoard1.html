@@ -27,6 +27,11 @@
     <link rel="shortcut icon" href="{{ url_for('static', filename='template/images/favicon.png')}}"/>
     <script src="{{ url_for('static', filename='assets/js/a076d05399.js')}}"></script>
 </head>
+<style>
+.btn:focus {
+  background: #0066ff;
+}
+</style>
 <script>
 $(document).ready(function(){
     $(".new_customer").click(function(){
@@ -170,7 +175,7 @@ $(document).ready(function() {
                     <a class="nav-link btn btn-siderbar  btn-rounded btn-fw"
                        href="/api/hafta/add_collection_dialog_new">
                         <i class="fd-add-collection"></i>
-                        <span class="menu-title">Add Collection</span>
+                        <span class="menu-title">Day Collection</span>
                     </a>
                 </li>
                 <li class="nav-item">
@@ -226,7 +231,7 @@ $(document).ready(function() {
                                     <table id="order-listing" class="table">
                                         <thead>
                                         <tr>
-                                            <th style="text-align: center;"><b>Id</b></th>
+                                            <th style="text-align: center;"><b>P. Code</b></th>
                                             <th style="text-align: center;"><b>Name</b></th>
                                             <th style="text-align: center;"><b>Phone</b></th>
                                             <th style="text-align: center;"><b>Type</b></th>
@@ -238,7 +243,7 @@ $(document).ready(function() {
                                         <tbody>
                                         {% for d in data %}
                                         <tr>
-                                            <td><span>{{d.loan_id}}</span></td>
+                                            <td><span>{{d.user_alias}}</span></td>
                                             <td><span>{{d.user_name}}</span></td>
                                             <td><span>{{d.user_phone}}</span></td>
                                             <td><span>{{d.customer_type}}</span></td>
@@ -253,7 +258,7 @@ $(document).ready(function() {
                                                     <div style="text-align: center;" class="col-md-5 box"><button
                                                             style="color: white;" class="new add btn btn-dark btn-rounded btn-fw right-align-button" title="New/Extend"
                                                             data-toggle="tooltip" user_id="{{d.id}}">View A/C</button></div>
-                                                    <!--                        <div style="text-align: center;" class="col-md-4 box bg-primary"><a style="color: white;" class="add_collection" title="Add Collection" data-toggle="tooltip" data="{{d.id}}">Hafta</a></div>-->
+                                                    <!--                        <div style="text-align: center;" class="col-md-4 box bg-primary"><a style="color: white;" class="add_collection" title="Day Collection" data-toggle="tooltip" data="{{d.id}}">Hafta</a></div>-->
                                                 </div>
 
                                                 </span>

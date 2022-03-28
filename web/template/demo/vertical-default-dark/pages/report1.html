@@ -43,7 +43,12 @@
     <link rel="shortcut icon" href="{{ url_for('static', filename='template/images/favicon.png')}}"/>
     <script src="{{ url_for('static', filename='assets/js/a076d05399.js')}}"></script>
 </head>
-
+<style>
+.btn:focus {
+  background: #0066ff;
+}
+.dataTables_filter, .dataTables_info { display: none; }
+</style>
 <script>
 $(document).ready(function(){
     $(".pending_date_installment_btn").click(function(){
@@ -191,7 +196,7 @@ $(".account_user_pending_installments_btn").click(function(){
                     <a class="nav-link btn btn-siderbar  btn-rounded btn-fw"
                        href="/api/hafta/add_collection_dialog_new">
                         <i class="fd-add-collection"></i>
-                        <span class="menu-title">Add Collection</span>
+                        <span class="menu-title">Day Collection</span>
                     </a>
                 </li>
                 <li class="nav-item">

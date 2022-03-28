@@ -21,11 +21,11 @@ def create_html_table(x, length=0, show_col_name=False, lines=1):
         else:
             dtype_list.append('text')
     if show_col_name:
-        row_data += '<tr height:50px;>'
+        row_data += '<tr>'
         for col in x.columns.values.tolist():
             row_data += f'<th>{col}</th>'
         row_data += '</tr>'
-    row_data += '<tr height:50px;>'
+    row_data += '<tr>'
     for i in range(x.shape[0]):
         if length != 0:
             if i == x.shape[0] - 1:
@@ -34,12 +34,12 @@ def create_html_table(x, length=0, show_col_name=False, lines=1):
             if (i == 20 and lines == 2) or (i % 21 == 0 and lines == 2 and i != 21) or (i == 30 and lines == 1) or (
                     i % 35 == 0 and lines == 1 and i != 35):
                 if i % 21*3 == 0:
-                    row_data += "</table>\n<br/><br/><br/></br><table><tr height:50px;>"
+                    row_data += "</table>\n<br/><br/><br/></br><table><tr>"
                 else:
-                    row_data += "</table>\n<br/><br/><br/><table><tr height:50px;>"
+                    row_data += "</table>\n<br/><br/><br/><table><tr>"
 
             else:
-                row_data += '\n<tr height:50px;> '
+                row_data += '\n<tr> '
         for j in range(x.shape[1]):
             if pd.isnull(x.iloc[i, j]):
                 val = ''
@@ -55,8 +55,8 @@ def create_html_table(x, length=0, show_col_name=False, lines=1):
         row_data += '\n </tr>'
     if length != 0:
         for i in range(length - x.shape[0]):
-            row_data += '\n<tr height:50px;> <td></td><td></td><td></td>\n</tr>'
-        row_data += '\n<tr> '
+            row_data += '\n<tr> <td></td><td></td><td></td>\n</tr>'
+        row_data += '\n<tr"> '
         row_data += '\n <td class = "number_column" style="text-align:right">' + str(
             x.iloc[x.shape[0] - 1, 0]) + '</td>'
 
@@ -91,17 +91,17 @@ def create_general_html_table(x, length=0, show_col_name=False):
         else:
             dtype_list.append('text')
     if show_col_name:
-        row_data += '<tr>'
+        row_data += '<tr">'
         for col in x.columns.values.tolist():
             row_data += f'<th>{col}</th>'
         row_data += '</tr>'
-    row_data += '<tr>'
+    row_data += '<tr">'
     for i in range(x.shape[0]):
         if length != 0:
             if i == x.shape[0] - 1:
                 continue
         if i != 0:
-            row_data += '\n<tr> '
+            row_data += '\n<tr"> '
         for j in range(x.shape[1]):
             if pd.isnull(x.iloc[i, j]):
                 val = ''
@@ -109,24 +109,24 @@ def create_general_html_table(x, length=0, show_col_name=False):
                 val = x.iloc[i, j]
             if dtype_list[j] == 'text':  # The first column
                 if x.columns.values.tolist()[j] == 'id':
-                    row_data += '\n <td class = "text_column col-md-2">' + str(val) + '</td>'
+                    row_data += '\n <td class = "text_column col-md-2" style="padding: 0px;">' + str(val) + '</td>'
                 else:
-                    row_data += '\n <td class = "text_column col-md-8">' + str(val) + '</td>'
+                    row_data += '\n <td class = "text_column col-md-8"  style="padding: 0px;">' + str(val) + '</td>'
 
             else:  # second column
-                row_data += '\n <td class = "number_column col-md-2" style="text-align:right;">' + str(val) + '</td>'
+                row_data += '\n <td class = "number_column col-md-2" style="text-align:right; padding: 0px;">' + str(val) + '</td>'
 
         row_data += '\n </tr>'
     if length != 0:
         for i in range(length - x.shape[0]):
-            row_data += '\n<tr> <td></td><td></td><td></td>\n</tr>'
-        row_data += '\n<tr> '
-        row_data += '\n <td class = "number_column" style="text-align:right">' + str(
+            row_data += '\n<tr"> <td  style="padding: 0px;"></td><td  style="padding: 0px;"></td><td  style="padding: 0px;"></td>\n</tr>'
+        row_data += '\n<tr"> '
+        row_data += '\n <td class = "number_column" style="text-align:right; padding: 0px;">' + str(
             x.iloc[x.shape[0] - 1, 0]) + '</td>'
 
-        row_data += '\n <td class = "number_column" style="text-align:right">' + str(
+        row_data += '\n <td class = "number_column" style="text-align:right; padding: 0px;">' + str(
             x.iloc[x.shape[0] - 1, 1]) + '</td>'
-        row_data += '\n <td class = "number_column" style="text-align:right">' + str(
+        row_data += '\n <td class = "number_column" style="text-align:right; padding: 0px;">' + str(
             x.iloc[x.shape[0] - 1, 2]) + '</td>'
         row_data += '\n </tr>'
     return row_data
@@ -503,8 +503,14 @@ def add_installment(installment_num=1, paid_date=datetime.now(), user_type="loan
         print(e)
         return {"code": 500, "status": "error in installment update"}
 
+def get_emi_amount(base_amount, interest, loan_type, no_of_emi):
+    if loan_type == "hafta":
+        return (base_amount + interest) / no_of_emi
+    elif loan_type == "flat":
+        return interest
 
 def get_user_data(id=None, loan_type="hafta", user_type='loan', loan_status='active'):
+
     if id is not None:
         try:
             user_table = META_DATA.tables[str(id)]
@@ -545,14 +551,24 @@ def get_user_data(id=None, loan_type="hafta", user_type='loan', loan_status='act
                                 user_table.c.tx_status.desc()))
                         user_d_list = [{column: value for column, value in rowproxy.items()} for rowproxy in user_d]
                         if user_type == 'debit':
-                            for val in user_d_list:
+                            for k, val in enumerate(user_d_list):
                                 entry_data = entry_table.query.filter_by(id=id, transaction_id=loan).first()
                                 val['remark'] = entry_data.remark
                                 val['base_amount'] = entry_data.base_amount
+                                loan_type = entry_data.loan_type
+                                if entry_data.no_installment == k+1 and loan_type == "flat":
+                                    continue
+                                emi_amount = get_emi_amount(val['base_amount'], entry_data.interest, loan_type, entry_data.no_installment)
+                                val['emi_amount'] = emi_amount
                         elif user_type == 'loan':
-                            for val in user_d_list:
+                            for k, val in enumerate(user_d_list):
                                 entry_data = entry_table.query.filter_by(id=id, transaction_id=loan).first()
                                 val['base_amount'] = entry_data.base_amount
+                                loan_type = entry_data.loan_type
+                                if entry_data.no_installment == k+1 and loan_type == "flat":
+                                    continue
+                                emi_amount = get_emi_amount(val['base_amount'], entry_data.interest, loan_type, entry_data.no_installment)
+                                val['emi_amount'] = emi_amount
                     user_data += user_d_list
                 # try:
                 #     # user_data = sorted(user_data, key=itemgetter('tx_status'))
@@ -801,6 +817,7 @@ def get_pending_installments_of_user(user_id, date):
     emis_count = db.engine.execute(user_table.select(user_table.c.emi_amount).where(
         user_table.c.tx_status == 0))
     emis_dict = [{column: value for column, value in rowproxy.items()} for rowproxy in emis]
+
     emis_dict_count = [{column: value for column, value in rowproxy.items()} for rowproxy in emis_count]
     loan_id_dict = {}
     for val in emis_dict:
@@ -817,6 +834,45 @@ def get_pending_installments_of_user(user_id, date):
         loan_id_dict[val['loan_id']][3] = len(emis_dict_count)
     return loan_id_dict, emis_dict
 
+
+def get_pending_installments_of_user_split_emi(user_id, date):
+    META_DATA.reflect()
+    user_table = META_DATA.tables[str(user_id)]
+    # select pending values and payment
+    emis = db.engine.execute(user_table.select(user_table.c.emi_amount).where(
+        (user_table.c.date_to_pay <= date) &
+        (user_table.c.tx_status == 0)))
+
+    emis_count = db.engine.execute(user_table.select(user_table.c.emi_amount).where(
+        user_table.c.tx_status == 0))
+    emis_dict = [{column: value for column, value in rowproxy.items()} for rowproxy in emis]
+    emis_dict_count = [{column: value for column, value in rowproxy.items()} for rowproxy in emis_count]
+    loan_id_dict = {}
+    pending_emis = 0
+    next_emis = 0
+    for emi in emis_dict_count:
+        if type(emi['date_to_pay']) == str:
+            date_to_pay = datetime.strptime(emi['date_to_pay'], "%Y-%m-%d %H:%M:%S.%f")
+        else:
+            date_to_pay = emi['date_to_pay']
+        if date_to_pay <= datetime.now():
+            pending_emis += 1
+        else:
+            next_emis += 1
+    for val in emis_dict:
+        if val['loan_id'] not in list(loan_id_dict.keys()):
+            loan_id_dict[val['loan_id']] = [0, 0, 0, 0, 0]
+        loan_id_dict[val['loan_id']][0] += val['emi_amount']
+        loan_id_dict[val['loan_id']][1] += 1
+        if type(val['date_to_pay']) == str:
+            loan_id_dict[val['loan_id']][2] = datetime.strptime(val['date_to_pay'].split(" ")[0], "%Y-%m-%d").date().strftime("%d/%m/%Y")
+
+        else:
+            loan_id_dict[val['loan_id']][2] = val['date_to_pay'].date().strftime("%d/%m/%Y")
+        val['date_to_pay'] = loan_id_dict[val['loan_id']][2]
+        loan_id_dict[val['loan_id']][3] = pending_emis
+        loan_id_dict[val['loan_id']][4] = next_emis
+    return loan_id_dict, emis_dict
 
 def get_account_user_entries(user_id, from_date=datetime.now().date() - relativedelta(months=1),
                              date=datetime.now().date()):

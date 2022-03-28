@@ -22,7 +22,12 @@
   <!-- endinject -->
   <link rel="shortcut icon" href="{{ url_for('static', filename='template/images/favicon.png')}}" />
 </head>
-
+<style>
+.btn:focus {
+  background: #0066ff;
+}
+.dataTables_filter, .dataTables_info { display: none; }
+</style>
 <body>
   <div class="container-scroller">
     <!-- partial:../../partials/_navbar.html -->
@@ -75,7 +80,7 @@
                     <a class="nav-link btn btn-siderbar  btn-rounded btn-fw"
                        href="/api/hafta/add_collection_dialog_new">
                         <i class="fd-add-collection"></i>
-                        <span class="menu-title">Add Collection</span>
+                        <span class="menu-title">Day Collection</span>
                     </a>
                 </li>
                 <li class="nav-item">

@@ -32,7 +32,24 @@
     }
 </style>
 </head>
+<style>
+.btn:focus {
+  background: #0066ff;
+}
+
+.well {
+    background: none;
+}
+
+.table-hover > tbody > tr:hover > td,
+.table-hover > tbody > tr:hover > th {
+    background-color: #CFF5FF;
+}
+
+.dataTables_filter, .dataTables_info { display: none; }
+</style>
 <script>
+
 $(document).ready(function(){
     var data = {
           key1: "value1",
@@ -174,7 +191,7 @@ $(document).ready(function(){
                     <a class="nav-link btn btn-siderbar  btn-rounded btn-fw" style="background-color: #2f3841;"
                        href="/api/hafta/add_collection_dialog_new">
                         <i class="fd-add-collection"></i>
-                        <span class="menu-title">Add Collection</span>
+                        <span class="menu-title">Day Collection</span>
                     </a>
                 </li>
                 <li class="nav-item">
@@ -229,7 +246,7 @@ $(document).ready(function(){
                 <div class="card card-box" style="margin-top: 10px;">
                     <div class="card-body">
                         <div class="row">
-                            <div class="col-12">
+                            <div class="col-12 well">
                                 <div class="table-responsive">
                                     <table id="order-listing" class="table">
                                         <thead>

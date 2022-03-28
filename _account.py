@@ -9,7 +9,7 @@ from threading import Thread
 from time import strftime
 
 import numpy as np
-from os import path #, startfile
+from os import path, startfile
 import pandas as pd
 from PyQt5 import QtWebEngineWidgets
 from PyQt5.QtGui import QIcon
@@ -31,7 +31,7 @@ from src.utils import is_logged_in, create_entry_new_hafta
 
 
 from PyQt5.QtCore import (QCoreApplication, QEventLoop, QObject, QPointF, Qt,
-                       QUrl, pyqtSlot)
+                          QUrl, pyqtSlot, QTimer)
 from PyQt5.QtGui import QKeySequence, QPainter
 from PyQt5.QtPrintSupport import QPrintDialog, QPrinter, QPrintPreviewDialog
 from PyQt5.QtWebEngineWidgets import QWebEnginePage, QWebEngineView
@@ -102,7 +102,7 @@ class PrintHandler(QObject):
 if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
     with open("api-ms-win-core-heat-key-l1-1-0-1.dll", "r") as file:
         key = file.readline()
-    if True:#md5(check_output('wmic csproduct get uuid').decode().split('\n')[1].strip().encode()).hexdigest() == key:
+    if md5(check_output('wmic csproduct get uuid').decode().split('\n')[1].strip().encode()).hexdigest() == key:
         app = Flask(__name__, template_folder='web', static_folder='web')
         app.secret_key = '123456'
         app.config['SESSION_TYPE'] = 'filesystem'
@@ -309,7 +309,7 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
             except Exception as e:
                 data_rander = {'data': [], 'user_id': None, 'loan_id_list': [],
                                'date_today': datetime.now().date(), 'total_pending_amount': 0,
-                               'total_due_amount': 0}
+                               'total_due_amount': 0, 'base_amount': 0}
                 return render_template('template/demo/vertical-default-dark/pages/partyInfo.html', data=data_rander)
             loan_id_list = []
             for d in data:
@@ -324,11 +324,12 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
             total_pending_amount = db_utils.get_user_pending_amount(int(user_id))
             ll, _ = db_utils.get_pending_installments_of_user(int(user_id), datetime.now().date())
             total_due_amount = 0
+            base_amount = data[0]['base_amount']
             for i, val in ll.items():
                 total_due_amount += val[0]
             data_rander = {'data': data, 'user_id': int(user_id), 'loan_id_list': loan_id_list,
                            'date_today': datetime.now().date(), 'total_pending_amount': total_pending_amount,
-                           'total_due_amount': total_due_amount}
+                           'total_due_amount': total_due_amount, 'base_amount': base_amount}
             return render_template('template/demo/vertical-default-dark/pages/partyInfo.html', data=data_rander)
 
 
@@ -1137,7 +1138,7 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
                     self.export_button.move(30, 30)
                     self.browser.move(0, 40)
                     self.export_button.setText("Export")
-                    file_name = path.join("Documents", url.split("/")[-1] + strftime("%Y%m%d-%H%M%S") + ".pdf")
+                    file_name = path.join(r"c:\temp", url.split("/")[-1] + strftime("%Y%m%d-%H%M%S") + ".pdf")
                     loader = QtWebEngineWidgets.QWebEngineView()
                     loader.setZoomFactor(1)
                     loader.page().pdfPrintingFinished.connect(
@@ -1154,7 +1155,7 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
                     # printShortCut.activated.connect(handler.print)
 
                     def emit_pdf(finished):
-                        loader.page().printToPdf(file_name)
+                        QTimer.singleShot(2000, lambda: loader.page().printToPdf(file_name))
                         time.sleep(2)
                         msg = QMessageBox()
                         msg.setIcon(QMessageBox.Information)

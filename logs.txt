@@ -1,8 +1,8 @@
 Traceback (most recent call last):
-  File "C:/Users/Raja/Desktop/marmik/finance_software/_account.py", line 962, in pending_installment_by_date
+  File "/home/marmik/marmik/finance_software/_account.py", line 968, in pending_installment_by_date
     emis = src.utils.get_report_of_pending_installments_by_date(
-  File "C:\Users\Raja\Desktop\marmik\finance_software\src\utils.py", line 249, in get_report_of_pending_installments_by_date
-    row = pd.Series([user_info['user_name'],
-  File "C:\Users\Raja\miniconda3\envs\finance_software\lib\site-packages\pandas\core\series.py", line 350, in __init__
-    raise ValueError(
-ValueError: Length of passed values is 7, index implies 6.
+  File "/home/marmik/marmik/finance_software/src/utils.py", line 243, in get_report_of_pending_installments_by_date
+    user_data_pending_installments, _ = get_pending_installments_of_user_split_emi(user_data['id'], date)
+  File "/home/marmik/marmik/finance_software/database/db_utils.py", line 854, in get_pending_installments_of_user_split_emi
+    if emi['date_to_pay'] <= datetime.now():
+TypeError: '<=' not supported between instances of 'str' and 'datetime.datetime'

@@ -6,7 +6,7 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Add Collection</title>
+    <title>Day Collection</title>
     <!-- plugins:css -->
     <link rel="stylesheet"
           href="{{ url_for('static', filename='template/vendors/mdi/css/materialdesignicons.min.css')}}">
@@ -26,6 +26,12 @@
     <script src="{{ url_for('static', filename='assets/js/jquery.min.js')}}"></script>
     <link rel="shortcut icon" href="{{ url_for('static', filename='template/images/favicon.png')}}"/>
 </head>
+<style>
+.btn:focus {
+  background: #0066ff;
+}
+.dataTables_filter, .dataTables_info { display: none; }
+</style>
 <body>
 <div class="container-scroller">
     <div class="container-fluid page-body-wrapper">

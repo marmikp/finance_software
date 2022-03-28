@@ -6,7 +6,7 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Add Collection</title>
+    <title>Day Collection</title>
     <script src="{{ url_for('static', filename='assets/js/jquery-3.5.1.js')}}"></script>
     <link href="{{ url_for('static', filename='assets/css/jquery-ui.css')}}" rel="stylesheet"/>
 
@@ -56,6 +56,12 @@
 
     </style>
 </head>
+<style>
+.btn:focus {
+  background: #0066ff;
+}
+.dataTables_filter, .dataTables_info { display: none; }
+</style>
 <script>
 $(document).ready(function(){
   $('#loanNo').change(function() {
@@ -85,6 +91,7 @@ $(document).ready(function(){
             }).fail(function(){
                   console.log("error");
             });
+        document.getElementById("loanNo").focus();
 
     }
   });
@@ -145,7 +152,7 @@ $(document).ready(function(){
                     <a class="nav-link btn btn-siderbar  btn-rounded btn-fw"
                        href="/api/hafta/add_collection_dialog_new">
                         <i class="fd-add-collection"></i>
-                        <span class="menu-title">Add Collection</span>
+                        <span class="menu-title">Day Collection</span>
                     </a>
                 </li>
                 <li class="nav-item">
