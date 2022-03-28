@@ -1149,16 +1149,13 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
                     loader.load(QUrl(url_f))
 
                     def emit_pdf(finished):
-                        if finished:
-                            QTimer.singleShot(2000, lambda: loader.page().printToPdf(file_name))
-                            msg = QMessageBox()
-                            msg.setIcon(QMessageBox.Information)
+                        QTimer.singleShot(2000, lambda: loader.page().printToPdf(file_name))
+                        msg = QMessageBox()
+                        msg.setIcon(QMessageBox.Information)
 
-                            msg.setText("File Downloaded")
-                            msg.setInformativeText("File Downloaded to " + file_name)
-                            msg.setStandardButtons(QMessageBox.Ok)
-                        else:
-                            print("printing")
+                        msg.setText("File Downloaded")
+                        msg.setInformativeText("File Downloaded to " + file_name)
+                        msg.setStandardButtons(QMessageBox.Ok)
 
                         def msgbtn():
                             time.sleep(4)
