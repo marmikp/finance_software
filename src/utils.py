@@ -243,7 +243,7 @@ def get_report_of_pending_installments_by_date(date, user_type='loan'):
             if user_data['id'] not in checked_users:
                 checked_users.append(user_data['id'])
                 user_data_pending_installments, _ = get_pending_installments_of_user_split_emi(user_data['id'], date)
-                print(user_data_pending_installments)
+                # print(user_data_pending_installments)
                 if user_data_pending_installments:
                     user_data_dict[user_data['id']] = {}
                     user_data_dict[user_data['id']]['loans'] = user_data_pending_installments

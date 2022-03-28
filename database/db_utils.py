@@ -133,7 +133,7 @@ def create_general_html_table(x, length=0, show_col_name=False):
 
 
 def convert_table_to_dict_data(data):
-    print("in convert table to dict")
+    # print("in convert table to dict")
     return {column: getattr(data, column) for column in data.__table__.c.keys()}
 
 
@@ -164,7 +164,7 @@ def login(username, password):
     data = db.session.query(General).filter(
         and_(General.username == username, General.password == password))
     data_len = len(list(data))
-    print(data)
+    # print(data)
     if data_len > 0:
         return {'code': 200, 'status': "success"}
     else:
@@ -382,7 +382,7 @@ def add_installment(installment_num=1, paid_date=datetime.now(), user_type="loan
             user_data_list_current = [{column: value for column, value in rowproxy.items()} for rowproxy in
                                       user_d_current]
 
-            print(user_data_list[0]['tx_hist_id'])
+            # print(user_data_list[0]['tx_hist_id'])
             try:
                 TransactionHistory.query.filter(
                     TransactionHistory.tx_id == user_data_list_current[0]['tx_hist_id']).delete()
@@ -575,7 +575,7 @@ def get_user_data(id=None, loan_type="hafta", user_type='loan', loan_status='act
                 # except Exception as e:
                 #     print(e)
 
-                print(user_data)
+                # print(user_data)
                 return user_data
         except Exception as e:
             return [{}]
@@ -619,7 +619,7 @@ def get_user_data_by_loan_id(loan_id=None, loan_type="hafta", user_type='loan'):
                         pass
             user_data += user_d_list
             # user_data = sorted(user_data, key=itemgetter('tx_status'))
-            print(user_data)
+            # print(user_data)
             return user_data
     else:
         return {"code": 500, "status": "user id is not available"}
@@ -699,7 +699,7 @@ def get_users_details(loan_status="active", user_type="loan", all_entries=False)
         if data['customer_type_account'] and data['customer_type_loan']:
             data['customer_type'] = "both"
         customer_data[i] = data
-        print("customer data: ", customer_data)
+        # print("customer data: ", customer_data)
     return customer_data
 
 

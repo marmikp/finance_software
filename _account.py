@@ -1,3 +1,4 @@
+import os.path
 import time
 import traceback
 from functools import partial
@@ -156,7 +157,7 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
         def signup():
             try:
                 args = {'username': request.args['username'], 'password': request.args['password']}
-                print(args)
+                # print(args)
                 db_utils.signup(**args)
                 return "success"
             except Exception as e:
@@ -205,7 +206,7 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
             if session.get('username'):
                 data = db_utils.get_users_details(loan_status='both')
                 today = datetime.now().strftime("%A, %d %B, %Y")
-                print(data)
+                # print(data)
                 return render_template('template/demo/vertical-default-dark/pages/loanLists1.html', data=data,
                                        today=today)
             else:
@@ -370,7 +371,7 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
             else:
                 data = db_utils.get_user_info_by_id(request.args['user_id'], return_type="dict")
 
-            print(data)
+            # print(data)
 
             return render_template('template/demo/vertical-default-dark/pages/editCustomerLoan.html', data=data[0])
 
@@ -382,7 +383,7 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
             else:
                 data = db_utils.get_user_info_by_id(request.args['user_id'], return_type="dict", user_type='account')
 
-            print(data)
+            # print(data)
 
             return render_template('template/demo/vertical-default-dark/pages/editCustomerAccount.html', data=data[0])
 
@@ -435,9 +436,9 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
                 loan_id = int(request.form['loan_id'])
             else:
                 loan_id = int(request.args['loan_id'])
-            print(loan_id)
+            # print(loan_id)
             data = db_utils.get_user_basic_info_by_loan_id(loan_id=loan_id)
-            print(data)
+            # print(data)
             return jsonify({'code': 200, 'data':data})
 
 
@@ -455,7 +456,7 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
                 user_data['loan_id'] = int(request.args['loan_id'])
                 user_data['amount'] = float(request.args['amount'])
                 user_data['no_of_hafta'] = int(request.args['months'])
-            print(user_data)
+            # print(user_data)
             if db_utils.get_loan_type_by_loan_id(loan_id=user_data['loan_id']) == 'hafta':
                 return {'code': 500, 'status': 'Loan must be Flat'}
             resp = db_utils.extend_hafta(**user_data)
@@ -496,7 +497,7 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
                         'total_pending_amount': get_user_pending_amount(user_id),
                         'total_due_amount': get_user_due_amount(user_id)}
 
-            print(data_ret['total_pending_amount'])
+            # print(data_ret['total_pending_amount'])
             return render_template('templates/user_add_collection.html', data=data_ret)
 
 
@@ -519,7 +520,7 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
                 data = src.utils.get_loan_entries_by_user_id(request.form['user_id'])
             else:
                 data = src.utils.get_loan_entries_by_user_id(request.args['user_id'])
-            print(data)
+            # print(data)
             return render_template('template/demo/vertical-default-dark/pages/closeLoan.html', data=data)
 
 
@@ -536,7 +537,7 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
                     data = src.utils.get_loan_entries_by_user_id(user_id)
             except:
                 data = []
-            print(data)
+            # print(data)
             return render_template('template/demo/vertical-default-dark/pages/closeLoan.html', data=data)
 
 
@@ -544,7 +545,7 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
         def close_loan():
             resp = db_utils.close_loan(int(request.form['user_id']), int(request.form['loan_id']),
                                        float(request.form['amount']))
-            print(resp)
+            # print(resp)
             return resp
 
 
@@ -602,7 +603,7 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
                     </html>"""
             except Exception as e:
                 print(e)
-            print(resp)
+            # print(resp)
             return resp
 
 
@@ -786,7 +787,7 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
         def close_account_loan():
             resp = db_utils.close_loan(int(request.form['user_id']), int(request.form['loan_id']),
                                        float(request.form['amount']), user_type="account")
-            print(resp)
+            # print(resp)
             return resp
 
 
@@ -820,7 +821,7 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
                     return db_utils.add_account_entry_by_lenar_denar(lenar_user_user_id, denar_user_user_id, amount,
                                                                      remark, data['date'])
                 except Exception as e:
-                    print('credit_debit_amount', e)
+                    # print('credit_debit_amount', e)
                     return {'code': 500, 'status': 'something occured wrong'}
 
 
@@ -848,13 +849,13 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
                     [val['no_of_installment'], val['date_to_pay'], val['emi_amount'], val['tx_status']],
                     ['Id', 'Date', 'Amount', 'Status'])
 
-                print(val['date_to_pay'].date(), val['no_of_installment'])
+                # print(val['date_to_pay'].date(), val['no_of_installment'])
                 df = df.append(row, ignore_index=True)
 
             df = df.sort_values(by='Id', ascending=True)
-            print(df)
+            # print(df)
             for i, val in enumerate(df['Date']):
-                print(val, df['Date'].iloc[i])
+                # print(val, df['Date'].iloc[i])
                 if type(val) == str:
                     df['Date'].iloc[i] = datetime.strptime(val, "%d/%m/%Y")
                 try:
@@ -1138,33 +1139,29 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
                     self.export_button.move(30, 30)
                     self.browser.move(0, 40)
                     self.export_button.setText("Export")
+                    if not os.path.exists(r"c:\temp"):
+                        os.mkdir(r"c:\temp")
                     file_name = path.join(r"c:\temp", url.split("/")[-1] + strftime("%Y%m%d-%H%M%S") + ".pdf")
                     loader = QtWebEngineWidgets.QWebEngineView()
                     loader.setZoomFactor(1)
                     loader.page().pdfPrintingFinished.connect(
                         lambda *args: print('finished:', args))
                     loader.load(QUrl(url_f))
-                    # handler = PrintHandler(self.parent())
-                    # handler.setPage(loader.page())
-                    #
-                    # printPreviewShortCut = QShortcut(QKeySequence(Qt.CTRL + Qt.Key_P), loader)
-                    # printShortCut = QShortcut(QKeySequence(Qt.CTRL + Qt.SHIFT + Qt.Key_P), loader)
-                    #
-                    # self.export_button.clicked.connect(handler.printPreview)
-
-                    # printShortCut.activated.connect(handler.print)
 
                     def emit_pdf(finished):
-                        QTimer.singleShot(2000, lambda: loader.page().printToPdf(file_name))
-                        time.sleep(2)
-                        msg = QMessageBox()
-                        msg.setIcon(QMessageBox.Information)
+                        if finished:
+                            QTimer.singleShot(2000, lambda: loader.page().printToPdf(file_name))
+                            msg = QMessageBox()
+                            msg.setIcon(QMessageBox.Information)
 
-                        msg.setText("File Downloaded")
-                        msg.setInformativeText("File Downloaded to " + file_name)
-                        msg.setStandardButtons(QMessageBox.Ok)
+                            msg.setText("File Downloaded")
+                            msg.setInformativeText("File Downloaded to " + file_name)
+                            msg.setStandardButtons(QMessageBox.Ok)
+                        else:
+                            print("printing")
 
                         def msgbtn():
+                            time.sleep(4)
                             msg.close()
                             startfile(file_name)
 
