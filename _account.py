@@ -1160,6 +1160,10 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
                         def msgbtn():
                             time.sleep(4)
                             msg.close()
+                            prev_size = 0
+                            while prev_size != os.path.getsize(file_name):
+                                prev_size = os.path.getsize(file_name)
+                                time.sleep(0.5)
                             startfile(file_name)
 
                         msg.buttonClicked.connect(msgbtn)
