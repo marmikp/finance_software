@@ -1144,7 +1144,6 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
                     file_name = path.join(r"c:\temp", url.split("/")[-1] + strftime("%Y%m%d-%H%M%S") + ".pdf")
                     loader = QtWebEngineWidgets.QWebEngineView()
                     loader.setZoomFactor(1)
-                    
                     loader.load(QUrl(url_f))
 
                     def emit_pdf(finished):
