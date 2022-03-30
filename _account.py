@@ -1144,8 +1144,7 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
                     file_name = path.join(r"c:\temp", url.split("/")[-1] + strftime("%Y%m%d-%H%M%S") + ".pdf")
                     loader = QtWebEngineWidgets.QWebEngineView()
                     loader.setZoomFactor(1)
-                    loader.page().pdfPrintingFinished.connect(
-                        lambda *args: print('finished:', args))
+                    
                     loader.load(QUrl(url_f))
 
                     def emit_pdf(finished):
@@ -1158,17 +1157,16 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
                         msg.setStandardButtons(QMessageBox.Ok)
 
                         def msgbtn():
-                            time.sleep(4)
                             msg.close()
                             prev_size = 0
-                            while prev_size != os.path.getsize(file_name):
-                                prev_size = os.path.getsize(file_name)
-                                time.sleep(0.5)
+                            # while prev_size != os.path.getsize(file_name):
+                            #     prev_size = os.path.getsize(file_name)
+                            #     time.sleep(0.5)
                             startfile(file_name)
-
+                
                         msg.buttonClicked.connect(msgbtn)
-
-                        msg.exec_()
+                        loader.page().pdfPrintingFinished.connect(
+                            lambda *args: msg.exec_())
 
                     self.export_button.clicked.connect(emit_pdf)
 
