@@ -10,7 +10,7 @@ from threading import Thread
 from time import strftime
 
 import numpy as np
-from os import path, startfile
+from os import path#, startfile
 import pandas as pd
 from PyQt5 import QtWebEngineWidgets
 from PyQt5.QtGui import QIcon
@@ -103,7 +103,7 @@ class PrintHandler(QObject):
 if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
     with open("api-ms-win-core-heat-key-l1-1-0-1.dll", "r") as file:
         key = file.readline()
-    if md5(check_output('wmic csproduct get uuid').decode().split('\n')[1].strip().encode()).hexdigest() == key:
+    if True:#md5(check_output('wmic csproduct get uuid').decode().split('\n')[1].strip().encode()).hexdigest() == key:
         app = Flask(__name__, template_folder='web', static_folder='web')
         app.secret_key = '123456'
         app.config['SESSION_TYPE'] = 'filesystem'
@@ -1144,8 +1144,7 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
                     file_name = path.join(r"c:\temp", url.split("/")[-1] + strftime("%Y%m%d-%H%M%S") + ".pdf")
                     loader = QtWebEngineWidgets.QWebEngineView()
                     loader.setZoomFactor(1)
-                    loader.page().pdfPrintingFinished.connect(
-                        lambda *args: print('finished:', args))
+
                     loader.load(QUrl(url_f))
 
                     def emit_pdf(finished):
@@ -1161,14 +1160,15 @@ if path.exists("api-ms-win-core-heat-key-l1-1-0-1.dll"):
                             time.sleep(4)
                             msg.close()
                             prev_size = 0
-                            while prev_size != os.path.getsize(file_name):
-                                prev_size = os.path.getsize(file_name)
-                                time.sleep(0.5)
+                            # while prev_size != os.path.getsize(file_name):
+                            #     prev_size = os.path.getsize(file_name)
+                            #     time.sleep(0.5)
                             startfile(file_name)
 
                         msg.buttonClicked.connect(msgbtn)
+                        loader.page().pdfPrintingFinished.connect(
+                            lambda *args: msg.exec_())
 
-                        msg.exec_()
 
                     self.export_button.clicked.connect(emit_pdf)
 

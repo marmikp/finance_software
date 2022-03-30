@@ -1,5 +1,6 @@
 import datetime
 import math
+import traceback
 from hashlib import md5
 from time import sleep
 
@@ -33,7 +34,7 @@ def create_html_table(x, length=0, show_col_name=False, lines=1):
         if i != 0:
             if (i == 20 and lines == 2) or (i % 21 == 0 and lines == 2 and i != 21) or (i == 30 and lines == 1) or (
                     i % 35 == 0 and lines == 1 and i != 35):
-                if i % 21*3 == 0:
+                if i % 21 * 3 == 0:
                     row_data += "</table>\n<br/><br/><br/></br><table><tr>"
                 else:
                     row_data += "</table>\n<br/><br/><br/><table><tr>"
@@ -72,13 +73,13 @@ def get_user_basic_info_by_loan_id(loan_id):
     user_id = get_user_id_from_loan_id(loan_id)
     customer_data = Customer.query.filter_by(id=user_id).first()
     loan_data = HaftEntry.query.filter_by(transaction_id=loan_id).first()
-    data={'user_id': user_id, 'name': customer_data.user_name, 'alias': customer_data.user_alias,
-          'address': customer_data.user_address, 'phone': customer_data.user_phone,
-          'phone_2': customer_data.user_phone_2,
-          'city': customer_data.user_city, 'guarantor_1_name': loan_data.guarantor_1_name,
-          'guarantor_2_name': loan_data.guarantor_2_name, 'guarantor_1_phone': loan_data.guarantor_1_phone,
-          'guarantor_2_phone': loan_data.guarantor_2_phone, 'guarantor_1_address': loan_data.guarantor_1_address,
-          'guarantor_2_address': loan_data.guarantor_2_address}
+    data = {'user_id': user_id, 'name': customer_data.user_name, 'alias': customer_data.user_alias,
+            'address': customer_data.user_address, 'phone': customer_data.user_phone,
+            'phone_2': customer_data.user_phone_2,
+            'city': customer_data.user_city, 'guarantor_1_name': loan_data.guarantor_1_name,
+            'guarantor_2_name': loan_data.guarantor_2_name, 'guarantor_1_phone': loan_data.guarantor_1_phone,
+            'guarantor_2_phone': loan_data.guarantor_2_phone, 'guarantor_1_address': loan_data.guarantor_1_address,
+            'guarantor_2_address': loan_data.guarantor_2_address}
     return data
 
 
@@ -114,7 +115,8 @@ def create_general_html_table(x, length=0, show_col_name=False):
                     row_data += '\n <td class = "text_column col-md-8"  style="padding: 0px;">' + str(val) + '</td>'
 
             else:  # second column
-                row_data += '\n <td class = "number_column col-md-2" style="text-align:right; padding: 0px;">' + str(val) + '</td>'
+                row_data += '\n <td class = "number_column col-md-2" style="text-align:right; padding: 0px;">' + str(
+                    val) + '</td>'
 
         row_data += '\n </tr>'
     if length != 0:
@@ -269,7 +271,7 @@ def extend_hafta(customer_id, amount, no_of_hafta, loan_id, user_type="loan"):
             {"last_installment_date": entry_table.query.filter_by(id=customer_id,
                                                                   transaction_id=loan_id).first().last_installment_date + relativedelta(
                 months=no_of_hafta),
-             "no_installment": no_installments + no_of_hafta-1})
+             "no_installment": no_installments + no_of_hafta - 1})
 
         # db.session.commit()
         db.session.commit()
@@ -487,7 +489,7 @@ def add_installment(installment_num=1, paid_date=datetime.now(), user_type="loan
             tx_hist_query = TransactionHistory(party_id=kwargs['id'], loan_id=kwargs['transaction_id'],
                                                account_type='loan emi',
                                                amount=kwargs['paid_amount'],
-                                               status='cr', total_balance=total_balance, tx_date=kwargs['paid_date'])
+                                               status='cr', total_balance=total_balance, tx_date=paid_date)
             db.session.add(tx_hist_query)
             db.session.commit()
             tx_id = TransactionHistory.query.order_by(TransactionHistory.tx_id.desc()).first().tx_id
@@ -500,8 +502,9 @@ def add_installment(installment_num=1, paid_date=datetime.now(), user_type="loan
 
         return {"code": 200, "status": "installment updated successfully"}
     except Exception as e:
-        print(e)
+        traceback.print_exc()
         return {"code": 500, "status": "error in installment update"}
+
 
 def get_emi_amount(base_amount, interest, loan_type, no_of_emi):
     if loan_type == "hafta":
@@ -509,8 +512,8 @@ def get_emi_amount(base_amount, interest, loan_type, no_of_emi):
     elif loan_type == "flat":
         return interest
 
-def get_user_data(id=None, loan_type="hafta", user_type='loan', loan_status='active'):
 
+def get_user_data(id=None, loan_type="hafta", user_type='loan', loan_status='active'):
     if id is not None:
         try:
             user_table = META_DATA.tables[str(id)]
@@ -556,18 +559,20 @@ def get_user_data(id=None, loan_type="hafta", user_type='loan', loan_status='act
                                 val['remark'] = entry_data.remark
                                 val['base_amount'] = entry_data.base_amount
                                 loan_type = entry_data.loan_type
-                                if entry_data.no_installment == k+1 and loan_type == "flat":
+                                if entry_data.no_installment == k + 1 and loan_type == "flat":
                                     continue
-                                emi_amount = get_emi_amount(val['base_amount'], entry_data.interest, loan_type, entry_data.no_installment)
+                                emi_amount = get_emi_amount(val['base_amount'], entry_data.interest, loan_type,
+                                                            entry_data.no_installment)
                                 val['emi_amount'] = emi_amount
                         elif user_type == 'loan':
                             for k, val in enumerate(user_d_list):
                                 entry_data = entry_table.query.filter_by(id=id, transaction_id=loan).first()
                                 val['base_amount'] = entry_data.base_amount
                                 loan_type = entry_data.loan_type
-                                if entry_data.no_installment == k+1 and loan_type == "flat":
+                                if entry_data.no_installment == k + 1 and loan_type == "flat":
                                     continue
-                                emi_amount = get_emi_amount(val['base_amount'], entry_data.interest, loan_type, entry_data.no_installment)
+                                emi_amount = get_emi_amount(val['base_amount'], entry_data.interest, loan_type,
+                                                            entry_data.no_installment)
                                 val['emi_amount'] = emi_amount
                     user_data += user_d_list
                 # try:
@@ -826,7 +831,8 @@ def get_pending_installments_of_user(user_id, date):
         loan_id_dict[val['loan_id']][0] += val['emi_amount']
         loan_id_dict[val['loan_id']][1] += 1
         if type(val['date_to_pay']) == str:
-            loan_id_dict[val['loan_id']][2] = datetime.strptime(val['date_to_pay'].split(" ")[0], "%Y-%m-%d").date().strftime("%d/%m/%Y")
+            loan_id_dict[val['loan_id']][2] = datetime.strptime(val['date_to_pay'].split(" ")[0],
+                                                                "%Y-%m-%d").date().strftime("%d/%m/%Y")
 
         else:
             loan_id_dict[val['loan_id']][2] = val['date_to_pay'].date().strftime("%d/%m/%Y")
@@ -865,7 +871,8 @@ def get_pending_installments_of_user_split_emi(user_id, date):
         loan_id_dict[val['loan_id']][0] += val['emi_amount']
         loan_id_dict[val['loan_id']][1] += 1
         if type(val['date_to_pay']) == str:
-            loan_id_dict[val['loan_id']][2] = datetime.strptime(val['date_to_pay'].split(" ")[0], "%Y-%m-%d").date().strftime("%d/%m/%Y")
+            loan_id_dict[val['loan_id']][2] = datetime.strptime(val['date_to_pay'].split(" ")[0],
+                                                                "%Y-%m-%d").date().strftime("%d/%m/%Y")
 
         else:
             loan_id_dict[val['loan_id']][2] = val['date_to_pay'].date().strftime("%d/%m/%Y")
@@ -873,6 +880,7 @@ def get_pending_installments_of_user_split_emi(user_id, date):
         loan_id_dict[val['loan_id']][3] = pending_emis
         loan_id_dict[val['loan_id']][4] = next_emis
     return loan_id_dict, emis_dict
+
 
 def get_account_user_entries(user_id, from_date=datetime.now().date() - relativedelta(months=1),
                              date=datetime.now().date()):
