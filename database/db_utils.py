@@ -290,7 +290,7 @@ def extend_hafta(customer_id, amount, no_of_hafta, loan_id, user_type="loan"):
         db.session.commit()
         return {"code": 200, "status": "hafta extend done"}
     except Exception as e:
-        print(e)
+        traceback.print_exc()
         return {"code": 500, "status": "error occurred in hafta extension"}
 
 
@@ -559,17 +559,18 @@ def get_user_data(id=None, loan_type="hafta", user_type='loan', loan_status='act
                                 val['remark'] = entry_data.remark
                                 val['base_amount'] = entry_data.base_amount
                                 loan_type = entry_data.loan_type
-                                if entry_data.no_installment == k + 1 and loan_type == "flat":
+                                if entry_data.no_installment == noi + 1 and loan_type == "flat":
                                     continue
                                 emi_amount = get_emi_amount(val['base_amount'], entry_data.interest, loan_type,
                                                             entry_data.no_installment)
                                 val['emi_amount'] = emi_amount
                         elif user_type == 'loan':
+                            noi = entry_table.query.filter_by(id=id).first().no_installment
                             for k, val in enumerate(user_d_list):
                                 entry_data = entry_table.query.filter_by(id=id, transaction_id=loan).first()
                                 val['base_amount'] = entry_data.base_amount
                                 loan_type = entry_data.loan_type
-                                if entry_data.no_installment == k + 1 and loan_type == "flat":
+                                if entry_data.no_installment == val['no_of_installment'] - 1 and loan_type == "flat":
                                     continue
                                 emi_amount = get_emi_amount(val['base_amount'], entry_data.interest, loan_type,
                                                             entry_data.no_installment)
